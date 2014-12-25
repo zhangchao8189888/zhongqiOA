@@ -1,7 +1,6 @@
 <?php
 require_once("module/form/".$actionPath."Form.class.php");
 require_once("module/dao/".$actionPath."Dao.class.php");
-require_once("module/dao/ProductDao.class.php");
 require_once("tools/fileTools.php");
 
 require_once("tools/excel_class.php");
@@ -94,6 +93,17 @@ class AdminAction extends BaseAction{
                 $this->modelInput();
                 break;
         }
+    }
+    function modelInput() {
+        $this->mode	=	"toIndex";
+        /*$user = $_SESSION ['admin'];
+        $uid = $user['user_id'];
+        $this->objDao = new SalaryDao();
+        $employPO = $this->objDao->getEmByEid($uid);
+        $company = $this->objDao->searchCompanyByName($employPO['e_company']);
+        $this->objDao = new CompanyDao();
+        $result = $this ->objDao->getNoticeByCompanyId($company['id']);
+        $this->objForm->setFormData("notice",$result);*/
     }
     /**
      * 得到管理员列表

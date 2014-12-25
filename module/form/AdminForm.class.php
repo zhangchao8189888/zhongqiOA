@@ -24,6 +24,8 @@ class AdminForm extends BaseForm
     function getTpl($mode = false)
     {
         switch ($mode) {
+            case "toIndex" :
+                return "site_index.php";
             case "tolist" :
                 return "admin_list.php";
             case "login" :

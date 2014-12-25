@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * 工资dao
  * @author zhang.chao

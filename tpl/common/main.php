@@ -2,20 +2,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <?php $login_error = $form_data['login_error'];?>
-    <?php include("tpl/commom/public_meta.php"); ?>
+    <?php include("tpl/common/public_meta.php"); ?>
 </head>
 <body>
-<?php if (empty($login_error))include("tpl/commom/public_head.php"); ?>
+    <?php if (empty($login_error))include("tpl/common/public_head.php"); ?>
 
-<?php if (empty($login_error))include("tpl/commom/public_menu.php"); ?>
-
+    <?php if (empty($login_error))include("tpl/common/public_menu.php"); ?>
 
     <!--主体内容开始-->
-
     <?php include("tpl/$nextPageFile"); ?>
 	<!--主体内容结束-->
 
 
-    <?php include("tpl/commom/public_footer.php"); ?>
+    <?php include("tpl/common/public_footer.php"); ?>
 </body>
 </html>
