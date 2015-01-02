@@ -3,13 +3,33 @@
  */
 $(function(){
     $("#company_validate").validate({
+        onsubmit:true,
         submitHandler:function(form){
-            $(form).ajaxSubmit({
-                type:"post",
-                url:"test_save.php?time="+ (new Date()).getTime(),
-                //beforeSubmit: showRequest,
-                success: showResponse
-            });
+            var obj = {};
+            obj.company_id = $("#company_id").val();
+            obj.company_code = $(".codeNo").text();
+            obj.company_name = $("#company_name").val();
+            obj.contacts = $("#contacts").val();
+            obj.contacts_no = $("#contacts_no").val();
+            obj.com_address = $("#com_address").val();
+            obj.com_bank = $("#com_bank").val();
+            obj.bank_no = $("#bank_no").val();
+            obj.company_level = $("#company_level").val();
+            obj.company_type = $("#company_type").val();
+            $.ajax(
+                {
+                    type: "POST",
+                    url: "index.php?action=Company&mode=saveOrUpdateCompany",
+                    data: obj,
+                    success: function(data){
+                        if (data.code > 100000) {
+                            alert(data.message);
+                            return;
+                        }
+                        window.location.reload();
+                    }
+                }
+            );
         },
         rules: {
             company_name: { required: true },
