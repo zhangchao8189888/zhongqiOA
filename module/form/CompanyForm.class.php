@@ -26,6 +26,8 @@ class CompanyForm extends BaseForm
         switch ($mode) {
             case "toCompanyList" :
                 return "company/company_list.php";
+            case "toTest" :
+                return "company/test.php";
             default :
                 return "BaseConfig.php";
         }

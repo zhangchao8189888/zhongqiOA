@@ -1,5 +1,5 @@
 <?php
-require_once("module/form/CompanyForm.class.php");
+require_once("module/form/SalaryForm.class.php");
 require_once("module/dao/CompanyDao.class.php");
 require_once("module/dao/SalaryDao.class.php");
 require_once("tools/excel_class.php");
@@ -45,9 +45,6 @@ class CompanyAction extends BaseAction {
             case "toCompanyList" :
                 $this->toCompanyList();
                 break;
-            case "demoTest" :
-                $this->demoTest();
-                break;
             case "saveOrUpdateCompany" :
                 $this->saveOrUpdateCompany();
                 break;
@@ -67,9 +64,6 @@ class CompanyAction extends BaseAction {
 
     function modelInput() {
         $this->mode = "toAdd";
-    }
-    function demoTest () {
-        $this->mode = "toTest";
     }
     function toCompanyList () {
         $this->mode = "toCompanyList";
