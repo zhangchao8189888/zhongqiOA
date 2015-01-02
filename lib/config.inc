@@ -19,7 +19,7 @@ define('DUIBIUPLOADPATH','upload/duiBi/');
 //define('UPLOADPATH','$(UPLOADPATH)');
 define('UPLOAD_FILE_NAME','upload.');
 //分页一页长度
-define('PAGE_SIZE',40);
+define('PAGE_SIZE',5);
 define('NOTICE_PAGE_SIZE',10);
 //设置管理员类型
 define('ADMIN_TYPE_SYS',1);
