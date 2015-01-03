@@ -1,21 +1,20 @@
 <?php
 require_once("module/form/SalaryForm.class.php");
-require_once("module/dao/CompanyDao.class.php");
 require_once("module/dao/SalaryDao.class.php");
 require_once("tools/excel_class.php");
 require_once("tools/Classes/PHPExcel.php");
 require_once("tools/Util.php");
 require_once("tools/JPagination.php");
 
-class CompanyAction extends BaseAction {
+class SalaryAction extends BaseAction {
     /*
         *
         * @param $actionPath
         * @return TestAction
         */
-    function CompanyAction($actionPath) {
+    function SalaryAction($actionPath) {
         parent::BaseAction();
-        $this->objForm = new CompanyForm();
+        $this->objForm = new SalaryForm();
         $this->actionPath = $actionPath;
     }
 
@@ -42,17 +41,8 @@ class CompanyAction extends BaseAction {
     function controller() {
         // Controller -> Model
         switch ($this->mode) {
-            case "toCompanyList" :
-                $this->toCompanyList();
-                break;
-            case "saveOrUpdateCompany" :
-                $this->saveOrUpdateCompany();
-                break;
-            case "getCode" :
-                $this->getCode();
-                break;
-            case "getCompany" :
-                $this->getCompany();
+            case "saveFukuanTongzhi" :
+                $this->saveFukuanTongzhi();
                 break;
             default :
                 $this->modelInput();
@@ -65,104 +55,71 @@ class CompanyAction extends BaseAction {
     function modelInput() {
         $this->mode = "toAdd";
     }
-    function toCompanyList () {
-        $this->mode = "toCompanyList";
-        $searchType = $_REQUEST['searchType'];
-        $com_status = $_REQUEST['com_status'];
-        $search_name = $_REQUEST['search_name'];
-        $this->objDao = new CompanyDao();
-        $where = '';
-        if ($searchType =='name') {
-            $where.= ' and company_name = "'.$search_name.'"';
-        } elseif ($searchType =='status') {
-            $where.= ' and company_status ='.$com_status;
-        }
-        $sum =$this->objDao->g_db_count("OA_company","*","1=1 $where");
-        $pageSize=PAGE_SIZE;
-        $count = intval($_GET['c']);
-        $page = intval($_GET['page']);
-        if ($count == 0){
-            $count = $pageSize;
-        }
-        if ($page == 0){
-            $page = 1;
-        }
+    function saveFukuanTongzhi () {
 
-        $startIndex = ($page-1)*$count;
-        $total = $sum;
-        $searchResult=$this->objDao->getCompanyList($where,$startIndex,$pageSize);
-        $pages = new JPagination($total);
-        $pages->setPageSize($pageSize);
-        $pages->setCurrent($page);
-        $pages->makePages();
-        $companyList = array();
-        //company_code,company_name,com_contact,contact_no,company_address,com_bank,bank_no,company_level,company_type,company_status
-        while ($row = mysql_fetch_array($searchResult)) {
-            $company['id'] = $row['id'];
-            $company['company_code'] = $row['company_code'];
-            $company['company_name'] = $row['company_name'];
-            $company['com_contact'] = $row['com_contact'];
-            $company['contact_no'] = $row['contact_no'];
-            $company['company_address'] = $row['company_address'];
-            $company['com_bank'] = $row['com_bank'];
-            $company['bank_no'] = $row['bank_no'];
-            $company['company_level'] = $row['company_level'];
-            $company['company_type'] = $row['company_type'];
-            $company['company_status'] = $row['company_status'];
-            $companyList[] = $company;
-        }
-        $this->objForm->setFormData("companyList",$companyList);
-        $this->objForm->setFormData("total",$total);
-        $this->objForm->setFormData("page",$pages);
-        $this->objForm->setFormData("searchType",$searchType);
-        $this->objForm->setFormData("search_name",$search_name);
-        $this->objForm->setFormData("com_status",$com_status);
+        $fileName = $_FILES ['file'] ['name'];
 
-    }
-    function getCode() {
-        $type = $_GET['type'];
-        $firstCode = '';
-        if ($type =='qiye') {
-            $firstCode = 'QY';
+        $errorMsg = "";
+        var_dump($_FILES);
+
+        $fileArray = split ( "\.", $_FILES ['file'] ['name'] );
+        if (count ( $fileArray ) != 2) {
+            $this->mode = "toUpload";
+            $errorMsg = '文件名格式 不正确';
+            $this->objForm->setFormData ( "error", $errorMsg );
+            return;
+        } else if ($fileArray [1] != 'xls' && $fileArray [1] != 'xlsx') {
+            $this->mode = "toUpload";
+            $errorMsg = '文件类型不正确，必须是xls，xlsx类型';
+            $this->objForm->setFormData ( "error", $errorMsg );
+            return;
         }
-        $date = date("Ymd",time());
-        $this->objDao = new CompanyDao();
-        $maxId = $this->objDao->getMaxId('OA_company');
-        if(empty($maxId['max'])){
-            $maxId = 0;
-        } else {
-            $maxId = $maxId['max'];
+        if ($_FILES ['file'] ['error'] != 0) {
+            $error = $_FILES ['file'] ['error'];
+            switch ($error) {
+                case 1 :
+                    $errorMsg = '1,上传的文件超过了php.ini中  upload_max_filesize选项限制的值.';
+                    break;
+                case 2 :
+                    $errorMsg = '2,上传文件的大小超过了HTML表单中MAX_FILE_SIZE  选项指定的大小';
+                    break;
+                case 3 :
+                    $errorMsg = '3,文件只有部分被上传';
+                    break;
+                case 4 :
+                    $errorMsg = '4,文件没有被上传';
+                    break;
+                case 6 :
+                    $errorMsg = '找不到临文件夹';
+                    break;
+                case 7 :
+                    $errorMsg = '文件写入失败';
+                    break;
+            }
         }
-        $maxId+=1;
-        $maxId =  str_pad($maxId,4,'0',STR_PAD_LEFT);
-        $codeNo = $firstCode.$date.$maxId;
-        $data['codeNo'] = $codeNo;
-        echo json_encode($data);
-        exit;
-    }
-    function getCompany() {
-        $id = $_REQUEST['id'];
-        $this->objDao = new CompanyDao();
-        $result = $this->objDao->getCompanyById($id);
-        echo json_encode($result);
-        exit;
-    }
-    function saveOrUpdateCompany () {
-        //company_name,com_contact,contact_no,company_address,com_bank,bank_no,company_level,company_type
-        $company['company_code'] = $_REQUEST['company_code'];
-        $company['company_name'] = $_REQUEST['company_name'];
-        $company['com_contact'] = $_REQUEST['contacts'];
-        $company['contact_no'] = $_REQUEST['contacts_no'];
-        $company['company_address'] = $_REQUEST['com_address'];
-        $company['com_bank'] = $_REQUEST['com_bank'];
-        $company['bank_no'] = $_REQUEST['bank_no'];
-        $company['company_level'] = $_REQUEST['company_level'];
-        $company['company_type'] = $_REQUEST['company_type'];
-        $company['id'] = $_REQUEST['company_id'];
-        $this->objDao = new CompanyDao();
+        if ($errorMsg != "") {
+            $this->mode = "toUpload";
+            $this->objForm->setFormData ( "error", $errorMsg );
+            return ;
+        }
+        $this->readExcelContent();
+
+        $fukuan['fu_code'] = $_REQUEST['fuNo'];
+        $fukuan['company_id'] = 0;
+        $fukuan['company_name'] = $_REQUEST['company_name'];
+        $fukuan['salary_time_id'] = 0;
+        $fukuan['salary_time'] = $_REQUEST['salaryDate'];
+        $fukuan['yingfu_money'] = $_REQUEST['yingfujine'];
+        $fukuan['laowufei_money'] = $_REQUEST['laowufei'];
+        $fukuan['fapiao_id_json'] = '';
+        $fukuan['jieshou_person_id'] = 0;
+        $fukuan['jieshou_person_name'] = $_REQUEST['jieshouren'];
+        $fukuan['zhifu_status'] = 0;
+        $fukuan['more'] = $_REQUEST['more'];
+        $this->objDao = new SalaryDao();
         $data = array();
-        if (empty($company['id'])) {
-            $result = $this->objDao->addCompany($company);
+        if (empty($fukuan['id'])) {
+            $result = $this->objDao->saveFukuanTongzhi($fukuan);
             if ($result) {
                 $data['code'] = 100000;
                 $data['mess'] = '公司添加成功';
@@ -171,7 +128,7 @@ class CompanyAction extends BaseAction {
                 $data['mess'] = '公司添加失败，请重试';
             }
         } else {
-            $result = $this->objDao->updateCompany($company);
+            $result = $this->objDao->updateCompany($fukuan);
             if ($result) {
                 $data['code'] = 100000;
                 $data['mess'] = '公司修改成功';
@@ -188,7 +145,7 @@ class CompanyAction extends BaseAction {
 }
 
 
-$objModel = new CompanyAction($actionPath);
+$objModel = new SalaryAction($actionPath);
 $objModel->dispatcher();
 
 

@@ -7,82 +7,24 @@ $com_status = $form_data['com_status'];
 $admin=$_SESSION['admin'];
 ?>
 <script src="common/hot-js/handsontable.full.js"></script>
+<script src="common/common-js/fukuantongzhi.js"></script>
 <link rel="stylesheet" media="screen" href="common/hot-js/handsontable.full.css">
 <script language="javascript" type="text/javascript">
     $(document).ready(function () {
-        function createBigData() {
-            var rows = []
-                , i
-                , j;
-
-            for (i = 0; i < 1000; i++) {
-                var row = [];
-                for (j = 0; j < 22; j++) {
-                    row.push(Handsontable.helper.spreadsheetColumnLabel(j) + (i + 1));
+        $("#com_add").click(function(){
+            $.ajax(
+                {
+                    type: "get",
+                    url: "index.php?action=Company&mode=getCode",
+                    data: {type:'fukuantongzhi'},
+                    dataType: "json",
+                    success: function(data){
+                        $(".codeNo").text(data.codeNo);
+                    }
                 }
-                rows.push(row);
-            }
-
-            return rows;
-        }
-        var container = document.getElementById("exampleGrid");
-        var hot5 = Handsontable(container, {
-            data: createBigData(),
-            startRows: 5,
-            startCols: 4,
-            colWidths: [55, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80], //can also be a number or a function
-            rowHeaders: true,
-            colHeaders: ['姓名', '社保基数', '公积金基数',
-                '基本工资','考核工资','其他','应发合计','个人失业',
-                '个人医疗','个人养老','个人公积金','个人代扣税',
-                '个人扣款合计','个人实发合计','单位失业','单位医疗',
-                '单位养老','单位工伤','单位生育','单位公积金','劳务费','合计付款'],
-            stretchH: 'last',
-            minSpareRows: 1,
-            contextMenu: true
+            );
+            $('#modal-event1').modal({show:true});
         });
-        var selectFirst = document.getElementById('selectFirst'),
-            rowHeaders = document.getElementById('rowHeaders'),
-            colHeaders = document.getElementById('colHeaders');
-        /*Handsontable.Dom.addEvent(rowHeaders, 'click', function () {
-            hot5.updateSettings({
-                rowHeaders: this.checked
-            });
-        });
-*/
-        Handsontable.Dom.addEvent(colHeaders, 'click', function () {
-            if (this.checked) {
-                hot5.updateSettings({
-                    fixedColumnsLeft: 2
-                });
-            } else {
-                hot5.updateSettings({
-                    fixedColumnsLeft: 0
-                });
-            }
-
-        });
-        /*hot.loadData(data);
-
-        var selectFirst = document.getElementById('selectFirst'),
-            rowHeaders = document.getElementById('rowHeaders'),
-            colHeaders = document.getElementById('colHeaders');
-
-        Handsontable.Dom.addEvent(selectFirst, 'click', function () {
-            hot.selectCell(0,0);
-        });
-
-        Handsontable.Dom.addEvent(rowHeaders, 'click', function () {
-            hot.updateSettings({
-                rowHeaders: this.checked
-            });
-        });
-
-        Handsontable.Dom.addEvent(colHeaders, 'click', function () {
-            hot.updateSettings({
-                colHeaders: this.checked
-            });
-        });*/
     });
 </script>
 <div id="content">
@@ -130,14 +72,16 @@ $admin=$_SESSION['admin'];
                     <tr>
                         <!-- 编号 企业名称 联系人 联系方式 地址 银行账户 客户等级 -->
                         <th class="tl"><div></div></th>
-                        <th class="tl"><div>编号</div></th>
                         <th class="tl"><div>企业名称</div></th>
-                        <!--<th class="tl"><div>金额</div></th>-->
-                        <th class="tl"><div>联系人</div></th>
-                        <th class="tl"><div>联系方式</div></th>
-                        <th class="tl"><div>地址</div></th>
-                        <th class="tl"><div>银行账户</div></th>
-                        <th class="tl"><div>客户等级</div></th>
+                        <th class="tl"><div>工资月份</div></th>
+                        <th class="tl"><div>应付金额</div></th>
+                        <th class="tl"><div>应付劳务费</div></th>
+                        <th class="tl"><div>发票金额</div></th>
+                        <th class="tl"><div>发票号</div></th>
+                        <th class="tl"><div>接收人</div></th>
+                        <th class="tl"><div>填报人</div></th>
+                        <th class="tl"><div>填报时间</div></th>
+                        <th class="tl"><div>付款状态</div></th>
                         <th class="tl"><div>操作</div></th>
                     </tr>
                     </thead>
@@ -257,31 +201,25 @@ $admin=$_SESSION['admin'];
 
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">×</button>
-        <h3>企业信息新增</h3>
+        <h3>付款通知单新增</h3>
     </div>
-    <form action="" id="company_validate" method="post" class="form-horizontal"  novalidate="novalidate">
+    <form action="index.php" id="company_validate" method="post" class="form-horizontal"  novalidate="novalidate">
         <div class="modal-body">
             <div class="designer_win">
-                <div class="tips">客户编号：<span class="codeNo"></span><input type="hidden" value="" id="company_id" name="company_id"/></div>
+                <div class="tips">付款通知单号：<span class="codeNo"></span><input type="hidden" value="" id="fuNo" name="fuNo"/></div>
                 <div class="tips"><em style="color: red;padding-right: 10px;">*</em>企业名称：<input type="text" maxlength="20" id="company_name"name="company_name"  /></div>
-                <div class="tips"><em style="color: red;padding-right: 10px;">*</em>联系人：<input type="text" maxlength="20" id="contacts"name="contacts"  /></div>
-                <div class="tips"><em style="color: red;padding-right: 10px;">*</em>联系方式：<input type="text" maxlength="20" id="contacts_no"name="contacts_no"  /></div>
-                <div class="tips">公司地址：<input type="text" maxlength="20" id="com_address"  /></div>
-                <div class="tips">开户行：<input type="text" maxlength="20" id="com_bank"  /></div>
-                <div class="tips">银行帐号：<input type="text" maxlength="20" id="bank_no"  /></div>
-                <div class="tips">企业类型：<select name="company_type" id="company_type"/>
-                    <option value="1">国有企业</option>
-                    <option value="2">事业单位</option>
-                    <option value="3">名营企业</option>
-                    <option value="4">外资企业</option>
-                    <option value="5">政府部门</option>
-                    </select></div>
-                <div class="tips">客户级别：<select name="company_level" id="company_level">
-                        <option value="1">普通客户</option>
-                        <option value="2">中级客户</option>
-                        <option value="3">高级客户</option>
-                    </select></div>
-                <div class="tips">状态：启用</div>
+                <div class="tips"><em style="color: red;padding-right: 10px;">*</em>工资月份：
+                    <input type="text" id="salaryDate" name="salaryDate" value=""  onFocus="WdatePicker({isShowClear:false,readOnly:true,dateFmt:'yyyy-MM',realDateFmt:'yyyy-MM'})"/>
+                </div>
+                <div class="tips"><em style="color: red;padding-right: 10px;">*</em>工资导入：<input type="hidden" name="max_file_size" value="10000000"/><input name="file" id="file"  type="file"/></div>
+                <div class="tips">应付金额：<input type="text" maxlength="20" style="width: 100px" id="yingfujine" name="yingfujine"  />劳务费：<input style="width: 100px" type="text" maxlength="20" id="laowufei" name="laowufei"  /></div>
+                <div class="tips">发票金额：<input type="text" maxlength="20" id="fapiaojin" name="fapiaojin"  /></div>
+                <div class="tips">发票号：<input type="text" maxlength="20" id="piao_no" name="piao_no"  /></div>
+                <div class="tips">接收人：<input type="text" maxlength="20" id="jieshouren" name="jieshouren"  /></div>
+                <div class="tips">支付状态：<span style="color: red">未支付</span></div>
+                <div class="tips">备注：<textarea id="more">
+
+                </textarea></div>
             </div>
         </div>
 

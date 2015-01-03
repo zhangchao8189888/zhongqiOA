@@ -251,7 +251,7 @@ Enjoy!
 
       //hide normal input and add focus classes
       $(elem)
-      .css("opacity", 1)
+      .css("opacity", 0)
       .bind({
         "focus.uniform": function(){
           divTag.addClass(options.focusClass);

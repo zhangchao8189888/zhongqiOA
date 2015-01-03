@@ -9,28 +9,21 @@
 <link rel="stylesheet" href="common/css/fullcalendar.css" />
 <link rel="stylesheet" href="common/css/matrix-style.css" />
 <link rel="stylesheet" href="common/css/matrix-media.css" />
+<link rel="stylesheet" href="common/css/uniform.css" />
 <link rel="stylesheet" href="common/css/select2.css" />
 <link href="common/font-awesome/css/font-awesome.css" rel="stylesheet" />
 <link rel="stylesheet" href="common/css/jquery.gritter.css" />
-<link rel="stylesheet" href="common/css/custom.css" />
 
 
-<!--<script language="javascript" type="text/javascript" src="common/js/excanvas.min.js" charset="utf-8"></script>-->
 <script language="javascript" type="text/javascript" src="common/js/jquery.min.js" charset="utf-8"></script>
 <script language="javascript" type="text/javascript" src="common/js/jquery.ui.custom.js" charset="utf-8"></script>
-<script language="javascript" type="text/javascript" src="common/js/bootstrap.min.js" charset="utf-8"></script><!--
-<script language="javascript" type="text/javascript" src="common/js/jquery.flot.min.js" charset="utf-8"></script>
-<script language="javascript" type="text/javascript" src="common/js/jquery.flot.resize.min.js" charset="utf-8"></script>-->
+<script language="javascript" type="text/javascript" src="common/js/bootstrap.min.js" charset="utf-8"></script>
 <script language="javascript" type="text/javascript" src="common/js/jquery.peity.min.js" charset="utf-8"></script>
 <script language="javascript" type="text/javascript" src="common/js/fullcalendar.min.js" charset="utf-8"></script>
 <script language="javascript" type="text/javascript" src="common/js/matrix.js" charset="utf-8"></script>
-<!--<script language="javascript" type="text/javascript" src="common/js/matrix.dashboard.js" charset="utf-8"></script>-->
-<script language="javascript" type="text/javascript" src="common/js/jquery.gritter.min.js" charset="utf-8"></script><!--
-<script language="javascript" type="text/javascript" src="common/js/matrix.interface.js" charset="utf-8"></script>
-<script language="javascript" type="text/javascript" src="common/js/matrix.chat.js" charset="utf-8"></script>-->
+<script language="javascript" type="text/javascript" src="common/js/jquery.gritter.min.js" charset="utf-8"></script>
 <script language="javascript" type="text/javascript" src="common/js/jquery.validate.js" charset="utf-8"></script>
-<script language="javascript" type="text/javascript" src="common/js/matrix.form_validation.js" charset="utf-8"></script><!--
-<script language="javascript" type="text/javascript" src="common/js/jquery.wizard.js" charset="utf-8"></script>-->
+<script language="javascript" type="text/javascript" src="common/js/matrix.form_validation.js" charset="utf-8"></script>
 <script language="javascript" type="text/javascript" src="common/js/jquery.uniform.js" charset="utf-8"></script>
 <script language="javascript" type="text/javascript" src="common/js/select2.min.js" charset="utf-8"></script>
 <script language="javascript" type="text/javascript" src="common/js/matrix.popover.js" charset="utf-8"></script>

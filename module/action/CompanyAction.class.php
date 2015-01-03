@@ -128,12 +128,17 @@ class CompanyAction extends BaseAction {
     function getCode() {
         $type = $_GET['type'];
         $firstCode = '';
+        $table ='';
         if ($type =='qiye') {
             $firstCode = 'QY';
+            $table = 'OA_company';
+        } elseif ($type =='fukuantongzhi') {
+            $firstCode = 'PN';
+            $table = 'OA_fukuantongzhi';
         }
         $date = date("Ymd",time());
         $this->objDao = new CompanyDao();
-        $maxId = $this->objDao->getMaxId('OA_company');
+        $maxId = $this->objDao->getMaxId($table);
         if(empty($maxId['max'])){
             $maxId = 0;
         } else {
