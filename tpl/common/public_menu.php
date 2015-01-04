@@ -14,6 +14,11 @@
                     <li><a href="index.php?action=Company&mode=demoTest">测试</a></li>
                 </ul>
             </li>
+            <li class="submenu"> <a href="#"><i class="icon icon-file"></i> <span>工资管理</span><span class="label label-important">1</span></a>
+                <ul>
+                    <li><a href="index.php?action=Salary&mode=toSalaryUpload">做工资</a></li>
+                </ul>
+            </li>
 
             </li>
             <!--<li class="submenu"> <a href="#"><i class="icon icon-file"></i> <span>财务对账</span><span class="label label-important">1</span></a>

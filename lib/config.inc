@@ -57,6 +57,10 @@ define('ERROR_LOG_PATH','log/');
 define('SALARY_TIME_TYPE',5);
 //设置二次工资类别
 define('ER_SALARY_TIME_TYPE',6);
+
+define('UPLOAD_FILE_NAME','upload.');
+define('DOWNLOAD_SALARY_PATH','template/salTemlate.xls');
+
 global $userType;
 $userType=array(
 
