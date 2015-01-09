@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  *员工dao
  * @author zhang.chao
@@ -22,6 +22,15 @@ class EmployDao extends BaseDao
 		{$employ["shebaojishu"]},{$employ["gongjijinjishu"]},{$employ["laowufei"]},{$employ["canbaojin"]},{$employ["danganfei"]},'{$employ["memo"]}',{$employ["e_hetongnian"]},'{$employ["e_hetong_date"]}')";
 		$result=$this->g_db_query($sql);
 		return $result;
+    }
+    function getEmployList($where,$startIndex,$pagesize) {
+        $sql="select * from OA_employ where 1=1";
+        if ($where) {
+            $sql.=$where;
+        }
+        $sql.=" order by update_time desc limit $startIndex,$pagesize";
+        $result=$this->g_db_query($sql);
+        return $result;
     }
     function getEmlistbyComname($comName,$eStat=null,$empName=null,$empNo=null){
     	echo  $eStat;

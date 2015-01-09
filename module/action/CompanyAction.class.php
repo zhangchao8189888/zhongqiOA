@@ -57,6 +57,9 @@ class CompanyAction extends BaseAction {
             case "getCompany" :
                 $this->getCompany();
                 break;
+            case "getCompanyListJson" :
+                $this->getCompanyListJson();
+                break;
             default :
                 $this->modelInput();
                 break;
@@ -156,6 +159,17 @@ class CompanyAction extends BaseAction {
         $this->objDao = new CompanyDao();
         $result = $this->objDao->getCompanyById($id);
         echo json_encode($result);
+        exit;
+    }
+    function getCompanyListJson () {
+        $this->objDao = new CompanyDao();
+        $result = $this->objDao->getCompanyListAll();
+        $customerList = array();
+        while ($row = mysql_fetch_array($result)){
+            $row['name'] = $row['company_code'].' '.$row['company_name'];
+            $customerList[] = $row;
+        }
+        echo json_encode($customerList);
         exit;
     }
     function saveOrUpdateCompany () {

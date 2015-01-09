@@ -20,6 +20,7 @@ define('DUIBIUPLOADPATH','upload/duiBi/');
 define('UPLOAD_FILE_NAME','upload.');
 //分页一页长度
 define('PAGE_SIZE',5);
+define('PAGE_SIZE_EMPLOY',10);
 define('NOTICE_PAGE_SIZE',10);
 //设置管理员类型
 define('ADMIN_TYPE_SYS',1);
@@ -63,8 +64,13 @@ define('DOWNLOAD_SALARY_PATH','template/salTemlate.xls');
 
 global $userType;
 $userType=array(
-
-
+    0=> "未缴纳保险",
+	1 => "本市城镇职工",
+	2 => "外埠城镇职工",
+	3 => "本市农村劳动力",
+    4 => "外地农村劳动力",
+    5 => "本市农民工",
+	6 => "外地农民工",
 );
 global $billType;
 $billType=array(

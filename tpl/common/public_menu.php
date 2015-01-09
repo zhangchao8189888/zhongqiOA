@@ -19,6 +19,11 @@
                     <li><a href="index.php?action=Salary&mode=toSalaryUpload">做工资</a></li>
                 </ul>
             </li>
+            <li class="submenu"> <a href="#"><i class="icon icon-file"></i> <span>员工管理</span><span class="label label-important">1</span></a>
+                <ul>
+                    <li><a href="index.php?action=Employ&mode=toEmployList">员工查询</a></li>
+                </ul>
+            </li>
 
             </li>
             <!--<li class="submenu"> <a href="#"><i class="icon icon-file"></i> <span>财务对账</span><span class="label label-important">1</span></a>

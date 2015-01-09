@@ -1,8 +1,6 @@
 <?php
 $errorMsg=$form_data['error'];
-$salarylist=$form_data['salarylist'];
-session_start();
-$_SESSION['excellsit']=$salarylist;
+$fname=$form_data['fname'];
 ?>
 <style type="text/css">
     .ui-slide-gray-a {
@@ -73,7 +71,7 @@ $_SESSION['excellsit']=$salarylist;
         display: inline-block;
     }
 </style>
-<script type="text/javascript">
+<script language="javascript"  type="text/javascript">
     $(function(){
         $('#test').bind('input propertychange', function() {
             alert("aa");
@@ -85,7 +83,33 @@ $_SESSION['excellsit']=$salarylist;
         //$("#nfname").val($("#newfname").val());
         $("#iform").submit();
     }
+    function b(){
+        $("#iform").attr("action","index.php?action=Salary&mode=sumSalary");
+        $("#iform").submit();
+    }
+    function nian_b(){
+        $("#iform_nian").attr("action","index.php?action=Salary&mode=sumNianSalary");
+        $("#iform_nian").submit();
+    }
+    function nian_er(){
+        $("#iform_er").attr("action","index.php?action=Salary&mode=sumErSalary");
+        $("#iform_er").submit();
+    }
+    function changeSum () {
+        var val = $("#change").val();
+        if (val == 1){
+            $("#first").show(),$("#nian").hide(),$("#second").hide();
+        } else if(val == 2) {
+            $("#first").hide();$("#nian").show();$("#second").hide();
+        } else if(val == 3) {
+            $("#first").hide();$("#nian").hide();$("#second").show();
+        }
+
+    }
 </script>
+<script src="common/hot-js/handsontable.full.js"></script>
+<script src="common/common-js/salary.js"></script>
+<link rel="stylesheet" media="screen" href="common/hot-js/handsontable.full.css">
 <div id="content">
     <div id="content-header">
         <div id="breadcrumb">
@@ -94,72 +118,112 @@ $_SESSION['excellsit']=$salarylist;
             <a href="#" class="current">查看导入文件  </a>
         </div>
     </div>
-    <div class="step step1">
-        <div class="step-item step-item-1"><em class="ui-slide-gray-a ">一</em>导入文件</div>
-        <div class="step-item step-item-2"><em class="ui-slide-gray-a current">二</em>导入预览</div>
-        <div class="step-item step-item-3"><em class="ui-slide-gray-a">三</em>导入完成</div>
-    </div>
+
     <div class="container-fluid">
+        <div class="step step1">
+            <div class="step-item step-item-1"><em class="ui-slide-gray-a ">一</em>导入文件</div>
+            <div class="step-item step-item-2"><em class="ui-slide-gray-a current">二</em>导入预览</div>
+            <div class="step-item step-item-3"><em class="ui-slide-gray-a">三</em>导入完成</div>
+        </div>
         <div class="row-fluid">
             <div class="span12">
                 <div class="widget-box">
-                    <div class="widget-title"> <span class="icon"> <i class="icon-info-sign"></i> </span>
-                        <h5>产品导入 </h5>
-                    </div>
-                    <div class="widget-content nopadding">
-                        <form class="form-horizontal" method="post" action="index.php?action=Product&mode=productImport" enctype="multipart/form-data" name="basic_validate" id="basic_validate" novalidate="novalidate">
-                            <div class="control-group" id="createError" style="display:none;">
-                                <label class="control-label">&nbsp;</label>
-                                <div class="controls">
-                                    <span class="colorRem"></span>
-                                </div>
-                            </div>
-                            <div class="form-actions">
-                                <!--<input type="submit" value="导入" class="btn btn-success" id="submitBtn1" >-->
-                                <!--<input type="button" value="导入客户信息列表" class="btn btn-success" onclick="b()"/>-->
-                                <input type="submit" value="导入产品信息列表" class="btn btn-success"/>
+                    <div class="manage">
+                        <span style="font-size: 12px; color: red">如果选择多项请用"+"号隔开</span>
+                        <p>注：<input type="hidden" id="fileName" value="<?php echo $fname;?>"/>
+                        <select id="change" onchange="changeSum()">
+                            <option value="1">一次工资</option>
+                            <option value="2">年终奖</option>
+                            <option value="3">二次工资</option>
+                        </select>
+                        </p>
+                        <!--功能项-->
+                        <div id="first" class="manage"
+                             style="word-wrap: break-word; background-color: Tan;display: block;">
+                            <form enctype="multipart/form-data" id="iform" action="" method="post">
+                                选择身份证：<input type="text" id="shenfenzheng" value="3" style="width: 30"/>
+                                选择相加项：<input type="text" id="add" value="4" style="width: 30"/>
+                                选择相减项：<input type="text" id="del" value="" style="width: 30"/>
+                                免税项：<input type="text" id="freeTex" type="hidden" name="sDate" id="sDate" value="" />
+                                <input type="button" value="普通工资计算" id="sumFirst" /></font>
+                                <font color="green"></font>
+                            </form>
+                        </div>
+                        <div id="nian" class="manage"
+                             style="word-wrap: break-word; background-color: red;display: none;">
+                            <form enctype="multipart/form-data" id="iform_nian"
+                                  action="index.php?action=Salary&mode=sumSalary" method="post">
+                                选择身份证：<input type="text" name="shenfenzheng_nian" value="3" style="width: 30"/>
+                                发年终奖月份（2012-01-01）：<input type="text" name="salaryTime_nian" value="" />
+                                年终奖项：<input type="text" name="nian" value="4" style="width: 30"/>
+                                是否做过本月一次工资：<select name="isFirst">
+                                    <option value="1">是</option>
+                                    <option value="0">否</option>
+                                </select>
+                                <input type="button" value="年终奖计算" onclick="nian_b()" />
                                 <font color="red"><?php if($errorMsg)echo $errorMsg?></font>
                                 <font color="green"><?php if($succ)echo $succ?></font>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
+                        <div id="second" class="manage"
+                             style="word-wrap: break-word; background-color: yellow;display: none;">
+                            <form enctype="multipart/form-data" id="iform_er"
+                                  action="index.php?action=Salary&mode=sumSalary" method="post">
+                                选择身份证：<input type="text" name="shenfenzheng_er" value="3" style="width: 30"/>
+                                二次工资月份（2012-01-01）：<input type="text" name="salaryTime_er"
+                                                          value="<?php if($salDate)echo $salDate;?>" /> 相加项：<input
+                                    type="text" name="add" value="4" style="width: 30"/> <input type="hidden" value=""
+                                                                                                id="datas" name="datas[]" /> <input type="hidden" name="comId"
+                                                                                                                                    id="comId" value="<?php if($companyId)echo $companyId;?>" /> <input
+                                    type="hidden" name="sDate" id="sDate"
+                                    value="<?php if($salDate)echo $salDate;?>" /> <input type="hidden"
+                                                                                         name="salType" id="salType"
+                                                                                         value="<?php if($checkType)echo $checkType;?>" /> <input
+                                    type="hidden" name="companyName" id="companyName"
+                                    value="<?php if($companyName)echo $companyName;?>" /> <input
+                                    type="button" value="二次工资计算" onclick="nian_er()" /> <font
+                                    color="red"><?php if($errorMsg)echo $errorMsg?></font> <font
+                                    color="green"><?php if($succ)echo $succ?></font>
+                            </form>
+                        </div>
                     </div>
-                    <table class="table table-bordered table-striped">
-                        <?php
-                        echo '<tr onmouseover="" onmouseout="">';
-                        for ($j=0;$j<count($salarylist['moban'][0]);$j++)
-                        {
-                            //if($salarylist[Sheet1][$i][$j]!=""){
-                            echo '<td><div><font color="green">'.($j+1).'</font></div></td>';
-                            //}
-                        }
-                        echo "</tr>";
-                        for ($i=0;$i<count($salarylist['moban']);$i++)
-                        {
-                            echo '<tr onmouseover="" onmouseout="">';
-                            for ($j=0;$j<count($salarylist['moban'][$i]);$j++)
-                            {
-                                //if($salarylist[Sheet1][$i][$j]!=""){
-                                echo '<td><div>'.$salarylist['moban'][$i][$j].'</div></td>';
-                                //}
-                            }
-                            echo "</tr>";
-                        }
-                        ?>
-                    </table>
-                    <?php if($errorList[0]['error']!=""){?>
-                    <table class="table table-bordered table-striped">
-                        <tr>
-                            <th><div>错误信息</div></th>
-                        </tr>
-                        <?php foreach ($errorList as $row){?>
-                            <tr >
 
-                                <td><div><?php echo $row['error'];?></div></td>
+                    <div class="span12" style="margin-left:0;">
+                        <div class="widget-box">
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="home">
+                                    <div class="controls">
+                                        <!-- checked="checked"-->
+                                        <input type="button" value="重置" class="btn btn-primary" id="reload" />
+                                    </div>
+                                    <div id="exampleGrid" class="dataTable" style="width: 1400px; height: 200px; overflow: auto"></div>
+                                </div>
+                                <div class="tab-pane" id="profile">
 
-                            </tr>
-                        <?php }?>
-                        </table>
-                        <?php }?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="span12" style="margin-left:0;">
+                        <div class="widget-box">
+                            <ul class="nav nav-tabs" id="myTab">
+                                <li class="active"><a href="#home">计算结果</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="home">
+                                    <div class="controls">
+                                        <!-- checked="checked"-->
+                                        <input type="checkbox" id="colHeaders" autocomplete="off"> <span>锁定前两列</span>
+                                        <!--<input type="button" value="重置" class="btn btn-primary" id="reload" />-->
+                                    </div>
+                                    <div id="sumGrid" class="dataTable" style="width: 1400px; height: 400px; overflow: auto"></div>
+                                </div>
+                                <div class="tab-pane" id="profile">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
