@@ -85,7 +85,7 @@ $admin=$_SESSION['admin'];
                         <input type="submit" value="查询"/>
                         <input type="hidden" value="" id="pro_id"/>
                         <input type="hidden" value="" id="pro_code"/>
-                        <div style="float: right;margin-right: 20px"><a href="#" id="com_add" class="btn btn-success" >新增订单</a></div>
+                        <div style="float: right;margin-right: 20px"><a href="#" id="com_add" class="btn btn-success" >新增员工</a></div>
                     </form>
                 </div>
                 <table class="table table-bordered table-striped table-hover">
@@ -181,6 +181,8 @@ $admin=$_SESSION['admin'];
                 <div class="tips"><em style="color: red;padding-right: 10px;">*</em>身份证号：<input type="text" maxlength="20" id="e_num"name="e_num"  /></div>
                 <div class="tips">银行卡号：<input type="text" maxlength="20" id="bank_no"  /></div>
                 <div class="tips">开户行：<input type="text" maxlength="20" id="e_bank"  /></div>
+                <div class="tips">社保基数：<input type="text" maxlength="20" id="shebaojishu"  /></div>
+                <div class="tips">公积金基数：<input type="text" maxlength="20" id="gongjijinjishu"  /></div>
                 <div class="tips">身份类别：<select name="company_type" id="e_type"/>
                     <option value="0">未缴纳保险</option>
                     <option value="1">本市城镇职工</option>
@@ -198,11 +200,12 @@ $admin=$_SESSION['admin'];
             <a href="#" class="btn" data-dismiss="modal">取消</a>
         </div>
     </form>
-</div>
-<div class="search_suggest" id="custor_search_suggest">
-    <ul class="search_ul">
+    <div class="search_suggest" id="custor_search_suggest">
+        <ul class="search_ul">
 
-    </ul>
-    <div class="extra-list-ctn"><a href="javascript:void(0);" id="quickChooseProduct" class="quick-add-link"><i class="ui-icon-choose"></i>选择客户</a></div>
+        </ul>
+        <div class="extra-list-ctn"><a href="javascript:void(0);" id="quickChooseProduct" class="quick-add-link"><i class="ui-icon-choose"></i>选择客户</a></div>
+    </div>
 </div>
+
 

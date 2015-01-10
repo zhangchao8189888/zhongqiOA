@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="common/css/select2.css" />
 <link href="common/font-awesome/css/font-awesome.css" rel="stylesheet" />
 <link rel="stylesheet" href="common/css/jquery.gritter.css" />
+<link rel="stylesheet" href="common/css/ui-common.css" />
 
 
 <script language="javascript" type="text/javascript" src="common/js/jquery.min.js" charset="utf-8"></script>

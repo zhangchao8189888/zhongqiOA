@@ -109,32 +109,46 @@ class EmployAction extends BaseAction {
     }
     function saveOrUpdateEmploy () {
         //company_name,com_contact,contact_no,company_address,com_bank,bank_no,company_level,company_type
-        $company['e_num'] = $_REQUEST['e_num'];
-        $company['e_company'] = $_REQUEST['e_company'];
-        $company['e_name'] = $_REQUEST['e_name'];
-        $company['bank_no'] = $_REQUEST['bank_no'];
-        $company['e_bank'] = $_REQUEST['e_bank'];
-        $company['e_type'] = $_REQUEST['e_type'];
-        $company['id'] = $_REQUEST['id'];
-        $this->objDao = new CompanyDao();
+        $employ = array();
+        $employ['e_name'] = $_POST['e_name'];
+        $employ['e_num'] = $_POST['e_num'];
+        $employ['bank_name'] = $_POST['e_bank'];
+        $employ['bank_num'] = $_POST['bank_no'];
+        $employ['e_type'] = $_POST['e_type'];
+        $employ['e_company'] = $_POST['e_company'];
+        $employ['shebaojishu'] = $_POST['shebaojishu'];
+        $employ['gongjijinjishu'] = $_POST['gongjijinjishu'];
+        $employ['laowufei'] = $_POST['laowufei'];
+        $employ['canbaojin'] = $_POST['canbaofei'];
+        $employ['danganfei'] = $_POST['danganfei'];
+        $employ['memo'] = $_POST['memo'];
+        $this->objDao = new EmployDao();
         $data = array();
         if (empty($company['id'])) {
-            $result = $this->objDao->addCompany($company);
+            $emper = $this->objDao->getEmByEno($employ['e_num']);
+            if (!empty($emper)) {
+                $mess = "此员工身份证号已存在，请重新确认";
+                $data['code'] = 100001;
+                $data['mess'] = $mess;
+                echo json_encode($data);
+                exit;
+            }
+            $result = $this->objDao->addEm($employ);
             if ($result) {
                 $data['code'] = 100000;
-                $data['mess'] = '公司添加成功';
+                $data['mess'] = '员工添加成功';
             } else {
                 $data['code'] = 100001;
-                $data['mess'] = '公司添加失败，请重试';
+                $data['mess'] = '员工添加失败，请重试';
             }
         } else {
-            $result = $this->objDao->updateCompany($company);
+            $result = $this->objDao->updateEm($employ);
             if ($result) {
                 $data['code'] = 100000;
-                $data['mess'] = '公司修改成功';
+                $data['mess'] = '员工修改成功';
             } else {
                 $data['code'] = 100001;
-                $data['mess'] = '公司修改失败，请重试';
+                $data['mess'] = '员工修改失败，请重试';
             }
         }
         echo json_encode($data);

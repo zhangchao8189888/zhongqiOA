@@ -17,9 +17,9 @@ class EmployDao extends BaseDao
     }
     function addEm($employ){
 		$sql="insert into OA_employ 
-		(e_name,e_company,e_num,bank_name,bank_num,e_type,shebaojishu,gongjijinjishu,laowufei,canbaojin,danganfei,memo,e_hetongnian,e_hetong_date)
+		(e_name,e_company,e_num,bank_name,bank_num,e_type,shebaojishu,gongjijinjishu,laowufei,canbaojin,danganfei,memo,e_hetongnian,e_hetong_date,update_time)
 		 values ('{$employ["e_name"]}','{$employ["e_company"]}','{$employ["e_num"]}','{$employ["bank_name"]}','{$employ["bank_num"]}','{$employ["e_type"]}',
-		{$employ["shebaojishu"]},{$employ["gongjijinjishu"]},{$employ["laowufei"]},{$employ["canbaojin"]},{$employ["danganfei"]},'{$employ["memo"]}',{$employ["e_hetongnian"]},'{$employ["e_hetong_date"]}')";
+		{$employ["shebaojishu"]},{$employ["gongjijinjishu"]},{$employ["laowufei"]},{$employ["canbaojin"]},{$employ["danganfei"]},'{$employ["memo"]}',{$employ["e_hetongnian"]},'{$employ["e_hetong_date"]}',now())";
 		$result=$this->g_db_query($sql);
 		return $result;
     }

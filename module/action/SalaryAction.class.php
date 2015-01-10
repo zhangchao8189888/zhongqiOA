@@ -143,7 +143,7 @@ class SalaryAction extends BaseAction {
             $employ = $this->objDao->getEmByEno ( $data [$i] [$shenfenzheng] );
             if ($employ) {
                 $jisuan_var [$i] ['yinhangkahao'] = $employ ['bank_num'];
-                $jisuan_var [$i] ['shenfenleibie'] = $employ ['e_type'];
+                $jisuan_var [$i] ['shenfenleibie'] = $employ ['e_type_name'];
                 $jisuan_var [$i] ['shebaojishu'] = $employ ['shebaojishu'];
                 $jisuan_var [$i] ['gongjijinjishu'] = $employ ['gongjijinjishu'];
                 $jisuan_var [$i] ['laowufei'] = $employ ['laowufei'];

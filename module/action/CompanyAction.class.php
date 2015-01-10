@@ -60,6 +60,9 @@ class CompanyAction extends BaseAction {
             case "getCompanyListJson" :
                 $this->getCompanyListJson();
                 break;
+            case "getCompanyByIdJson" :
+                $this->getCompanyByIdJson();
+                break;
             default :
                 $this->modelInput();
                 break;
@@ -163,14 +166,24 @@ class CompanyAction extends BaseAction {
     }
     function getCompanyListJson () {
         $this->objDao = new CompanyDao();
-        $result = $this->objDao->getCompanyListAll();
+        $type=$_REQUEST['type'];
+        $keyword=$_REQUEST['keyword'];
+        $where = ' where 1=1 ';
+        if ($type != 'all'){
+            $where.="and company_name like '%{$keyword}%'";
+        }
+        $result = $this->objDao->getCompanyListAll($where);
         $customerList = array();
         while ($row = mysql_fetch_array($result)){
-            $row['name'] = $row['company_code'].' '.$row['company_name'];
+            //$row['name'] = $row['company_code'].' '.$row['company_name'];
+            $row['name'] = $row['company_name'];
             $customerList[] = $row;
         }
         echo json_encode($customerList);
         exit;
+    }
+    function getCompanyByIdJson () {
+
     }
     function saveOrUpdateCompany () {
         //company_name,com_contact,contact_no,company_address,com_bank,bank_no,company_level,company_type

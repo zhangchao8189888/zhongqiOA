@@ -57,7 +57,11 @@ $(document).ready(function () {
     Handsontable.Dom.addEvent(reload,'click', function (){
         createBigData();
     });
+    var redRenderer = function (instance, td, row, col, prop, value, cellProperties) {
+        Handsontable.renderers.TextRenderer.apply(this, arguments);
+        td.style.backgroundColor = 'red';
 
+    };
     var sumGrid = document.getElementById("sumGrid");
     var hot6 = Handsontable(sumGrid, {
         data: [],
@@ -69,6 +73,7 @@ $(document).ready(function () {
         stretchH: 'last',
         manualColumnResize: true,
         manualRowResize: true,
+        readOnly:true,
         minSpareRows: 1,
         contextMenu: true
     });
@@ -107,6 +112,17 @@ $(document).ready(function () {
                     });
                     salary.remove(0);
                     hot6.loadData(salary);
+                    hot6.updateSettings({
+                        cells: function (row, col, prop) {
+                            var cellProperties = {};
+                            //console.log(hot6.getData()[row][6]);
+                            if (hot6.getData()[row][6] == 'null' || hot6.getData()[row][6] == null){
+                                //cellProperties.readOnly = true;
+                                cellProperties.renderer = redRenderer;
+                            }
+                            return cellProperties;
+                        }
+                    })
                 }
                 else {
                     console.log('Save error');

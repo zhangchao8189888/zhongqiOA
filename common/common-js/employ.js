@@ -13,6 +13,8 @@ $(function(){
             obj.e_bank = $("#e_bank").val();
             obj.e_type = $("#e_type").val();
             obj.employ_id = $("#employ_id").val();
+            obj.shebaojishu = $("#shebaojishu").val();
+            obj.gongjijinjishu = $("#gongjijinjishu").val();
             $.ajax(
                 {
                     type: "POST",
@@ -80,8 +82,8 @@ $(function(){
         var suggestWrap = $('#custor_search_suggest');
         var oSearchSelect = BaseWidget.UI.SearchSelect;
         oSearchSelect.fnInt();
-        oSearchSelect.leftPlus = -188;
-        oSearchSelect.topPlus = 30;
+        oSearchSelect.leftPlus = -779;
+        oSearchSelect.topPlus = -13;
         oSearchSelect.inputWith = 314;
         oSearchSelect.url = 'index.php?action=Company&mode=getCompanyListJson';
         var fnHideSuggest = function(){
@@ -97,7 +99,8 @@ $(function(){
             } else {
                 //Customer.oCustomer.fnGetCustomerInfo(obj);
                 //得到用户信息
-                console.log('得到用户信息');
+                $("#e_company").val(obj.name);
+                $("#employ_id").val(obj.id);
             }
         }
         input = $(this);
