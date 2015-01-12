@@ -73,6 +73,10 @@ $fname=$form_data['fname'];
 </style>
 <script language="javascript"  type="text/javascript">
     $(function(){
+        $('#myTab a').click(function (e) {
+            e.preventDefault();//阻止a链接的跳转行为
+            $(this).tab('show');//显示当前选中的链接及关联的content
+        })
         $('#test').bind('input propertychange', function() {
             alert("aa");
             $('#content').html($(this).val().length + ' characters');
@@ -191,15 +195,12 @@ $fname=$form_data['fname'];
                     <div class="span12" style="margin-left:0;">
                         <div class="widget-box">
                             <div class="tab-content">
-                                <div class="tab-pane active" id="home">
+                                <div>
                                     <div class="controls">
                                         <!-- checked="checked"-->
                                         <input type="button" value="重置" class="btn btn-primary" id="reload" />
                                     </div>
                                     <div id="exampleGrid" class="dataTable" style="width: 1400px; height: 200px; overflow: auto"></div>
-                                </div>
-                                <div class="tab-pane" id="profile">
-
                                 </div>
                             </div>
                         </div>
@@ -208,18 +209,21 @@ $fname=$form_data['fname'];
                         <div class="widget-box">
                             <ul class="nav nav-tabs" id="myTab">
                                 <li class="active"><a href="#home">计算结果</a></li>
+                                <li><a href="#profile">错误信息<em style="color: red" id="error"></em></a></li>
                             </ul>
                             <div class="tab-content">
                                 <div class="tab-pane active" id="home">
                                     <div class="controls">
                                         <!-- checked="checked"-->
                                         <input type="checkbox" id="colHeaders" autocomplete="off"> <span>锁定前两列</span>
-                                        <!--<input type="button" value="重置" class="btn btn-primary" id="reload" />-->
+                                        <input type="button" value="保存工资" class="btn btn-success" id="save" />
                                     </div>
                                     <div id="sumGrid" class="dataTable" style="width: 1400px; height: 400px; overflow: auto"></div>
                                 </div>
                                 <div class="tab-pane" id="profile">
+                                    <table id="errorInfo">
 
+                                    </table>
                                 </div>
                             </div>
                         </div>

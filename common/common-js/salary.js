@@ -107,6 +107,13 @@ $(document).ready(function () {
             success: function (res) {
                 if (res.result === 'ok') {
                     var  salary = res.data;
+                    var errorList = res.error;
+                    $("#error").html(errorList.length+"个错误");
+                    $("errorInfo").html("");
+                    for(var i =0 ; i < errorList.length; i++){
+                        $("#errorInfo").append("<tr><td>"+errorList[i]['error']+"</td></tr>");
+                    }
+
                     hot6.updateSettings({
                         colHeaders: salary[0]
                     });
@@ -133,6 +140,27 @@ $(document).ready(function () {
             }
         });
 
+    });
+    $("#save").click(function () {
+        var data = hot6.getData();
+        console.log(data);
+        $.ajax({
+            url: "php/save.php",
+            data: {"data": hot6.getData()}, //returns all cells' data
+            dataType: 'json',
+            type: 'POST',
+            success: function (res) {
+                if (res.result === 'ok') {
+                    $console.text('Data saved');
+                }
+                else {
+                    $console.text('Save error');
+                }
+            },
+            error: function () {
+                $console.text('Save error');
+            }
+        });
     });
     createBigData();
 });/**

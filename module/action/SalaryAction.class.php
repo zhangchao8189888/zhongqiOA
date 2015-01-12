@@ -90,8 +90,6 @@ class SalaryAction extends BaseAction {
         } else {
             $delArray = "";
         }
-        // print_r($addArray);
-        // print_r($delArray);
         session_start ();
         $salaryList = $_SESSION ['salarylist'];
         $count_add = count ( $data [0] );
@@ -134,6 +132,7 @@ class SalaryAction extends BaseAction {
         $error = array ();
         $this->objDao = new EmployDao ();
         // 根据身份证号查询出员工身份类别
+        $errorRow = 0;
         for($i = 1; $i < count ( $data ); $i ++) {
             // $error[$i]["error"]="";
             // $jisuan_var[$i]['error']="";
@@ -150,7 +149,8 @@ class SalaryAction extends BaseAction {
                 $jisuan_var [$i] ['canbaojin'] = $employ ['canbaojin'];
                 $jisuan_var [$i] ['danganfei'] = $employ ['danganfei'];
             } else {
-                $error [$i] ["error"] = "{$salaryList[Sheet1][$i][$shenfenzheng]}:未查询到该员工身份类别！";
+                $error [$errorRow] ["error"] = "第$i 行:未查询到该员工身份类别！";
+                $errorRow++;
                 continue;
             }
             $addValue = 0;
@@ -164,7 +164,8 @@ class SalaryAction extends BaseAction {
                     $f++;
                     $addValue += $data [$i] [($row - 1)];
                 } else {
-                    $error [$i] ["error"] = "第1$row列所加项非数字类型";
+                    $error [$errorRow] ["error"] = "第$i 行 第$row 列所加项非数字类型";
+                    $errorRow++;
                     continue;
                 }
             }
@@ -178,7 +179,8 @@ class SalaryAction extends BaseAction {
                         $delValue += $data [$i] [($row - 1)];
                         $f++;
                     } else {
-                        $error [$i] ["error"] = "第2$row列所减项非数字类型";
+                        $error [$errorRow] ["error"] = "第$i 行 第$row 列所加项非数字类型";
+                        $errorRow++;
                         continue;
                     }
                 }
@@ -214,24 +216,6 @@ class SalaryAction extends BaseAction {
         $sumDanweiheji = 0;
         $sumJiaozhongqiheji = 0;
         for($i = 1; $i < count ( $data ); $i ++) {
-            /**
-             * $jisuan_var[$i]['yingfaheji']=0;
-             * $jisuan_var[$i]['gerenshiye']="错误";
-             * $jisuan_var[$i]['gerenyiliao']="错误";
-             * $jisuan_var[$i]['gerenyanglao']="错误";
-             * $jisuan_var[$i]['gerengongjijin']=0;
-             * $jisuan_var[$i]['daikousui']=0;
-             * $jisuan_var[$i]['koukuanheji']=0;
-             * $jisuan_var[$i]['shifaheji']=0;
-             * $jisuan_var[$i]['danweishiye']="错误";
-             * $jisuan_var[$i]['danweigongshang']="错误";
-             * $jisuan_var[$i]['danweishengyu']="错误";
-             * $jisuan_var[$i]['danweiyanglao']="错误";
-             * $jisuan_var[$i]['danweiyiliao']="错误";
-             * $jisuan_var[$i]['danweigongjijin']=0;
-             * $jisuan_var[$i]['danweiheji']="错误";
-             * $jisuan_var[$i]['jiaozhongqiheji']=0;
-             */
             // 增加的字段赋值
             /*
              * $salaryList[Sheet1][0][($count_add+0)]=" 银行卡号"; $salaryList[Sheet1][0][($count_add+1)]="身份类别"; $salaryList[Sheet1][0][($count_add+2)]=" 社保基数"; $salaryList[Sheet1][0][($count_add+3)]="公积金基数";
@@ -328,6 +312,7 @@ class SalaryAction extends BaseAction {
         $data [$countLie] [($count + 18)] = $sumJiaozhongqiheji;
         $result['result'] = 'ok';
         $result['data'] = $data;
+        $result['error'] = $error;
         echo json_encode($result);
         exit;
     }
