@@ -47,7 +47,7 @@ $(document).ready(function () {
         stretchH: 'last',
         manualColumnResize: true,
         manualRowResize: true,
-        minSpareRows: 1,
+        minSpareRows: 0,
         contextMenu: true
     });
     var selectFirst = document.getElementById('selectFirst'),
@@ -74,7 +74,7 @@ $(document).ready(function () {
         manualColumnResize: true,
         manualRowResize: true,
         readOnly:true,
-        minSpareRows: 1,
+        minSpareRows: 0,
         contextMenu: true
     });
     Handsontable.Dom.addEvent(colHeaders, 'click', function () {
@@ -83,17 +83,15 @@ $(document).ready(function () {
                 fixedColumnsLeft: 2
             });
         } else {
-            hot5.updateSettings({
+            hot6.updateSettings({
                 fixedColumnsLeft: 0
             });
         }
 
     });
+    var excelMove = [];
+    var excelHead = [];
     $('#sumFirst').click(function () {
-        //console.log(hot5.getData());
-        var salaryData = hot5.getData();
-        var endIndex = salaryData.length-1;
-        salaryData.remove(endIndex);
         $.ajax({
             url: "index.php?action=Salary&mode=sumSalary",
             data: {
@@ -107,23 +105,36 @@ $(document).ready(function () {
             success: function (res) {
                 if (res.result === 'ok') {
                     var  salary = res.data;
+                    excelHead =  res.head;
+                    var shenfenleibie = res['shenfenleibie'];
+                    var colWidths = [];
+                    for(var i = 0;i < excelHead.length; i++){
+                        if (i == shenfenleibie) colWidths.push(160);
+                        else if (i == excelHead.length-1) {colWidths.push(160);}
+                        else {
+                            colWidths.push(80);
+                        }
+                    }
                     var errorList = res.error;
                     $("#error").html(errorList.length+"个错误");
                     $("errorInfo").html("");
                     for(var i =0 ; i < errorList.length; i++){
                         $("#errorInfo").append("<tr><td>"+errorList[i]['error']+"</td></tr>");
                     }
+                    excelMove = res.move;
 
                     hot6.updateSettings({
-                        colHeaders: salary[0]
+                        colHeaders: excelHead
                     });
-                    salary.remove(0);
+                    hot6.updateSettings({
+                        colWidths: colWidths
+                    });
                     hot6.loadData(salary);
                     hot6.updateSettings({
                         cells: function (row, col, prop) {
                             var cellProperties = {};
                             //console.log(hot6.getData()[row][6]);
-                            if (hot6.getData()[row][6] == 'null' || hot6.getData()[row][6] == null){
+                            if (hot6.getData()[row][shenfenleibie] == 'null' || hot6.getData()[row][shenfenleibie] == null){
                                 //cellProperties.readOnly = true;
                                 cellProperties.renderer = redRenderer;
                             }
@@ -141,26 +152,92 @@ $(document).ready(function () {
         });
 
     });
-    $("#save").click(function () {
+
+    $("#save").click(function(){
+        $('#modal-event1').modal({show:true});
+    });
+    $("#salarySave").click(function () {
+
         var data = hot6.getData();
-        console.log(data);
+        if (data.length < 0) {
+            return;
+        }
+        var formData = {};
+        var url = 'index.php?action=SaveSalary&mode=saveSalary';
+        if ($("#change").val() == 1) {
+            formData = {
+                "data": data,
+                company_id: $("#company_id").val(),
+                e_company: $("#e_company").val(),
+                salaryDate: $("#salaryDate").val(),
+                mark:  $("#mark").val(),
+                excelHead:  excelHead,
+                excelMove : excelMove
+            }
+        }
         $.ajax({
-            url: "php/save.php",
-            data: {"data": hot6.getData()}, //returns all cells' data
+            url: url,
+            data: formData, //returns all cells' data
             dataType: 'json',
             type: 'POST',
             success: function (res) {
                 if (res.result === 'ok') {
-                    $console.text('Data saved');
+                    console.text('Data saved');
                 }
                 else {
-                    $console.text('Save error');
+                    console.text('Save error');
                 }
             },
             error: function () {
-                $console.text('Save error');
+                console.text('Save error');
             }
         });
+    });
+    $("#e_company").on("click",function(){
+        var input;
+        var inputVal;
+        var suggestWrap = $('#custor_search_suggest');
+        var oSearchSelect = BaseWidget.UI.SearchSelect;
+        oSearchSelect.fnInt();
+
+        input = $(this);
+        oSearchSelect.leftPlus = -185;
+        oSearchSelect.topPlus = 64;
+        oSearchSelect.inputWith = 314;
+        oSearchSelect.url = 'index.php?action=Company&mode=getCompanyListJson';
+        var fnHideSuggest = function(){
+            var that = BaseWidget.UI.SearchSelect;
+            that.inputVal = '';
+            that.targetSuggestWrap.hide();
+        }
+        oSearchSelect.targetSuggestWrap = suggestWrap;
+        oSearchSelect.fnHideSuggest = fnHideSuggest;
+        oSearchSelect.fnMousedown = function (that,obj) {
+            if (that.inputVal == obj.name) {
+                that.fnHideSuggest();
+            } else {
+                //Customer.oCustomer.fnGetCustomerInfo(obj);
+                //得到用户信息
+                $("#e_company").val(obj.name);
+                $("#company_id").val(obj.id);
+            }
+        }
+        oSearchSelect.targetInput = input;
+        input.click(function(e){
+            oSearchSelect.fnSendKeyWord(e);
+        });
+        input.keyup(
+            function (e) {
+                oSearchSelect.fnSendKeyWord(e);
+            }
+        );
+        input.blur(oSearchSelect.fnHideSuggest);
+        if (input.val() == '') {
+            oSearchSelect.fnSendKeyWord({});
+        } else {
+            inputVal = input.val();
+        }
+        oSearchSelect.inputVal = inputVal;
     });
     createBigData();
 });/**

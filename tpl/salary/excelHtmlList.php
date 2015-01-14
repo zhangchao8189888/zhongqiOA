@@ -233,3 +233,34 @@ $fname=$form_data['fname'];
         </div>
     </div>
 </div>
+<div class="modal hide" id="modal-event1">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3>保存工资</h3>
+    </div>
+    <form action="" id="company_validate" method="post" class="form-horizontal"  novalidate="novalidate">
+        <div class="modal-body">
+            <div class="designer_win">
+                <div class="tips"><em style="color: red;padding-right: 10px;">*</em>所属公司：<input type="text" maxlength="20" id="e_company"name="e_company"  /><input type="hidden" value="" id="company_id" name="company_id"/></div>
+                <div class="tips"><em style="color: red;padding-right: 10px;">*</em>工资月份：
+                    <input type="text" id="salaryDate" name="salaryDate" value=""  onFocus="WdatePicker({isShowClear:false,readOnly:true,dateFmt:'yyyy-MM',realDateFmt:'yyyy-MM'})"/>
+                </div>
+                <div class="tips">备注：<textarea id="mark">
+
+                    </textarea></div>
+            </div>
+        </div>
+
+        <div class="modal-footer modal_operate">
+            <button type="button" id="salarySave" class="btn btn-primary">保存</button>
+            <a href="#" class="btn" data-dismiss="modal">取消</a>
+        </div>
+    </form>
+    <div class="search_suggest" id="custor_search_suggest">
+        <ul class="search_ul">
+
+        </ul>
+        <div class="extra-list-ctn"><a href="javascript:void(0);" id="quickChooseProduct" class="quick-add-link"><i class="ui-icon-choose"></i>选择客户</a></div>
+    </div>
+</div>

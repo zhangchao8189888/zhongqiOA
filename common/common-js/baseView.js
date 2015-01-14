@@ -21,7 +21,7 @@ BaseWidget.UI.SearchSelect = {
     fnSendKeyWord : function(event){
         var that = this;
         var input = that.targetInput;
-        var inputOffset = input.offset();
+        var inputOffset = input.position();
         var suggestWrap = that.targetSuggestWrap;
         //input = $(this);
         that.left = inputOffset.left+that.leftPlus;

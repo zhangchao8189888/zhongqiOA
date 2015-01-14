@@ -77,13 +77,14 @@ class SalaryAction extends BaseAction {
         $this->mode = "toAdd";
     }
     function sumSalary() {
-        $data = $_REQUEST['data'];
+        $dataExcel = $_REQUEST['data'];
         $shenfenzheng = ($_POST ['shenfenzheng'] - 1);
         $addArray = $_POST ['add'];
         $delArray = $_POST ['del'];
-        $freeTex = $_POST ['freeTex'] - 1;
+        if ($_POST ['freeTex']) {
+            $freeTex = $_POST ['freeTex'] - 1;
+        }
         $shifajian = $_POST ['shifajian'] - 1;
-        $checkType = $_REQUEST ['salType']; // 客服做工资选项
         $addArray = explode ( "+", $addArray );
         if (! empty ( $delArray )) {
             $delArray = explode ( "+", $delArray );
@@ -92,54 +93,51 @@ class SalaryAction extends BaseAction {
         }
         session_start ();
         $salaryList = $_SESSION ['salarylist'];
-        $count_add = count ( $data [0] );
+        $count_add = count ( $dataExcel [0] );
+        $head = array();
+        $head = $dataExcel [0];
         // 增加字段1·
         // 个人失业 个人医疗 个人养老 个人合计 单位失业 单位医疗 单位养老 单位工伤 单位生育 单位合计
         // 2011-10-14增加字段 姓名 身份证号 银行卡号 身份类别 社保基数 公积金基数
-        $data [0] [($count_add + 0)] = " 银行卡号";
-        $data [0] [($count_add + 1)] = "身份类别";
-        $data [0] [($count_add + 2)] = " 社保基数";
-        $data [0] [($count_add + 3)] = "公积金基数";
+        $head [($count_add + 0)] = " 银行卡号";
+        $head [($count_add + 1)] = "身份类别";$shenfenleibie = ($count_add + 1);
+        $head [($count_add + 2)] = " 社保基数";
+        $head [($count_add + 3)] = "公积金基数";
         // 再次算出字段总列数
-        $count = count ( $data [0] );
-        $data [0] [($count + 0)] = "个人应发合计";
-        $data [0] [($count + 1)] = "个人失业";
-        $data [0] [($count + 2)] = "个人医疗";
-        $data [0] [($count + 3)] = "个人养老";
-        $data [0] [($count + 4)] = "个人公积金";
-        $data [0] [($count + 5)] = "代扣税";
-        $data [0] [($count + 6)] = "个人扣款合计";
-        $data [0] [($count + 7)] = "实发合计";
-        $data [0] [($count + 8)] = "单位失业";
-        $data [0] [($count + 9)] = "单位医疗";
-        $data [0] [($count + 10)] = "单位养老";
-        $data [0] [($count + 11)] = "单位工伤";
-        $data [0] [($count + 12)] = "单位生育";
-        $data [0] [($count + 13)] = "单位公积金";
-        $data [0] [($count + 14)] = "单位合计";
-        $data [0] [($count + 15)] = "劳务费";
-        $data [0] [($count + 16)] = "残保金";
-        $data [0] [($count + 17)] = "档案费";
-        $data [0] [($count + 18)] = "交中企基业合计";
+        $count = count ( $head );
+        $head [($count + 0)] = "个人应发合计";
+        $head [($count + 1)] = "个人失业";
+        $head [($count + 2)] = "个人医疗";
+        $head [($count + 3)] = "个人养老";
+        $head [($count + 4)] = "个人公积金";
+        $head [($count + 5)] = "代扣税";
+        $head [($count + 6)] = "个人扣款合计";
+        $head [($count + 7)] = "实发合计";
+        $head [($count + 8)] = "单位失业";
+        $head [($count + 9)] = "单位医疗";
+        $head [($count + 10)] = "单位养老";
+        $head [($count + 11)] = "单位工伤";
+        $head [($count + 12)] = "单位生育";
+        $head [($count + 13)] = "单位公积金";
+        $head [($count + 14)] = "单位合计";
+        $head [($count + 15)] = "劳务费";
+        $head [($count + 16)] = "残保金";
+        $head [($count + 17)] = "档案费";
+        $head [($count + 18)] = "交中企基业合计";
         if (! empty ( $freeTex )) {
-            $data [0] [($count + 19)] = "免税项";
+            $head [($count + 19)] = "免税项";
         }
         if (! empty ( $_POST ['shifajian'] )) {
-            $data [0] [($count + 20)] = "实发合计减后项";
-            $data [0] [($count + 21)] = "交中企基业减后项";
+            $head [($count + 20)] = "实发合计减后项";
+            $head [($count + 21)] = "交中企基业减后项";
         }
         $jisuan_var = array ();
         $error = array ();
         $this->objDao = new EmployDao ();
         // 根据身份证号查询出员工身份类别
         $errorRow = 0;
-        for($i = 1; $i < count ( $data ); $i ++) {
-            // $error[$i]["error"]="";
-            // $jisuan_var[$i]['error']="";
-            /*
-             * if(!is_numeric($salaryList[Sheet1][$i][$shenfenzheng])){ $error[$i]["error"]="身份证非数字类型！"; continue; }
-             */
-            $employ = $this->objDao->getEmByEno ( $data [$i] [$shenfenzheng] );
+        for($i = 1; $i < count ( $dataExcel ); $i ++) {
+            $employ = $this->objDao->getEmByEno ( $dataExcel [$i] [$shenfenzheng] );
             if ($employ) {
                 $jisuan_var [$i] ['yinhangkahao'] = $employ ['bank_num'];
                 $jisuan_var [$i] ['shenfenleibie'] = $employ ['e_type_name'];
@@ -157,12 +155,12 @@ class SalaryAction extends BaseAction {
             $delValue = 0;
             $f= 0;
             foreach ( $addArray as $row ) {
-                if (is_numeric ( $data [$i] [($row - 1)] )) {
+                if (is_numeric ( $dataExcel [$i] [($row - 1)] )) {
 
-                    $salaryList[Sheet1] [$i]['add'][$f] ['key'] = urlencode($data [0] [($row - 1)]);
-                    $salaryList[Sheet1] [$i]['add'][$f] ['value'] =  $data [$i] [($row - 1)];
+                    $move [$i]['add'][$f] ['key'] = urlencode($head [($row - 1)]);
+                    $move [$i]['add'][$f] ['value'] =  $dataExcel [$i] [($row - 1)];
                     $f++;
-                    $addValue += $data [$i] [($row - 1)];
+                    $addValue += $dataExcel [$i] [($row - 1)];
                 } else {
                     $error [$errorRow] ["error"] = "第$i 行 第$row 列所加项非数字类型";
                     $errorRow++;
@@ -173,10 +171,10 @@ class SalaryAction extends BaseAction {
             $f= 0;
             if (! empty ( $delArray )) {
                 foreach ( $delArray as $row ) {
-                    if (is_numeric ( $data [$i] [($row - 1)] )) {
-                        $salaryList[Sheet1] [$i]['del'][$f] ['key'] = urlencode($data [0] [($row - 1)]);
-                        $salaryList[Sheet1] [$i]['del'][$f] ['value'] =  $data [$i] [($row - 1)];
-                        $delValue += $data [$i] [($row - 1)];
+                    if (is_numeric ( $dataExcel [$i] [($row - 1)] )) {
+                        $move [$i]['del'][$f] ['key'] = urlencode($head [($row - 1)]);
+                        $move [$i]['del'][$f] ['value'] =  $dataExcel [$i] [($row - 1)];
+                        $delValue += $dataExcel [$i] [($row - 1)];
                         $f++;
                     } else {
                         $error [$errorRow] ["error"] = "第$i 行 第$row 列所加项非数字类型";
@@ -188,15 +186,13 @@ class SalaryAction extends BaseAction {
             $jisuan_var [$i] ["addValue"] = $addValue;
             $jisuan_var [$i] ["delValue"] = $delValue;
             if (! empty ( $freeTex )) {
-                $jisuan_var [$i] ['freeTex'] = $data [$i] [$freeTex];
-                $salaryList[Sheet1] [$i]['freeTex'] ['key'] = urlencode($data [0] [($freeTex)]);
-                $salaryList[Sheet1] [$i]['freeTex'] ['value'] =  $data [$i] [($freeTex)];
+                $jisuan_var [$i] ['freeTex'] = $dataExcel [$i] [$freeTex];
+                $move [$i]['freeTex'] ['key'] = urlencode($head [($freeTex)]);
+                $move [$i]['freeTex'] ['value'] =  $dataExcel [$i] [($freeTex)];
             } else {
                 $jisuan_var [$i] ['freeTex'] = 0;
             }
         }
-         //var_dump($error);
-         //exit;
         $sumclass = new sumSalary ();
         $sumclass->getSumSalary ( $jisuan_var );
         $sumYingfaheji = 0;
@@ -214,75 +210,74 @@ class SalaryAction extends BaseAction {
         $sumDanweishengyu = 0;
         $sumDanweigongjijin = 0;
         $sumDanweiheji = 0;
+        $sumLaowufeiheji = 0;
+        $sumCanbaojinheji = 0;
+        $sumDanganfeiheji = 0;
         $sumJiaozhongqiheji = 0;
-        for($i = 1; $i < count ( $data ); $i ++) {
-            // 增加的字段赋值
-            /*
-             * $salaryList[Sheet1][0][($count_add+0)]=" 银行卡号"; $salaryList[Sheet1][0][($count_add+1)]="身份类别"; $salaryList[Sheet1][0][($count_add+2)]=" 社保基数"; $salaryList[Sheet1][0][($count_add+3)]="公积金基数";
-             */
-            $canjiren = $this->objDao->getCanjiren ( $data [$i] [$shenfenzheng] );
-
-            $data [$i] [($count_add + 0)] = $jisuan_var [$i] ['yinhangkahao'];
-            $data [$i] [($count_add + 1)] = $jisuan_var [$i] ['shenfenleibie'];
-            $data [$i] [($count_add + 2)] = $jisuan_var [$i] ['shebaojishu'];
-            $data [$i] [($count_add + 3)] = $jisuan_var [$i] ['gongjijinjishu'];
-            $data [$i] [($count + 0)] = sprintf ( "%01.2f", $jisuan_var [$i] ['yingfaheji'] ) + 0;
-            $data [$i] [($count + 1)] = sprintf ( "%01.2f", $jisuan_var [$i] ['gerenshiye'] ) + 0;
-            $data [$i] [($count + 2)] = sprintf ( "%01.2f", $jisuan_var [$i] ['gerenyiliao'] ) + 0;
-            $data [$i] [($count + 3)] = sprintf ( "%01.2f", $jisuan_var [$i] ['gerenyanglao'] ) + 0;
-            $data [$i] [($count + 4)] = $jisuan_var [$i] ['gerengongjijin'] + 0;
-            $data [$i] [($count + 5)] = sprintf ( "%01.2f", $jisuan_var [$i] ['daikousui'] ) + 0;
-            $data [$i] [($count + 6)] = sprintf ( "%01.2f", $jisuan_var [$i] ['koukuanheji'] ) + 0;
-            $data [$i] [($count + 7)] = sprintf ( "%01.2f", $jisuan_var [$i] ['shifaheji'] ) + 0;
+        $data = array();
+        for($i = 1; $i < count ( $dataExcel ); $i ++) {
+            $canjiren = $this->objDao->getCanjiren ( $dataExcel [$i] [$shenfenzheng] );
+            $salary = array();
+            $salary = $dataExcel[$i];
+            $salary [($count_add + 0)] = $jisuan_var [$i] ['yinhangkahao'];
+            $salary [($count_add + 1)] = $jisuan_var [$i] ['shenfenleibie'];
+            $salary [($count_add + 2)] = $jisuan_var [$i] ['shebaojishu'];
+            $salary [($count_add + 3)] = $jisuan_var [$i] ['gongjijinjishu'];
+            $salary [($count + 0)] = sprintf ( "%01.2f", $jisuan_var [$i] ['yingfaheji'] ) + 0;
+            $salary [($count + 1)] = sprintf ( "%01.2f", $jisuan_var [$i] ['gerenshiye'] ) + 0;
+            $salary [($count + 2)] = sprintf ( "%01.2f", $jisuan_var [$i] ['gerenyiliao'] ) + 0;
+            $salary [($count + 3)] = sprintf ( "%01.2f", $jisuan_var [$i] ['gerenyanglao'] ) + 0;
+            $salary [($count + 4)] = $jisuan_var [$i] ['gerengongjijin'] + 0;
+            $salary [($count + 5)] = sprintf ( "%01.2f", $jisuan_var [$i] ['daikousui'] ) + 0;
+            $salary [($count + 6)] = sprintf ( "%01.2f", $jisuan_var [$i] ['koukuanheji'] ) + 0;
+            $salary [($count + 7)] = sprintf ( "%01.2f", $jisuan_var [$i] ['shifaheji'] ) + 0;
             if($canjiren[0]==1){
-                $data [$i] [($count + 5)] /= 2;
-                $data [$i] [($count + 6)] -=  $data [$i] [($count + 5)];
-                $data [$i] [($count + 7)] += $data [$i] [($count + 5)];
+                $salary [($count + 5)] /= 2;
+                $salary [($count + 6)] -=  $salary [($count + 5)];
+                $salary [($count + 7)] += $salary [($count + 5)];
             }
-            $data [$i] [($count + 8)] = sprintf ( "%01.2f", $jisuan_var [$i] ['danweishiye'] ) + 0;
-            $data [$i] [($count + 9)] = sprintf ( "%01.2f", $jisuan_var [$i] ['danweiyiliao'] ) + 0;
-            $data [$i] [($count + 10)] = sprintf ( "%01.2f", $jisuan_var [$i] ['danweiyanglao'] ) + 0;
-            $data [$i] [($count + 11)] = sprintf ( "%01.2f", $jisuan_var [$i] ['danweigongshang'] ) + 0;
-            $data [$i] [($count + 12)] = sprintf ( "%01.2f", $jisuan_var [$i] ['danweishengyu'] ) + 0;
-            $data [$i] [($count + 13)] = $jisuan_var [$i] ['danweigongjijin'] + 0;
-            $data [$i] [($count + 14)] = sprintf ( "%01.2f", $jisuan_var [$i] ['danweiheji'] ) + 0;
-            $data [$i] [($count + 15)] = sprintf ( "%01.2f", $jisuan_var [$i] ['laowufei'] ) + 0;
-            $data [$i] [($count + 16)] = sprintf ( "%01.2f", $jisuan_var [$i] ['canbaojin'] ) + 0;
-            $data [$i] [($count + 17)] = sprintf ( "%01.2f", $jisuan_var [$i] ['danganfei'] ) + 0;
-            // $jisuan_var[$i]['laowufei']+$jisuan_var[$i]['canbaojin']+$jisuan_var[$i]['danganfei']
-            $data [$i] [($count + 18)] = sprintf ( "%01.2f", $jisuan_var [$i] ['jiaozhongqiheji'] ) + 0;
+            $salary [($count + 8)] = sprintf ( "%01.2f", $jisuan_var [$i] ['danweishiye'] ) + 0;
+            $salary [($count + 9)] = sprintf ( "%01.2f", $jisuan_var [$i] ['danweiyiliao'] ) + 0;
+            $salary [($count + 10)] = sprintf ( "%01.2f", $jisuan_var [$i] ['danweiyanglao'] ) + 0;
+            $salary [($count + 11)] = sprintf ( "%01.2f", $jisuan_var [$i] ['danweigongshang'] ) + 0;
+            $salary [($count + 12)] = sprintf ( "%01.2f", $jisuan_var [$i] ['danweishengyu'] ) + 0;
+            $salary [($count + 13)] = $jisuan_var [$i] ['danweigongjijin'] + 0;
+            $salary [($count + 14)] = sprintf ( "%01.2f", $jisuan_var [$i] ['danweiheji'] ) + 0;
+            $salary [($count + 15)] = sprintf ( "%01.2f", $jisuan_var [$i] ['laowufei'] ) + 0;
+            $salary [($count + 16)] = sprintf ( "%01.2f", $jisuan_var [$i] ['canbaojin'] ) + 0;
+            $salary [($count + 17)] = sprintf ( "%01.2f", $jisuan_var [$i] ['danganfei'] ) + 0;
+            $salary [($count + 18)] = sprintf ( "%01.2f", $jisuan_var [$i] ['jiaozhongqiheji'] ) + 0;
             if (! empty ( $freeTex )) {
-                $data [$i] [($count + 19)] = sprintf ( "%01.2f", $jisuan_var [$i] ['freeTex'] ) + 0;
+                $salary [($count + 19)] = sprintf ( "%01.2f", $jisuan_var [$i] ['freeTex'] ) + 0;
             }
             if (! empty ( $_POST ['shifajian'] )) {
-                $data [$i] [($count + 20)] = sprintf ( "%01.2f", ($jisuan_var [$i] ['shifaheji'] - $data [$i] [$shifajian]) ) + 0;
-                $data [$i] [($count + 21)] = sprintf ( "%01.2f", ($jisuan_var [$i] ['jiaozhongqiheji'] - $data [$i] [$shifajian]) ) + 0;
+                $salary [($count + 20)] = sprintf ( "%01.2f", ($jisuan_var [$i] ['shifaheji'] - $salary [$shifajian]) ) + 0;
+                $salary [($count + 21)] = sprintf ( "%01.2f", ($jisuan_var [$i] ['jiaozhongqiheji'] - $salary [$shifajian]) ) + 0;
             }
-            // echo $salaryList[Sheet1][$i][$j]."|";
             // 计算列的合计
-            $sumYingfaheji += $data [$i] [($count + 0)];
-            $sumGerenshiye += $data [$i] [($count + 1)];
-            $sumGerenyiliao += $data [$i] [($count + 2)];
-            $sumGerenyanglao += $data [$i] [($count + 3)];
-            $sumGerengongjijin += $data [$i] [($count + 4)];
-            $sumDaikousui += $data [$i] [($count + 5)];
-            $sumKoukuanheji += $data [$i] [($count + 6)];
-            $sumShifaheji += $data [$i] [($count + 7)];
-            $sumDanweishiye += $data [$i] [($count + 8)];
-            $sumDanweiyiliao += $data [$i] [($count + 9)];
-            $sumDanweiyanglao += $data [$i] [($count + 10)];
-            $sumDanweigongshang += $data [$i] [($count + 11)];
-            $sumDanweishengyu += $data [$i] [($count + 12)];
-            $sumDanweigongjijin += $data [$i] [($count + 13)];
-            $sumDanweiheji += $data [$i] [($count + 14)];
-            $sumLaowufeiheji += $data [$i] [($count + 15)];
-            $sumCanbaojinheji += $data [$i] [($count + 16)];
-            $sumDanganfeiheji += $data [$i] [($count + 17)];
-            $sumJiaozhongqiheji += $data [$i] [($count + 18)];
+            $sumYingfaheji += $salary [($count + 0)];
+            $sumGerenshiye += $salary [($count + 1)];
+            $sumGerenyiliao += $salary [($count + 2)];
+            $sumGerenyanglao += $salary [($count + 3)];
+            $sumGerengongjijin += $salary [($count + 4)];
+            $sumDaikousui += $salary [($count + 5)];
+            $sumKoukuanheji += $salary [($count + 6)];
+            $sumShifaheji += $salary [($count + 7)];
+            $sumDanweishiye += $salary [($count + 8)];
+            $sumDanweiyiliao += $salary [($count + 9)];
+            $sumDanweiyanglao += $salary [($count + 10)];
+            $sumDanweigongshang += $salary [($count + 11)];
+            $sumDanweishengyu += $salary [($count + 12)];
+            $sumDanweigongjijin += $salary [($count + 13)];
+            $sumDanweiheji += $salary [($count + 14)];
+            $sumLaowufeiheji += $salary [($count + 15)];
+            $sumCanbaojinheji += $salary [($count + 16)];
+            $sumDanganfeiheji += $salary [($count + 17)];
+            $sumJiaozhongqiheji += $salary [($count + 18)];
             // echo "<br>";
+            $data [] = $salary;
         }
         // 计算合计行
-
         $countLie = count ( $data ); // 代表一共多少行
         for($j = 0; $j < $count; $j ++) {
             if ($j == 0) {
@@ -311,7 +306,10 @@ class SalaryAction extends BaseAction {
         $data [$countLie] [($count + 17)] = $sumDanganfeiheji;
         $data [$countLie] [($count + 18)] = $sumJiaozhongqiheji;
         $result['result'] = 'ok';
+        $result['shenfenleibie'] = $shenfenleibie;
+        $result['move'] = $move;
         $result['data'] = $data;
+        $result['head'] = $head;
         $result['error'] = $error;
         echo json_encode($result);
         exit;
@@ -484,8 +482,6 @@ class SalaryAction extends BaseAction {
             $this->objForm->setFormData ( "error", $errorMsg );
             return ;
         }
-        $this->readExcelContent();
-
         $fukuan['fu_code'] = $_REQUEST['fuNo'];
         $fukuan['company_id'] = 0;
         $fukuan['company_name'] = $_REQUEST['company_name'];
