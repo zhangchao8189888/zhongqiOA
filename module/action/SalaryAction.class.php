@@ -65,6 +65,12 @@ class SalaryAction extends BaseAction {
             case "sumSalary" :
                 $this->sumSalary();
                 break;
+            case "salarySearchList" :
+                $this->salarySearchList();
+                break;
+            case "getSalaryListByTimeIdJson" :
+                $this->getSalaryListByTimeIdJson();
+                break;
             default :
                 $this->modelInput();
                 break;
@@ -75,6 +81,122 @@ class SalaryAction extends BaseAction {
 
     function modelInput() {
         $this->mode = "toAdd";
+    }
+    function getSalaryListByTimeIdJson() {
+        $salaryTimeId = $_REQUEST['salTimeId'];
+
+        $this->objDao = new SalaryDao ();
+        //$salaryPO = $this->objDao->searchSalaryTimeBy_id ( $salaryTimeId );
+        $salaryList = $this->objDao->searchSalaryListBy_SalaryTimeId ( $salaryTimeId );
+        $tableHead = array();
+        $tableHead[0] = '部门';
+        $tableHead[1] = '姓名';
+        $tableHead[2] = '身份证号';
+        $salaryArray = array();
+        $i = 0;
+        global $salaryTable;
+        while($row = mysql_fetch_array($salaryList)) {
+            $salary = array();
+
+            if ($i == 0) {
+                if (!empty($row['sal_add_json'])){
+                    $addJson = json_decode($row['sal_add_json'],true);
+                    foreach($addJson as $val) {
+                        $key = urldecode($val['key']);
+                        $tableHead[] =$key;
+                    }
+                }
+                if (!empty($row['sal_free_json'])){
+                    $addJson = json_decode($row['sal_free_json'],true);
+                    $key = urldecode($addJson['key']);
+                    $tableHead[] =$key;
+                }
+                if (!empty($row['sal_del_json'])){
+                    $addJson = json_decode($row['sal_del_json'],true);
+                    foreach($addJson as $val) {
+                        $key = urldecode($val['key']);
+                        $tableHead[] =$key;
+                    }
+                }
+                foreach($salaryTable as $val){
+                    $tableHead[] = $val;
+                }
+            }
+            $employ = $this->objDao->getEmByEno ($row ['employid']);
+            $salary[] = $employ['e_company'];
+            $salary[] = $employ['e_name'];
+            $salary[] = $row ['employid'];
+            foreach($salaryTable as $key =>$val){
+                $salary[] = $row[$key];
+            }
+            $salaryArray[] = $salary;
+            $i ++;
+        }
+        $data['head'] = $tableHead;
+        $data['salary'] = $salaryArray;
+        echo json_encode($data);
+        exit;
+    }
+    function salarySearchList () {
+        $this->mode = "salarySearchList";
+        $this->objDao=new SalaryDao();
+        $where=array();
+        $where['companyId'] = $_REQUEST['companyId'];
+        $salTime = $_REQUEST['salaryTime'];
+        $opTime = $_REQUEST['op_salaryTime'];
+        if($opTime) {
+            $time=$this->AssignTabMonth($opTime,0);
+            $where['op_salaryTime']=$time["next"];
+            $where['op_time']   =   $time["data"];
+        }
+        $where['salaryTime']=$salTime;
+        if($salTime) {
+            $time=$this->AssignTabMonth($salTime,0);
+            $where['salaryTime']=$time["month"];
+        }
+        $pageSize=PAGE_SIZE;
+        $count = intval($_GET['c']);
+        $page = intval($_GET['page']);
+        if ($count == 0){
+            $count = $pageSize;
+        }
+        if ($page == 0){
+            $page = 1;
+        }
+
+
+        $startIndex = ($page-1)*$count;
+
+        if (empty($sorts)){
+            $sorts = "op_salaryTime" ;
+        }
+        if (empty($dir)) {
+            $dir = "desc";
+        }
+        $sum =$this->objDao->searhSalaryTimeListCount($where);
+        $result=$this->objDao->searhSalaryTimeListPage($startIndex,$pageSize,$sorts." ".$dir,$where);
+        $total = $sum;
+        $pages = new JPagination($total);
+        $pages->setPageSize($pageSize);
+        $pages->setCurrent($page);
+        $pages->makePages();
+        $salaryTimeList = array();
+        //company_code,company_name,com_contact,contact_no,company_address,com_bank,bank_no,company_level,company_type,company_status
+        while ($row = mysql_fetch_array($result)) {
+            $salary = array();
+            $salary['id'] = $row['id'];
+            $salary['salaryTime'] = $row['salaryTime'];
+            $salary['companyId'] = $row['companyId'];
+            $salary['company_name'] = $row['company_name'];
+            $salary['op_salaryTime'] = $row['op_salaryTime'];
+            $salaryTimeList[] = $salary;
+        }
+        $this->objForm->setFormData("total",$total);
+        $this->objForm->setFormData("page",$pages);
+        $this->objForm->setFormData("companyId",$where['companyId']);
+        $this->objForm->setFormData("salaryTime",$salTime);
+        $this->objForm->setFormData("op_salaryTime",$opTime);
+        $this->objForm->setFormData ( "salaryTimeList", $salaryTimeList );
     }
     function sumSalary() {
         $dataExcel = $_REQUEST['data'];

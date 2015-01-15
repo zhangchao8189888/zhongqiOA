@@ -17,9 +17,10 @@
             <li class="submenu"> <a href="#"><i class="icon icon-file"></i> <span>工资管理</span><span class="label label-important">1</span></a>
                 <ul>
                     <li><a href="index.php?action=Salary&mode=toSalaryUpload">做工资</a></li>
+                    <li><a href="index.php?action=Salary&mode=salarySearchList">工资查询</a></li>
                 </ul>
             </li>
-            <li class="submenu"> <a href="#"><i class="icon icon-file"></i> <span>员工管理</span><span class="label label-important">1</span></a>
+            <li class="submenu"> <a href="#"><i class="icon icon-file"></i> <span>员工管理</span><span class="label label-important">2</span></a>
                 <ul>
                     <li><a href="index.php?action=Employ&mode=toEmployList">员工查询</a></li>
                 </ul>

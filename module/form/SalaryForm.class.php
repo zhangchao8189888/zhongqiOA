@@ -28,6 +28,8 @@ class SalaryForm extends BaseForm
                 return "salary/salaryUpload.php";
             case "excelList":
                 return "salary/excelHtmlList.php";
+            case "salarySearchList":
+                return "salary/salary_list.php";
             default :
                 return "BaseConfig.php";
         }

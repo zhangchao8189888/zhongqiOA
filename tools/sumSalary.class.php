@@ -1,4 +1,4 @@
-﻿<?php 
+<?php 
 class sumSalary{
 var $gerenshiye;
 var $gerenyiliao;

@@ -332,6 +332,9 @@ class SalaryDao extends BaseDao {
             if ($where ['companyName'] != "") {
                 $sql .= " and c.company_name like '%{$where['companyName']}%' ";
             }
+            if ($where ['companyId'] != "") {
+                $sql .= " and c.id  = {$where['companyId']}  ";
+            }
             if ($where ['salaryTime'] != "") {
                 $sql .= " and st.salaryTime like '%{$where['salaryTime']}%' ";
             }
@@ -348,7 +351,10 @@ class SalaryDao extends BaseDao {
     }
     function searhSalaryTimeListPage($start = NULL, $limit = NULL, $sort = NULL, $where = null) {
         $id = $_SESSION ['admin'] ['id'];
-        $sql = "select st.*,c.company_name from OA_salarytime st,OA_company c,OA_admin_company a where a.adminId=$id and a.companyId = c.id and st.companyId=c.id  ";
+        $sql = "select st.*,c.company_name from OA_salarytime st,OA_company c,OA_admin_company a where a.adminId=$id  and st.companyId=c.id  ";
+        if ($id && $_SESSION ['admin'] ['searchOrder']) {
+            $sql.= ' and a.companyId = c.id';
+        }
         if ($where != null) {
             if ($where ['companyName'] != "") {
                 $sql .= " and c.company_name like '%{$where['companyName']}%' ";
