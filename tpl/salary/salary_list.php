@@ -124,7 +124,7 @@ $admin=$_SESSION['admin'];
                                 <!-- checked="checked"-->
                                 <input type="checkbox" id="colHeaders" autocomplete="off"> <span>锁定前两列</span>
                             </div>
-                            <div id="exampleGrid" class="dataTable" style="width: 1400px; height: 400px; overflow: auto"></div>
+                            <div id="exampleGrid" class="dataTable" style="width: 1000px; height: 400px; overflow: auto"></div>
                         </div>
                         <div class="tab-pane" id="profile">
 

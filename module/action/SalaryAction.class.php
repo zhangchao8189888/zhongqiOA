@@ -93,47 +93,72 @@ class SalaryAction extends BaseAction {
         $tableHead[1] = '姓名';
         $tableHead[2] = '身份证号';
         $salaryArray = array();
+        $guding_num = 0;
         $i = 0;
         global $salaryTable;
         while($row = mysql_fetch_array($salaryList)) {
             $salary = array();
-
-            if ($i == 0) {
-                if (!empty($row['sal_add_json'])){
-                    $addJson = json_decode($row['sal_add_json'],true);
-                    foreach($addJson as $val) {
-                        $key = urldecode($val['key']);
-                        $tableHead[] =$key;
-                    }
-                }
-                if (!empty($row['sal_free_json'])){
-                    $addJson = json_decode($row['sal_free_json'],true);
-                    $key = urldecode($addJson['key']);
-                    $tableHead[] =$key;
-                }
-                if (!empty($row['sal_del_json'])){
-                    $addJson = json_decode($row['sal_del_json'],true);
-                    foreach($addJson as $val) {
-                        $key = urldecode($val['key']);
-                        $tableHead[] =$key;
-                    }
-                }
-                foreach($salaryTable as $val){
-                    $tableHead[] = $val;
-                }
-            }
             $employ = $this->objDao->getEmByEno ($row ['employid']);
             $salary[] = $employ['e_company'];
             $salary[] = $employ['e_name'];
             $salary[] = $row ['employid'];
+
+            if (!empty($row['sal_add_json'])){
+
+                $addJson = json_decode($row['sal_add_json'],true);
+                foreach($addJson as $val) {
+                    $key = urldecode($val['key']);
+                    if ($i == 0) $tableHead[] =$key;
+                    $salary[] = $val['value'];
+                }
+            }
+            if (!empty($row['sal_free_json'])){
+                $addJson = json_decode($row['sal_free_json'],true);
+                $key = urldecode($addJson['key']);
+                if ($i == 0) $tableHead[] =$key;
+                $salary[] = $val['value'];
+            }
+            if (!empty($row['sal_del_json'])){
+                $addJson = json_decode($row['sal_del_json'],true);
+                foreach($addJson as $val) {
+                    $key = urldecode($val['key']);
+                    if ($i == 0) $tableHead[] =$key;
+                    $salary[] = $val['value'];
+                }
+            }
+            if ($i == 0) {
+
+                $guding_num = count($tableHead);
+                foreach($salaryTable as $val){
+                    $tableHead[] = $val;
+                }
+
+
+            }
+
             foreach($salaryTable as $key =>$val){
                 $salary[] = $row[$key];
             }
             $salaryArray[] = $salary;
             $i ++;
         }
+
+        $data['guding_num'] = $guding_num;
+        $salarySum = array();
+        for($j = 0; $j < $guding_num; $j++) {
+            if ($j == 0) {
+                $salarySum[$j] = '合计';
+            }
+            else {$salarySum[$j] = '';}
+        }
+        $result = $this->objDao->searchSumSalaryListBy_SalaryTimeId($salaryTimeId);
+        foreach($salaryTable as $key =>$val){
+            $salarySum[] = $result['sum_'.$key];
+        }
+        $salaryArray[] = $salarySum;
         $data['head'] = $tableHead;
         $data['salary'] = $salaryArray;
+        $data['code'] = 100000;
         echo json_encode($data);
         exit;
     }

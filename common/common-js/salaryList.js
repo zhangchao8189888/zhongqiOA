@@ -9,11 +9,7 @@ $(document).ready(function () {
         startCols: 4,
         colWidths: [], //can also be a number or a function
         rowHeaders: true,
-        colHeaders: ['姓名', '社保基数', '公积金基数',
-            '基本工资','考核工资','其他','应发合计','个人失业',
-            '个人医疗','个人养老','个人公积金','个人代扣税',
-            '个人扣款合计','个人实发合计','单位失业','单位医疗',
-            '单位养老','单位工伤','单位生育','单位公积金','劳务费','合计付款'],
+        colHeaders: [],
         stretchH: 'last',
         manualColumnResize: true,
         manualRowResize: true,
@@ -24,12 +20,7 @@ $(document).ready(function () {
     var selectFirst = document.getElementById('selectFirst'),
         rowHeaders = document.getElementById('rowHeaders'),
         colHeaders = document.getElementById('colHeaders');
-    /*Handsontable.Dom.addEvent(rowHeaders, 'click', function () {
-     hot5.updateSettings({
-     rowHeaders: this.checked
-     });
-     });
-     */
+
     Handsontable.Dom.addEvent(colHeaders, 'click', function () {
         if (this.checked) {
             salaryGride.updateSettings({
@@ -53,7 +44,7 @@ $(document).ready(function () {
             dataType: 'json',
             type: 'POST',
             success: function (res) {
-                if (res.result === 'ok') {
+                if (res.code == 100000) {
                     var  salary = res.salary;
                     var excelHead =  res.head;
                     var shenfenleibie = res['shenfenleibie'];
@@ -75,11 +66,11 @@ $(document).ready(function () {
                     salaryGride.loadData(salary);
                 }
                 else {
-                    console.log('Save error');
+                    console.log('get error');
                 }
             },
             error: function () {
-                console.log('Save error');
+                console.log('ajax error');
             }
         });
 

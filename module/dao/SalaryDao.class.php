@@ -1144,10 +1144,10 @@ and OA_salarytime_other.id=OA_er_salary.salarytimeId and OA_er_salary.employId='
         return $result;
     }
     function searchSumSalaryListBy_SalaryTimeId($sid) {
-        $sql = "select *  from OA_total where salaryTime_Id=$sid";
+        $sql = "select *  from OA_total where salaryTime_Id=$sid limit 1";
 
         $list = $this->g_db_query ( $sql );
-        return $list;
+        return mysql_fetch_array($list);
     }
     function searchSumSalaryListBy_ManyCom($where) {
         $sql = "select sum(sum_per_yingfaheji) as sum_per_yingfaheji,

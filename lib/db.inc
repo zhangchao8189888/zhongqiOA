@@ -473,6 +473,7 @@ function g_db_count($table,$key,$where,$db=null){
 		$key = '*';
 	}
 	$query = "select count({$key}) as cnt from {$table} where {$where}";
+    echo $sql;
 	$result = $this->g_db_query($query,$db);
 	if (!$result) {
 		return 0;
