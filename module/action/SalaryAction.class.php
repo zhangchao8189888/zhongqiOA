@@ -71,6 +71,9 @@ class SalaryAction extends BaseAction {
             case "getSalaryListByTimeIdJson" :
                 $this->getSalaryListByTimeIdJson();
                 break;
+            case "toShoukuanList" :
+                $this->toShoukuanList();
+                break;
             default :
                 $this->modelInput();
                 break;
@@ -81,6 +84,9 @@ class SalaryAction extends BaseAction {
 
     function modelInput() {
         $this->mode = "toAdd";
+    }
+    function toShoukuanList () {
+
     }
     function getSalaryListByTimeIdJson() {
         $salaryTimeId = $_REQUEST['salTimeId'];

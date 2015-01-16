@@ -42,7 +42,7 @@ $(document).ready(function () {
         }
 
     });
-
+    var excelHead = '';
     $('.rowCheck').click(function () {
         var salTimeId = $(this).attr('data-id');
         $.ajax({
@@ -55,7 +55,7 @@ $(document).ready(function () {
             success: function (res) {
                 if (res.result === 'ok') {
                     var  salary = res.salary;
-                    var excelHead =  res.head;
+                    excelHead =  res.head;
                     var shenfenleibie = res['shenfenleibie'];
                     var colWidths = [];
                     for(var i = 0;i < excelHead.length; i++){
@@ -83,6 +83,27 @@ $(document).ready(function () {
             }
         });
 
+    });
+    $("#import").click(function(){
+        $.ajax({
+            url: "tpl/salary/import.php",
+            data: {
+                salaryData: salaryGride.getData(),
+                excelHead :excelHead
+            }, //returns all cells' data
+            dataType: 'json',
+            type: 'POST',
+            success: function (res) {
+                if (res.result === 'ok') {
+                }
+                else {
+                    console.log('Save error');
+                }
+            },
+            error: function () {
+                console.log('Save error');
+            }
+        });
     });
 });/**
  * Created by zhangchao8189888 on 15-1-3.

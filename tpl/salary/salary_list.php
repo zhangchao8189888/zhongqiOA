@@ -123,6 +123,7 @@ $admin=$_SESSION['admin'];
                             <div class="controls">
                                 <!-- checked="checked"-->
                                 <input type="checkbox" id="colHeaders" autocomplete="off"> <span>锁定前两列</span>
+                                <input type="button" value="保存导出" class="btn btn-success" id="import" />
                             </div>
                             <div id="exampleGrid" class="dataTable" style="width: 1400px; height: 400px; overflow: auto"></div>
                         </div>
