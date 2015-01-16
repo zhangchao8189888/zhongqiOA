@@ -224,14 +224,14 @@ class SaveSalaryAction extends BaseAction {
 
 			$salayList ['employid'] = $salaryList [$i] [$sit_shenfenzhenghao];
 			$salayList ['salaryTimeId'] = $lastSalaryTimeId;
-            if (!empty($excelMove [$i]['add'])){
-                $salayList ['sal_add_json'] = json_encode($excelMove [$i]['add']);
+            if (!empty($excelMove [$i+1]['add'])){
+                $salayList ['sal_add_json'] = json_encode($excelMove [$i+1]['add']);
             }
-            if (!empty($excelMove [$i]['del'])){
-                $salayList ['sal_del_json'] = json_encode($excelMove [$i]['del']);
+            if (!empty($excelMove [$i+1]['del'])){
+                $salayList ['sal_del_json'] = json_encode($excelMove [$i+1]['del']);
             }
-            if (!empty($excelMove [$i]['freeTex'])){
-                $salayList ['sal_free_json'] = json_encode($excelMove [$i]['freeTex']);
+            if (!empty($excelMove [$i+1]['freeTex'])){
+                $salayList ['sal_free_json'] = json_encode($excelMove [$i+1]['freeTex']);
             }
 			if ($i == ((count ( $salaryList ) - 1))) { // 最后一行为合计所以需要减1
 			                                  // 以上保存成功后，保存合计项
