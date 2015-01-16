@@ -128,7 +128,6 @@ class SaveSalaryAction extends BaseAction {
 				break;
 		}
 	}
-
     function AssignTabMonth($date,$step){
         $date= date("Y-m-d",strtotime($step." months",strtotime($date)));//得到处理后的日期（得到前后月份的日期）
         $u_date = strtotime($date);

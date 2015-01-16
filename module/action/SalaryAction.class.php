@@ -74,6 +74,21 @@ class SalaryAction extends BaseAction {
             case "toShoukuanList" :
                 $this->toShoukuanList();
                 break;
+            case "toFukuanList" :
+                $this->toFukuanList();
+                break;
+            case "salaryImport" :
+                $this->salaryImport ();
+                break;
+            case "getSalaryTimeListJson" :
+                $this->getSalaryTimeListJson ();
+                break;
+            case "saveFukuanTongzhi" :
+                $this->saveFukuanTongzhi ();
+                break;
+            case "getSalaryInfoJson" :
+                $this->getSalaryInfoJson ();
+                break;
             default :
                 $this->modelInput();
                 break;
@@ -85,8 +100,151 @@ class SalaryAction extends BaseAction {
     function modelInput() {
         $this->mode = "toAdd";
     }
-    function toShoukuanList () {
+    function getSalaryInfoJson () {
+        $salaryTimeId = $_REQUEST['salTime'];
+        $this->objDao = new SalaryDao ();
+        $result = $this->objDao->searchSumSalaryListBy_SalaryTimeId($salaryTimeId);
+        echo json_encode($result);
+        exit;
 
+    }
+    function getSalaryTimeListJson () {
+        $companyId = $_REQUEST['companyId'];
+        $this->objDao = new SalaryDao ();
+        $result = $this->objDao->getSalaryListByComId($companyId);
+        $salTimeList = array();
+        while ( $row = mysql_fetch_array ( $result ) ) {
+            $salTimeList[] = $row;
+        }
+        echo json_encode($salTimeList);
+        exit;
+    }
+    function salaryImport() {
+        require 'tools/php-excel.class.php';
+        $salaryTimeId = $_REQUEST['salaryId'];
+
+        $this->objDao = new SalaryDao ();
+        //$salaryPO = $this->objDao->searchSalaryTimeBy_id ( $salaryTimeId );
+        $salaryList = $this->objDao->searchSalaryListBy_SalaryTimeId ( $salaryTimeId );
+        $tableHead = array();
+        $tableHead[0] = '部门';
+        $tableHead[1] = '姓名';
+        $tableHead[2] = '身份证号';
+        $salaryArray = array();
+        $guding_num = 0;
+        $i = 0;
+        global $salaryTable;
+        while($row = mysql_fetch_array($salaryList)) {
+            $salary = array();
+            $employ = $this->objDao->getEmByEno ($row ['employid']);
+            $salary[] = $employ['e_company'];
+            $salary[] = $employ['e_name'];
+            $salary[] = $row ['employid'];
+
+            if (!empty($row['sal_add_json'])){
+
+                $addJson = json_decode($row['sal_add_json'],true);
+                foreach($addJson as $val) {
+                    $key = urldecode($val['key']);
+                    if ($i == 0) $tableHead[] =$key;
+                    $salary[] = $val['value'];
+                }
+            }
+            if (!empty($row['sal_free_json'])){
+                $addJson = json_decode($row['sal_free_json'],true);
+                $key = urldecode($addJson['key']);
+                if ($i == 0) $tableHead[] =$key;
+                $salary[] = $val['value'];
+            }
+            if (!empty($row['sal_del_json'])){
+                $addJson = json_decode($row['sal_del_json'],true);
+                foreach($addJson as $val) {
+                    $key = urldecode($val['key']);
+                    if ($i == 0) $tableHead[] =$key;
+                    $salary[] = $val['value'];
+                }
+            }
+            if ($i == 0) {
+
+                $guding_num = count($tableHead);
+                foreach($salaryTable as $val){
+                    $tableHead[] = $val;
+                }
+                $salaryArray[] = $tableHead;
+
+            }
+
+            foreach($salaryTable as $key =>$val){
+                $salary[] = $row[$key];
+            }
+            $salaryArray[] = $salary;
+            $i ++;
+        }
+
+        $data['guding_num'] = $guding_num;
+        $salarySum = array();
+        for($j = 0; $j < $guding_num; $j++) {
+            if ($j == 0) {
+                $salarySum[$j] = '合计';
+            }
+            else {$salarySum[$j] = '';}
+        }
+        $result = $this->objDao->searchSumSalaryListBy_SalaryTimeId($salaryTimeId);
+        foreach($salaryTable as $key =>$val){
+            $salarySum[] = $result['sum_'.$key];
+        }
+        $salaryArray[] = $salarySum;
+        $time = date('Y-m-d');
+        ob_end_clean();
+
+        $xls = new Excel_XML('UTF-8', false, 'My Test Sheet');
+        $xls->addArray($salaryArray);
+        $xls->generateXML($time);
+    }
+    function toFukuanList () {
+        $this->mode = "toFukuanList";
+        $searchType = $_REQUEST['searchType'];
+        $com_status = $_REQUEST['com_status'];
+        $search_name = $_REQUEST['search_name'];
+        $this->objDao = new SalaryDao();
+        $where = '';
+        if ($searchType =='name') {
+            $where.= ' and company_name = "'.$search_name.'"';
+        } elseif ($searchType =='status') {
+            $where.= ' and company_status ='.$com_status;
+        }
+        $sum =$this->objDao->g_db_count("OA_fukuantongzhi","*","1=1 $where");
+        $pageSize=PAGE_SIZE;
+        $count = intval($_GET['c']);
+        $page = intval($_GET['page']);
+        if ($count == 0){
+            $count = $pageSize;
+        }
+        if ($page == 0){
+            $page = 1;
+        }
+
+        $startIndex = ($page-1)*$count;
+        $total = $sum;
+        $searchResult=$this->objDao->getFukuantongzhiList($where,$startIndex,$pageSize);
+        $pages = new JPagination($total);
+        $pages->setPageSize($pageSize);
+        $pages->setCurrent($page);
+        $pages->makePages();
+        $fukuanList = array();
+        //company_code,company_name,com_contact,contact_no,company_address,com_bank,bank_no,company_level,company_type,company_status
+        while ($row = mysql_fetch_array($searchResult)) {
+            $fukuanList[] = $row;
+        }
+        $this->objForm->setFormData("fukuanList",$fukuanList);
+        $this->objForm->setFormData("total",$total);
+        $this->objForm->setFormData("page",$pages);
+        $this->objForm->setFormData("searchType",$searchType);
+        $this->objForm->setFormData("search_name",$search_name);
+        $this->objForm->setFormData("com_status",$com_status);
+    }
+    function toShoukuanList () {
+        $this->mode = "toShoukuanList";
     }
     function getSalaryListByTimeIdJson() {
         $salaryTimeId = $_REQUEST['salTimeId'];
@@ -590,82 +748,44 @@ class SalaryAction extends BaseAction {
     }
     function saveFukuanTongzhi () {
 
-        $fileName = $_FILES ['file'] ['name'];
-
-        $errorMsg = "";
-        var_dump($_FILES);
-
-        $fileArray = split ( "\.", $_FILES ['file'] ['name'] );
-        if (count ( $fileArray ) != 2) {
-            $this->mode = "toUpload";
-            $errorMsg = '文件名格式 不正确';
-            $this->objForm->setFormData ( "error", $errorMsg );
-            return;
-        } else if ($fileArray [1] != 'xls' && $fileArray [1] != 'xlsx') {
-            $this->mode = "toUpload";
-            $errorMsg = '文件类型不正确，必须是xls，xlsx类型';
-            $this->objForm->setFormData ( "error", $errorMsg );
-            return;
-        }
-        if ($_FILES ['file'] ['error'] != 0) {
-            $error = $_FILES ['file'] ['error'];
-            switch ($error) {
-                case 1 :
-                    $errorMsg = '1,上传的文件超过了php.ini中  upload_max_filesize选项限制的值.';
-                    break;
-                case 2 :
-                    $errorMsg = '2,上传文件的大小超过了HTML表单中MAX_FILE_SIZE  选项指定的大小';
-                    break;
-                case 3 :
-                    $errorMsg = '3,文件只有部分被上传';
-                    break;
-                case 4 :
-                    $errorMsg = '4,文件没有被上传';
-                    break;
-                case 6 :
-                    $errorMsg = '找不到临文件夹';
-                    break;
-                case 7 :
-                    $errorMsg = '文件写入失败';
-                    break;
-            }
-        }
-        if ($errorMsg != "") {
-            $this->mode = "toUpload";
-            $this->objForm->setFormData ( "error", $errorMsg );
-            return ;
-        }
+        $fukuan['id'] = $_REQUEST['fid'];
         $fukuan['fu_code'] = $_REQUEST['fuNo'];
-        $fukuan['company_id'] = 0;
+        $fukuan['company_id'] = $_REQUEST['company_id'];;
         $fukuan['company_name'] = $_REQUEST['company_name'];
-        $fukuan['salary_time_id'] = 0;
+        $fukuan['salary_time_id'] = $_REQUEST['salTimeId'];
         $fukuan['salary_time'] = $_REQUEST['salaryDate'];
         $fukuan['yingfu_money'] = $_REQUEST['yingfujine'];
         $fukuan['laowufei_money'] = $_REQUEST['laowufei'];
-        $fukuan['fapiao_id_json'] = '';
+        $fapiaoJson = array();
+        $fapiaoJson['fapiaojin'] = $_REQUEST['fapiaojin'];
+        $fapiaoJson['piao_no'] = $_REQUEST['piao_no'];
+
+        $fukuan['fapiao_id_json'] = json_encode($fapiaoJson);
         $fukuan['jieshou_person_id'] = 0;
         $fukuan['jieshou_person_name'] = $_REQUEST['jieshouren'];
         $fukuan['zhifu_status'] = 0;
         $fukuan['more'] = $_REQUEST['more'];
+        $adminPO = $_SESSION ['admin'];
+        $fukuan['op_id'] = $adminPO['id'];
         $this->objDao = new SalaryDao();
         $data = array();
         if (empty($fukuan['id'])) {
             $result = $this->objDao->saveFukuanTongzhi($fukuan);
             if ($result) {
                 $data['code'] = 100000;
-                $data['mess'] = '公司添加成功';
+                $data['mess'] = '添加成功';
             } else {
                 $data['code'] = 100001;
-                $data['mess'] = '公司添加失败，请重试';
+                $data['mess'] = '添加失败，请重试';
             }
         } else {
-            $result = $this->objDao->updateCompany($fukuan);
+            $result = $this->objDao->updateFukuanTongzhi($fukuan);
             if ($result) {
                 $data['code'] = 100000;
-                $data['mess'] = '公司修改成功';
+                $data['mess'] = '修改成功';
             } else {
                 $data['code'] = 100001;
-                $data['mess'] = '公司修改失败，请重试';
+                $data['mess'] = '修改失败，请重试';
             }
         }
         echo json_encode($data);

@@ -1,5 +1,5 @@
 <?php
-$companyList=$form_data['companyList'];
+$fukuanList=$form_data['fukuanList'];
 $total=$form_data['total'];
 $searchType=$form_data['searchType'];
 $search_name = $form_data['search_name'];
@@ -32,7 +32,7 @@ $admin=$_SESSION['admin'];
         <div id="breadcrumb">
             <a href="index.php" title="返回首页" class="tip-bottom"><i class="icon-home"></i>首页</a>
             <a href="#">工资管理</a>
-            <a href="#">收款管理</a>
+            <a href="#">付款通知管理</a>
         </div>
     </div>
     <div class="container-fluid">
@@ -71,7 +71,7 @@ $admin=$_SESSION['admin'];
                                 <thead>
                                 <tr>
                                     <!-- 编号 企业名称 联系人 联系方式 地址 银行账户 客户等级 -->
-                                    <th class="tl"><div></div></th>
+                                    <th class="tl"><div>付款单号</div></div></th>
                                     <th class="tl"><div>企业名称</div></th>
                                     <th class="tl"><div>工资月份</div></th>
                                     <th class="tl"><div>应付金额</div></th>
@@ -86,7 +86,52 @@ $admin=$_SESSION['admin'];
                                 </tr>
                                 </thead>
                                 <tbody  class="tbodays">
+                                    <?php foreach($fukuanList as $row) {
+                                        $fapiao = json_decode($row['fapiao_id_json'],true);
+                                        ?>
+                                        <tr class="">
+                                            <td>  <?php echo $row['fu_code'];?>  </td>
 
+                                            <td class="tl pl10">
+                                                <div><?php echo $row['company_name'];?></div>
+                                            </td>
+                                            <td class="tl pl10">
+                                                <div><?php echo $row['salaryTime'];?></div>
+                                            </td>
+                                            <td class="tl pl10">
+                                                <div><?php echo $row['yingfu_money'];?></div>
+                                            </td>
+                                            <td class="tl pl10">
+                                                <div><?php echo $row['laowufei_money'];?></div>
+                                            </td>
+                                            <td class="tl pl10">
+                                                <div><?php echo $fapiao['fapiaojin'];?></div>
+                                            </td>
+                                            <td class="tl pl10">
+                                                <div><?php echo $fapiao['piao_no'];?></div>
+                                            </td>
+                                            <td class="tl pl10">
+                                                <div><?php echo $row['jieshou_person_name'];?></div>
+                                            </td>
+                                            <td class="tl pl10">
+                                                <div><?php echo $row['admin_name'];?></div>
+                                            </td>
+                                            <td class="tl pl10">
+                                                <div><?php echo $row['add_time'];?></div>
+                                            </td>
+                                            <td class="tl pl10">
+                                                <div><?php if($row['zhifu_status'] == 0)echo '<em style="color: red">未支付</em>';
+                                                           elseif($row['zhifu_status'] == 1) echo '<em style="color: #008000">已支付</em>';
+                                                    ?></div>
+                                            </td>
+                                            <td class="tr">
+                                                <a title="修改" data-id="<?php echo $row['id'];?>" style="cursor:pointer"  class="rowUpdate theme-color">修改</a>
+                                                <a title="查看工资" data-id="<?php echo $row['salary_time_id'];?>" style="cursor:pointer"  class="rowCheck theme-color">查看工资</a>
+
+                                                <div class="cb"></div>
+                                            </td>
+                                        </tr>
+                                    <?php }?>
                                 </tbody>
                             </table>
                             <?php require_once("tpl/page.php"); ?>
@@ -106,7 +151,11 @@ $admin=$_SESSION['admin'];
                         <div class="tab-pane active" id="home">
                             <div class="controls">
                                 <!-- checked="checked"-->
+                                <form id="excelForm" method="post">
+                                    <input type="hidden" name="salaryId" id="salaryId" value=""/>
+                                </form>
                                 <input type="checkbox" id="colHeaders" autocomplete="off"> <span>锁定前两列</span>
+                                <input type="button" value="保存导出" class="btn btn-success" id="import" />
                             </div>
                             <div id="exampleGrid" class="dataTable" style="width: 1400px; height: 400px; overflow: auto"></div>
                         </div>
@@ -209,11 +258,11 @@ $admin=$_SESSION['admin'];
                 <div class="tips">付款通知单号：<span class="codeNo"></span><input type="hidden" value="" id="fuNo" name="fuNo"/></div>
                 <div class="tips"><em style="color: red;padding-right: 10px;">*</em>企业名称：<input type="text" maxlength="20" id="e_company"name="e_company"  /><input type="hidden" value="" id="company_id" name="company_id"/></div>
                 <div class="tips"><em style="color: red;padding-right: 10px;">*</em>工资月份：
-                    <select id="salTime" name="salTime"   onchange="searchByStatus()" >
+                    <select id="salTime" name="salTime"   onchange="getSalarySumInfo()" >
 
                     </select>
                 </div>
-                <div class="tips"><em style="color: red;padding-right: 10px;">*</em>工资导入：<input type="hidden" name="max_file_size" value="10000000"/><input name="file" id="file"  type="file"/></div>
+                <!--<div class="tips"><em style="color: red;padding-right: 10px;">*</em>工资导入：<input type="hidden" name="max_file_size" value="10000000"/><input name="file" id="file"  type="file"/></div>-->
                 <div class="tips">应付金额：<input type="text" maxlength="20" style="width: 100px" id="yingfujine" name="yingfujine"  />劳务费：<input style="width: 100px" type="text" maxlength="20" id="laowufei" name="laowufei"  /></div>
                 <div class="tips">发票金额：<input type="text" maxlength="20" id="fapiaojin" name="fapiaojin"  /></div>
                 <div class="tips">发票号：<input type="text" maxlength="20" id="piao_no" name="piao_no"  /></div>

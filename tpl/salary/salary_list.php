@@ -122,6 +122,9 @@ $admin=$_SESSION['admin'];
                         <div class="tab-pane active" id="home">
                             <div class="controls">
                                 <!-- checked="checked"-->
+                                <form id="excelForm" method="post">
+                                    <input type="hidden" name="salaryId" id="salaryId" value=""/>
+                                </form>
                                 <input type="checkbox" id="colHeaders" autocomplete="off"> <span>锁定前两列</span>
                                 <input type="button" value="保存导出" class="btn btn-success" id="import" />
                             </div>

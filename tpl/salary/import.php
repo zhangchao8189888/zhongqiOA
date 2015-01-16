@@ -1,9 +1,12 @@
 <?php
 
 // load library
-require 'tools/php-excel.class.php';
- session_start();
+require '../../tools/php-excel.class.php';
+ $excelHead=$_POST['excelHead'];
  $salaryList=$_POST['salaryData'];
+$excelList =array_merge($excelHead, $salaryList);
+print_r($excelList);
+exit;
 // create a simple 2-dimensional array
 /*$data = array(
         1 => array ('Name', 'Surname'),
@@ -15,7 +18,7 @@ require 'tools/php-excel.class.php';
 $time = date('Y-m-d');
 
 $xls = new Excel_XML('UTF-8', false, 'My Test Sheet');
-$xls->addArray($salaryList);
+$xls->addArray($excelList);
 $xls->generateXML($time);
 
 ?>

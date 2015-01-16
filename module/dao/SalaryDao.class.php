@@ -13,14 +13,42 @@ class SalaryDao extends BaseDao {
     function SalaryDao() {
         parent::BaseDao ();
     }
+    function getFukuantongzhiList () {
+        $sql = "select oa.name as admin_name,oc.company_name,os.salaryTime,of.*  from OA_admin oa, OA_company oc,OA_salarytime os,OA_fukuantongzhi of where
+of.company_id = oc.id and of.salary_time_id = os.id  and of.op_id =oa.id ;";
+        $result=$this->g_db_query($sql);
+        return $result;
+    }
     function saveFukuanTongzhi($fukuan) {
         $sql="insert into OA_fukuantongzhi
-        (company_name,salary_time_id,salary_time,yingfu_money,
-        laowufei_money,fapiao_id_json,jieshou_person_id,jieshou_person_name,zhifu_status,more)
-        values ('{$fukuan['company_name']}',{$fukuan['salary_time_id']},'{$fukuan['salary_time']}',
-        '{$fukuan['salary_time']}',{$fukuan['yingfu_money']},{$fukuan['laowufei_money']},'{$fukuan['fapiao_id_json']}',
-        {$fukuan['jieshou_person_id']},'{$fukuan['jieshou_person_name']}',0,'{$fukuan['more']}'
+        (fu_code,company_id,salary_time_id,yingfu_money,
+        laowufei_money,fapiao_id_json,jieshou_person_id,jieshou_person_name,
+        op_id,add_time,update_time,
+        zhifu_status,more)
+        values ('{$fukuan['fu_code']}',{$fukuan['company_id']},{$fukuan['salary_time_id']},
+        {$fukuan['yingfu_money']},{$fukuan['laowufei_money']},'{$fukuan['fapiao_id_json']}',
+        {$fukuan['jieshou_person_id']},'{$fukuan['jieshou_person_name']}',
+        {$fukuan['op_id']},now(),now(),
+        0,'{$fukuan['more']}'
         )";
+        echo $sql;
+        $result=$this->g_db_query($sql);
+        return $result;
+    }
+    function updateFukuanTongzhi($fukuan) {
+        $sql="update OA_fukuantongzhi
+        set
+        company_name = '{$fukuan['company_name']}',
+        salary_time_id = {$fukuan['salary_time_id']},
+        salary_time = '{$fukuan['salary_time']}',
+        yingfu_money = {$fukuan['yingfu_money']},
+        laowufei_money = {$fukuan['laowufei_money']},
+        fapiao_id_json = '{$fukuan['fapiao_id_json']}',
+        jieshou_person_id = {$fukuan['jieshou_person_id']},
+        jieshou_person_name ='{$fukuan['jieshou_person_name']}',
+        zhifu_status = {$fukuan['zhifu_status']},
+        more = '{$fukuan['more']}',update_time = now(),
+        where id = {$fukuan['id']}";
         $result=$this->g_db_query($sql);
         return $result;
     }

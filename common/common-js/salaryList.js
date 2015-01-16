@@ -36,6 +36,7 @@ $(document).ready(function () {
     var excelHead = '';
     $('.rowCheck').click(function () {
         var salTimeId = $(this).attr('data-id');
+        $("#salaryId").val(salTimeId);
         $.ajax({
             url: "index.php?action=Salary&mode=getSalaryListByTimeIdJson",
             data: {
@@ -76,25 +77,8 @@ $(document).ready(function () {
 
     });
     $("#import").click(function(){
-        $.ajax({
-            url: "tpl/salary/import.php",
-            data: {
-                salaryData: salaryGride.getData(),
-                excelHead :excelHead
-            }, //returns all cells' data
-            dataType: 'json',
-            type: 'POST',
-            success: function (res) {
-                if (res.result === 'ok') {
-                }
-                else {
-                    console.log('Save error');
-                }
-            },
-            error: function () {
-                console.log('Save error');
-            }
-        });
+        $("#excelForm").attr("action","index.php?action=Salary&mode=salaryImport");
+        $("#excelForm").submit();
     });
 });/**
  * Created by zhangchao8189888 on 15-1-3.

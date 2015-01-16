@@ -4,6 +4,12 @@ class BaseDao extends db {
         // echo "BaseDao</br> ";
         parent::db ();
     }
+    //取得当前表的最大id数
+    function getMaxId($table){
+        $sql="select max(id) as max  from $table  ";
+        $result=$this->g_db_query($sql);
+        return mysql_fetch_array($result);
+    }
     function addCompany($company) {
         $sql = "insert into OA_checkcompany (company_name) values('{$company['name']}')";
         $result = $this->g_db_query ( $sql );

@@ -18,6 +18,8 @@
                 <ul>
                     <li><a href="index.php?action=Salary&mode=toSalaryUpload">做工资</a></li>
                     <li><a href="index.php?action=Salary&mode=salarySearchList">工资查询</a></li>
+                    <li><a href="index.php?action=Salary&mode=toFukuanList">付款通知单</a></li>
+                    <li><a href="index.php?action=Salary&mode=toShoukuanList">收款</a></li>
                 </ul>
             </li>
             <li class="submenu"> <a href="#"><i class="icon icon-file"></i> <span>员工管理</span><span class="label label-important">2</span></a>

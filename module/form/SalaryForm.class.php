@@ -30,6 +30,10 @@ class SalaryForm extends BaseForm
                 return "salary/excelHtmlList.php";
             case "salarySearchList":
                 return "salary/salary_list.php";
+            case "toShoukuanList":
+                return "salary/shoukuan_list.php";
+            case "toFukuanList":
+                return "salary/fukuan_list.php";
             default :
                 return "BaseConfig.php";
         }
