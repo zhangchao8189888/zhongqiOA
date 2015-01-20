@@ -26,6 +26,8 @@ class EmployForm extends BaseForm
         switch ($mode) {
             case "toEmployList" :
                 return "employ/employList.php";
+            case "toimport" :
+                return "employ/employ_import.php";
             default :
                 return "BaseConfig.php";
         }

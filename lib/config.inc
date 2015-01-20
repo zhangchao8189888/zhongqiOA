@@ -80,6 +80,12 @@ $billType=array(
     '工资发放'=>'4',
     '银行到账'=>'3',
 );
+global $payType;
+$payType=array(
+    '1'=>'现金',
+    '2'=>'刷卡',
+    '3'=>'电汇',
+);
 global $billState;
 $billState=array(
     '0'=>'工资已保存',

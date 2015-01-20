@@ -27,6 +27,7 @@ $admin=$_SESSION['admin'];
                     }
                 }
             );
+            $("#company_validate")[0].reset();
             $('#modal-event1').modal({show:true});
         });
         $(".rowUpdate").click(function(){
@@ -144,7 +145,7 @@ $admin=$_SESSION['admin'];
                                              <div><?php echo $row['company_level'];?></div>
                                         </td>
                                         <td class="tr">
-                                            <a title="修改" data-id="<?php echo $row['id'];?>"  class="rowUpdate theme-color">修改</a>
+                                            <a title="修改" data-id="<?php echo $row['id'];?>"  class="rowUpdate pointer theme-color">修改</a>
                                             <div class="cb"></div>
                                         </td>
                                     </tr>
@@ -283,10 +284,7 @@ $admin=$_SESSION['admin'];
 </div>
 <script language="javascript" type="text/javascript">
     $(function(){
-        $("#pro_add").click(function(){
-            $("#pro_date").val($("#shaijia_date").val());
-            $('#modal-event1').modal({show:true});
-        });
+
     });
     function searchByType () {
         var type = $("#searchType").val();

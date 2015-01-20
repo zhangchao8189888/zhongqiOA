@@ -85,7 +85,7 @@ class CompanyAction extends BaseAction {
         $this->objDao = new CompanyDao();
         $where = '';
         if ($searchType =='name') {
-            $where.= ' and company_name = "'.$search_name.'"';
+            $where.= ' and company_name like "%'.$search_name.'%"';
         } elseif ($searchType =='status') {
             $where.= ' and company_status ='.$com_status;
         }
@@ -141,6 +141,9 @@ class CompanyAction extends BaseAction {
         } elseif ($type =='fukuantongzhi') {
             $firstCode = 'PN';
             $table = 'OA_fukuantongzhi';
+        } elseif ($type =='shoukuan') {
+            $firstCode = 'SK';
+            $table = 'OA_shoukuan';
         }
         $date = date("Ymd",time());
         $this->objDao = new CompanyDao();

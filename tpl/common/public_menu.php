@@ -25,6 +25,7 @@
             <li class="submenu"> <a href="#"><i class="icon icon-file"></i> <span>员工管理</span><span class="label label-important">2</span></a>
                 <ul>
                     <li><a href="index.php?action=Employ&mode=toEmployList">员工查询</a></li>
+                    <li><a href="index.php?action=Employ&mode=toEmImport">员工导入</a></li>
                 </ul>
             </li>
 

@@ -13,12 +13,52 @@ class SalaryDao extends BaseDao {
     function SalaryDao() {
         parent::BaseDao ();
     }
+
+    function getShoukuanList () {
+        $sql = "select oa.name as admin_name,oc.company_name,os.salaryTime,of.*  from OA_admin oa, OA_company oc,OA_salarytime os,OA_shoukuan of where
+of.company_id = oc.id and of.salaryTime_id = os.id  and of.op_id =oa.id ;";
+        $result=$this->g_db_query($sql);
+        return $result;
+    }
+    function saveShoukuan($shoukuan) {
+        $sql="insert into OA_shoukuan
+        (shou_code,company_id,salaryTime_id,shoukuanjin,
+        laowufei,pay_type,piao_json,shoukuan_person_name,
+        op_id,add_time,update_time,
+        shou_status,more,file_path)
+        values ('{$shoukuan['shou_code']}',{$shoukuan['company_id']},{$shoukuan['salaryTime_id']},
+        {$shoukuan['shoukuanjin']},{$shoukuan['laowufei']},{$shoukuan['pay_type']},'{$shoukuan['piao_json']}',
+        '{$shoukuan['shoukuan_person_name']}',
+        {$shoukuan['op_id']},now(),now(),{$shoukuan['shou_status']},'{$shoukuan['more']}','{$shoukuan['file_path']}'
+        )";
+        $result=$this->g_db_query($sql);
+        return $result;
+    }
+    function updateShoukuan($fukuan) {
+        $sql="update OA_shoukuan
+        set
+        company_id = {$fukuan['company_id']},
+        salaryTime_id = {$fukuan['salaryTime_id']},
+        shoukuanjin = {$fukuan['shoukuanjin']},
+        laowufei = {$fukuan['laowufei']},
+        pay_type = {$fukuan['pay_type']},
+        piao_json = '{$fukuan['piao_json']}',
+        shoukuan_person_name ='{$fukuan['shoukuan_person_name']}',
+        op_id = {$fukuan['op_id']},
+        update_time = now(),
+        shou_status = {$fukuan['shou_status']},
+        more = '{$fukuan['more']}',update_time = now(),
+        where id = {$fukuan['id']}";
+        $result=$this->g_db_query($sql);
+        return $result;
+    }
     function getFukuantongzhiList () {
         $sql = "select oa.name as admin_name,oc.company_name,os.salaryTime,of.*  from OA_admin oa, OA_company oc,OA_salarytime os,OA_fukuantongzhi of where
 of.company_id = oc.id and of.salary_time_id = os.id  and of.op_id =oa.id ;";
         $result=$this->g_db_query($sql);
         return $result;
     }
+
     function saveFukuanTongzhi($fukuan) {
         $sql="insert into OA_fukuantongzhi
         (fu_code,company_id,salary_time_id,yingfu_money,
@@ -31,7 +71,7 @@ of.company_id = oc.id and of.salary_time_id = os.id  and of.op_id =oa.id ;";
         {$fukuan['op_id']},now(),now(),
         0,'{$fukuan['more']}'
         )";
-        echo $sql;
+        //echo $sql;
         $result=$this->g_db_query($sql);
         return $result;
     }
