@@ -51,7 +51,7 @@ class EmployAction extends BaseAction {
             case "getEmployTemlate":
                 $this->getEmployTemlate();
                 break;
-            case "emImport" :
+            case "newemImport" :
                 $this->newemImport();
                 break;
             case "toEmImport" :
@@ -89,6 +89,7 @@ class EmployAction extends BaseAction {
         }
     }
     function newemImport() {
+        $this->mode = "toimport";
         set_time_limit(1800);
         $errorMsg = "";
         //var_dump($_FILES);
@@ -170,7 +171,7 @@ class EmployAction extends BaseAction {
         //exit;
         $this->objDao = new EmployDao();
         $this->objForm->setFormData("salarylist", $return);
-        $this->mode = "toimport";
+
         $employList = array();
         $companyId = $_REQUEST['company_id'];
         $company = $this->objDao->getCompanyById($companyId);
@@ -180,6 +181,7 @@ class EmployAction extends BaseAction {
             $companyList['name'] = $comname;
             $companyId = $this->objDao->addCompany($companyList);
         }*/
+        global $userTypeName;
         for ($i = 2; $i < count($return[Sheet1]); $i++) {
             $employList[$i]['e_company_id'] = $companyId;
             $employList[$i]['e_company'] = $company['company_name'];
@@ -187,7 +189,7 @@ class EmployAction extends BaseAction {
             $employList[$i]['e_num'] = $return[Sheet1][$i][2];
             $employList[$i]['bank_name'] = $return[Sheet1][$i][3];
             $employList[$i]['bank_num'] = $return[Sheet1][$i][4];
-            $employList[$i]['e_type'] = $return[Sheet1][$i][5];
+            $employList[$i]['e_type'] = $userTypeName[$return[Sheet1][$i][5]];
             $employList[$i]['shebaojishu'] = findNullReturnNumber($return[Sheet1][$i][6]);
             $employList[$i]['gongjijinjishu'] = findNullReturnNumber($return[Sheet1][$i][7]);
             $employList[$i]['laowufei'] = findNullReturnNumber($return[Sheet1][$i][8]);
@@ -213,6 +215,7 @@ class EmployAction extends BaseAction {
         $emList = array();
         $j = 0;
         $z = 0;
+
         for ($i = 1; $i <= count($employList); $i++) {
             if ($employList[$i]['e_num']) {
                 $emper = $this->objDao->getEmByEno($employList[$i]['e_num']);
@@ -292,6 +295,7 @@ class EmployAction extends BaseAction {
         $pages->setCurrent($page);
         $pages->makePages();
         $employList = array();
+        global $userType;
         //company_code,company_name,com_contact,contact_no,company_address,com_bank,bank_no,company_level,company_type,company_status
         while ($row = mysql_fetch_array($searchResult)) {
             $employ['id'] = $row['id'];
@@ -299,7 +303,7 @@ class EmployAction extends BaseAction {
             $employ['e_name'] = $row['e_name'];
             $employ['e_company'] = $row['e_company'];
             $employ['e_num'] = $row['e_num'];
-            $employ['e_type_name'] = $row['e_type_name'];
+            $employ['e_type_name'] = $userType[$row['e_type']];
             $employ['shebaojishu'] = $row['shebaojishu'];
             $employ['gongjijinjishu'] = $row['gongjijinjishu'];
             $employList[] = $employ;

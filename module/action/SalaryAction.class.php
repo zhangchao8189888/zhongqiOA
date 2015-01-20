@@ -490,11 +490,12 @@ class SalaryAction extends BaseAction {
         $this->objDao = new EmployDao ();
         // 根据身份证号查询出员工身份类别
         $errorRow = 0;
+        global $userType;
         for($i = 1; $i < count ( $dataExcel ); $i ++) {
             $employ = $this->objDao->getEmByEno ( $dataExcel [$i] [$shenfenzheng] );
             if ($employ) {
                 $jisuan_var [$i] ['yinhangkahao'] = $employ ['bank_num'];
-                $jisuan_var [$i] ['shenfenleibie'] = $employ ['e_type_name'];
+                $jisuan_var [$i] ['shenfenleibie'] = $userType[$employ ['e_type']];
                 $jisuan_var [$i] ['shebaojishu'] = $employ ['shebaojishu'];
                 $jisuan_var [$i] ['gongjijinjishu'] = $employ ['gongjijinjishu'];
                 $jisuan_var [$i] ['laowufei'] = $employ ['laowufei'];

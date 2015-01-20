@@ -109,6 +109,7 @@ class CompanyAction extends BaseAction {
         $pages->makePages();
         $companyList = array();
         //company_code,company_name,com_contact,contact_no,company_address,com_bank,bank_no,company_level,company_type,company_status
+        global $companyType;
         while ($row = mysql_fetch_array($searchResult)) {
             $company['id'] = $row['id'];
             $company['company_code'] = $row['company_code'];
@@ -118,7 +119,7 @@ class CompanyAction extends BaseAction {
             $company['company_address'] = $row['company_address'];
             $company['com_bank'] = $row['com_bank'];
             $company['bank_no'] = $row['bank_no'];
-            $company['company_level'] = $row['company_level'];
+            $company['company_level'] = $companyType[$row['company_level']];
             $company['company_type'] = $row['company_type'];
             $company['company_status'] = $row['company_status'];
             $companyList[] = $company;
@@ -200,6 +201,7 @@ class CompanyAction extends BaseAction {
         $company['company_level'] = $_REQUEST['company_level'];
         $company['company_type'] = $_REQUEST['company_type'];
         $company['id'] = $_REQUEST['company_id'];
+        $company['company_status'] = $_REQUEST['company_status'];
         $this->objDao = new CompanyDao();
         $data = array();
         if (empty($company['id'])) {

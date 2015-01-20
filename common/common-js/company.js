@@ -16,6 +16,7 @@ $(function(){
             obj.bank_no = $("#bank_no").val();
             obj.company_level = $("#company_level").val();
             obj.company_type = $("#company_type").val();
+            obj.company_status = $("#company_status").val();
             $.ajax(
                 {
                     type: "POST",

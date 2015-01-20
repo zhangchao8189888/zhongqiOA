@@ -52,6 +52,7 @@ $admin=$_SESSION['admin'];
                         $("#bank_no").val(data.bank_no);
                         $("#company_level").val(data.company_level);
                         $("#company_type").val(data.company_type);
+                        $("#company_status").val(data.company_status);
                     }
                 }
             );
@@ -96,7 +97,7 @@ $admin=$_SESSION['admin'];
                                     <input type="submit" value="查询"/>
                                     <input type="hidden" value="" id="pro_id"/>
                                     <input type="hidden" value="" id="pro_code"/>
-                                    <div style="float: right;margin-right: 20px"><a href="#" id="com_add" class="btn btn-success" >新增订单</a></div>
+                                    <div style="float: right;margin-right: 20px"><a href="#" id="com_add" class="btn btn-success" >新增企业</a></div>
                                 </form>
                             </div>
                             <table class="table table-bordered table-striped table-hover">
@@ -329,7 +330,10 @@ $admin=$_SESSION['admin'];
                     <option value="2">中级客户</option>
                     <option value="3">高级客户</option>
                 </select></div>
-            <div class="tips">状态：启用</div>
+            <div class="tips">状态：<select name="company_status" id="company_status">
+                    <option value="1">启用</option>
+                    <option value="0">停用</option>
+                </select></div>
         </div>
     </div>
 

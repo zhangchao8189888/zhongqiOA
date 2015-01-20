@@ -14,6 +14,12 @@
                     <li><a href="index.php?action=Company&mode=demoTest">测试</a></li>
                 </ul>
             </li>
+            <li class="submenu"> <a href="#"><i class="icon icon-file"></i> <span>员工管理</span><span class="label label-important">2</span></a>
+                <ul>
+                    <li><a href="index.php?action=Employ&mode=toEmployList">员工查询</a></li>
+                    <li><a href="index.php?action=Employ&mode=toEmImport">员工导入</a></li>
+                </ul>
+            </li>
             <li class="submenu"> <a href="#"><i class="icon icon-file"></i> <span>工资管理</span><span class="label label-important">1</span></a>
                 <ul>
                     <li><a href="index.php?action=Salary&mode=toSalaryUpload">做工资</a></li>
@@ -22,12 +28,7 @@
                     <li><a href="index.php?action=Salary&mode=toShoukuanList">收款</a></li>
                 </ul>
             </li>
-            <li class="submenu"> <a href="#"><i class="icon icon-file"></i> <span>员工管理</span><span class="label label-important">2</span></a>
-                <ul>
-                    <li><a href="index.php?action=Employ&mode=toEmployList">员工查询</a></li>
-                    <li><a href="index.php?action=Employ&mode=toEmImport">员工导入</a></li>
-                </ul>
-            </li>
+
 
             </li>
             <!--<li class="submenu"> <a href="#"><i class="icon icon-file"></i> <span>财务对账</span><span class="label label-important">1</span></a>

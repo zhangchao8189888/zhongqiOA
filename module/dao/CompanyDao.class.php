@@ -34,7 +34,7 @@ class CompanyDao extends BaseDao
 		 company_address = '{$company["company_address"]}',
 		 bank_no = '{$company["bank_no"]}',
 		company_level = {$company["company_level"]},
-		company_type = {$company["company_type"]},update_time = now() where id = {$company["id"]}";
+		company_type = {$company["company_type"]},update_time = now(),company_status = {$company["company_status"]} where id = {$company["id"]}";
         $result=$this->g_db_query($sql);
         return $result;
     }
@@ -52,6 +52,7 @@ class CompanyDao extends BaseDao
         if ($where) {
             $sql.=$where;
         }
+        $sql.= ' and company_status=1';
         $sql.=" order by update_time desc ";
         $result=$this->g_db_query($sql);
         return $result;

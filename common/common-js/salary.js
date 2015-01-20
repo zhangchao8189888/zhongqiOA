@@ -117,7 +117,7 @@ $(document).ready(function () {
                     }
                     var errorList = res.error;
                     $("#error").html(errorList.length+"个错误");
-                    $("errorInfo").html("");
+                    $("#errorInfo").html("<tobdy></tobdy>");
                     for(var i =0 ; i < errorList.length; i++){
                         $("#errorInfo").append("<tr><td>"+errorList[i]['error']+"</td></tr>");
                     }
@@ -183,6 +183,7 @@ $(document).ready(function () {
             success: function (res) {
                 if (res.result === 'ok') {
                     console.text('Data saved');
+                    alert('工作保存成功');
                 }
                 else {
                     console.text('Save error');

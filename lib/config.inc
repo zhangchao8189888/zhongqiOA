@@ -17,7 +17,6 @@ define('DB_PASS','Hello0617');
 define('UPLOADPATH','upload/');
 define('DUIBIUPLOADPATH','upload/duiBi/');
 //define('UPLOADPATH','$(UPLOADPATH)');
-define('UPLOAD_FILE_NAME','upload.');
 //分页一页长度
 define('PAGE_SIZE',5);
 define('PAGE_SIZE_EMPLOY',10);
@@ -72,6 +71,17 @@ $userType=array(
     5 => "本市农民工",
 	6 => "外地农民工",
 );
+global $userTypeName;
+$userTypeName=array(
+    "未缴纳保险"=>0,
+    "实习生"=>0,
+	"本市城镇职工"=>1,
+	"外埠城镇职工"=>2,
+	"本市农村劳动力"=>3,
+    "外地农村劳动力"=>4,
+    "本市农民工"=>5,
+	"外地农民工"=>6,
+);
 global $billType;
 $billType=array(
     '发票'=>'1',
@@ -124,6 +134,21 @@ $serviceState=array(
     '3'=>'添加发票',
     '4'=>'添加支票',
     '5'=>'申请发放',
+);
+/***
+ * <option value="1">国有企业</option>
+<option value="2">事业单位</option>
+<option value="3">名营企业</option>
+<option value="4">外资企业</option>
+<option value="5">政府部门</option>
+ */
+global $companyType;
+$companyType=array(
+    1=>'国有企业',
+    2=>'事业单位',
+    3=>'名营企业',
+    4=>'外资企业',
+    5=>'政府部门',
 );
 //工资表字段
 global $salaryTable;
