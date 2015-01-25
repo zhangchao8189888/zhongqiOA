@@ -24,7 +24,7 @@
     );
 
     ?>
-    <div class="tree_l" style="float: left">
+    <div class="tree_l">
 
 
         <div class="zTreeDemoBackground left">
@@ -41,7 +41,7 @@
         </div>
 
     </div>
-    <div class="search_r" style="float: left;margin-left: 100px">
+    <div class="search_r">
 
         <div class="search_list">
             <table class="table table-bordered table-striped">

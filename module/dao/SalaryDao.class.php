@@ -14,9 +14,54 @@ class SalaryDao extends BaseDao {
         parent::BaseDao ();
     }
 
+    function getFukuandanList ($where  = null) {
+        $sql = "select oa.name as admin_name,oc.company_name,os.salaryTime,of.*  from OA_admin oa, OA_company oc,OA_salarytime os,OA_fukuandan of where
+of.company_id = oc.id and of.salTime_id = os.id  and of.op_id =oa.id ";
+        if ($where['company_name']) {
+            $sql .= " and oc.company_name like '%{$where['company_name']}%'";
+        }
+        $sql .= " order by update_time desc";
+        $result=$this->g_db_query($sql);
+        return $result;
+    }
+    function getFukuandanListCount ($where = null) {
+        $sql = "select count(of.id) as cnt  from OA_admin oa, OA_company oc,OA_salarytime os,OA_fukuandan of where
+of.company_id = oc.id and of.salTime_id = os.id  and of.op_id =oa.id ";
+        if ($where['company_name']) {
+            $sql .= " and oc.company_name like '%{$where['company_name']}%'";
+        }
+        $result=$this->g_db_query($sql);
+        $sum = mysql_fetch_array($result);
+        return $sum['cnt'];
+    }
+
     function getShoukuanList () {
         $sql = "select oa.name as admin_name,oc.company_name,os.salaryTime,of.*  from OA_admin oa, OA_company oc,OA_salarytime os,OA_shoukuan of where
 of.company_id = oc.id and of.salaryTime_id = os.id  and of.op_id =oa.id ;";
+        $result=$this->g_db_query($sql);
+        return $result;
+    }
+    function saveFukuandan($fukuandan) {
+        $sql="insert into OA_fukuandan
+        (company_id,salTime_id,salSumValue,
+        op_id,file_path,create_time,update_time,
+        fukuan_status,memo)
+        values ({$fukuandan['company_id']},{$fukuandan['salTime_id']},
+        {$fukuandan['salSumValue']},{$fukuandan['op_id']},'{$fukuandan['file_path']}',
+        now(),now(),{$fukuandan['fukuan_status']},'{$fukuandan['memo']}'
+        )";
+        echo $sql;
+        $result=$this->g_db_query($sql);
+        return $result;
+    }
+    function updateFukuandan ($fukuandan) {
+        $sql="update OA_fukuandan
+        set company_id = {$fukuandan['company_id']},salTime_id = {$fukuandan['salTime_id']},
+        salSumValue = {$fukuandan['salSumValue']},
+        op_id = {$fukuandan['op_id']},
+        file_path = '{$fukuandan['file_path']}',
+        create_time = now(),update_time = now(),
+        fukuan_status = {$fukuandan['fukuan_status']},memo = '{$fukuandan['memo']}';";
         $result=$this->g_db_query($sql);
         return $result;
     }

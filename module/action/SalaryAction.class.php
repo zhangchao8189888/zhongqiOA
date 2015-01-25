@@ -89,6 +89,9 @@ class SalaryAction extends BaseAction {
             case "saveShoukuan" :
                 $this->saveShoukuan ();
                 break;
+            case "saveFukuandan" :
+                $this->saveFukuandan ();
+                break;
             case "getSalaryInfoJson" :
                 $this->getSalaryInfoJson ();
                 break;
@@ -101,6 +104,9 @@ class SalaryAction extends BaseAction {
             case "getSalHeadJson" :
                 $this->getSalHeadJson ();
                 break;
+            case "toFukuandanList" :
+                $this->toFukuandanList ();
+                break;
             default :
                 $this->modelInput();
                 break;
@@ -110,6 +116,46 @@ class SalaryAction extends BaseAction {
     }
     function modelInput() {
         $this->mode = "toAdd";
+    }
+    function toFukuandanList () {
+        $this->mode = "toFukuandanList";
+        $searchType = $_REQUEST['searchType'];
+        $com_status = $_REQUEST['com_status'];
+        $search_name = $_REQUEST['search_name'];
+        $this->objDao = new SalaryDao();
+        $where = '';
+        if ($searchType =='name') {
+            $where['company_name'] = $search_name;
+        }
+        $sum =$this->objDao->getFukuandanListCount($where);
+        $pageSize=PAGE_SIZE;
+        $count = intval($_GET['c']);
+        $page = intval($_GET['page']);
+        if ($count == 0){
+            $count = $pageSize;
+        }
+        if ($page == 0){
+            $page = 1;
+        }
+
+        $startIndex = ($page-1)*$count;
+        $total = $sum;
+        $searchResult=$this->objDao->getFukuandanList($where,$startIndex,$pageSize);
+        $pages = new JPagination($total);
+        $pages->setPageSize($pageSize);
+        $pages->setCurrent($page);
+        $pages->makePages();
+        $shoukuanList = array();
+
+        while ($row = mysql_fetch_array($searchResult)) {
+            $shoukuanList[] = $row;
+        }
+        $this->objForm->setFormData("shoukuanList",$shoukuanList);
+        $this->objForm->setFormData("total",$total);
+        $this->objForm->setFormData("page",$pages);
+        $this->objForm->setFormData("searchType",$searchType);
+        $this->objForm->setFormData("search_name",$search_name);
+        $this->objForm->setFormData("com_status",$com_status);
     }
     function getSalHeadJson () {
         $salaryTimeId = $_REQUEST['salTimeId'];
@@ -820,13 +866,11 @@ class SalaryAction extends BaseAction {
         $fileArray = split("\.", $_FILES['file']['name']);
         //print_r($fileArray);
         if (count($fileArray) != 2) {
-            $this->mode = "toSalaryUpload";
             $errorMsg = '文件名格式 不正确';
             $this->objForm->setFormData("error", $errorMsg);
             return $errorMsg;
-        } else if ($fileArray[1] != 'xls') {
-            $this->mode = "toSalaryUpload";
-            $errorMsg = '文件类型不正确，必须是xls类型';
+        } else if ($fileArray[1] != 'xls' && $fileArray[1] != "xlsx") {
+            $errorMsg = '文件类型不正确，必须是xls或xlsx类型';
             $this->objForm->setFormData("error", $errorMsg);
             return $errorMsg;
         }
@@ -872,7 +916,12 @@ class SalaryAction extends BaseAction {
     function getFileContentJson(){
         $fname = $_REQUEST ['fileName'];
         $checkType = $_REQUEST ['checkType'];
-        $path = "upload/" . $fname;
+        if ($checkType == 'fukuan') {
+            $path = "fukuandanfile/" . $fname;
+        } else {
+            $path = "upload/" . $fname;
+        }
+
         $_ReadExcel = new PHPExcel_Reader_Excel2007 ();
         if (!$_ReadExcel->canRead($path))
             $_ReadExcel = new PHPExcel_Reader_Excel5 ();
@@ -902,6 +951,48 @@ class SalaryAction extends BaseAction {
         $this->mode = "excelList";
         $fname = $_REQUEST ['fname'];
         $this->objForm->setFormData("fname", $fname);
+    }
+    function saveFukuandan () {
+        $adminPO = $_SESSION ['admin'];
+        $fukuandan = array();
+        $fukuandan['id'] = $_REQUEST['fid'];
+        $fukuandan['company_id'] = $_REQUEST['company_id'];
+        $fukuandan['salTime_id'] = $_REQUEST['salTimeId'];
+        $fukuandan['salSumValue'] = $_REQUEST['salSumValue'];
+        $fukuandan['fukuan_status'] = 0;
+        $fukuandan['memo'] = $_REQUEST['more'];
+        $fukuandan['op_id'] = $adminPO['id'];
+
+        $path = 'fukuandanfile/';
+        $fukuandan['file_path'] = $_FILES['file']['name'];
+        $mess = $this->filesUpCommon($path);
+
+        if(!empty($mess)) {
+            $this->toFukuandanList();
+        } else {
+            $this->objDao = new SalaryDao();
+            $data = array();
+            if (empty($fukuandan['id'])) {
+                $result = $this->objDao->saveFukuandan($fukuandan);
+                if ($result) {
+                    $data['code'] = 100000;
+                    $data['mess'] = '添加成功';
+                } else {
+                    $data['code'] = 100001;
+                    $data['mess'] = '添加失败，请重试';
+                }
+            } else {
+                $result = $this->objDao->updateFukuandan($fukuandan);
+                if ($result) {
+                    $data['code'] = 100000;
+                    $data['mess'] = '修改成功';
+                } else {
+                    $data['code'] = 100001;
+                    $data['mess'] = '修改失败，请重试';
+                }
+            }
+            $this->toFukuandanList();
+        }
     }
     function saveShoukuan () {
 

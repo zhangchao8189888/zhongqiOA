@@ -214,40 +214,51 @@ class BaseDataAction extends BaseAction {
         exit;
     }
     function getDepartmentTreeJson() {
-        $companyId = 11;
-        $companyName ="测试单位";
+       $company_id = $_REQUEST['comapny_id'];
+//        $companyName ="测试单位";
         $id = $_POST['id'];
         $this->objDao = new BaseDataDao();
         $treeJson =array();
         if(empty($id)) {
-            $companyPo = $this->objDao->getCompanyRootIdByCompanyId($companyId);
-            if ($companyPo) {
-                $treeJson['data'][0]['id'] = $companyPo['id'];
-                $treeJson['data'][0]['name'] = $companyPo['name'];
-                $treeJson['data'][0]['pid'] = $companyPo['pid'];
-                $count = $this->objDao->isParentNode($companyId,$companyPo['id']);
-                if ($count['cnt'] > 0) {
-                    $treeJson['data'][0]['isParent'] = 'true';
-                } else {
-                    $treeJson['data'][0]['isParent'] = 'false';
-                }
 
-            } else {
-                $treeJson['data'][0]['company_id'] = $companyId;
-                $treeJson['data'][0]['name'] = $companyName;
-                $treeJson['data'][0]['pid'] = 0;
-                $treeJson['data'][0]['isParent'] = 'false';
-                $data = $treeJson['data'][0];
-                $result = $this->objDao->addDepartmentTreeData($data);
-                $last_id = $this->objDao->g_db_last_insert_id();
-                $treeJson['data'][0]['id'] = $last_id;
+            $companyList = $this->objDao->searchCompanyListAll();
+            $i = 0;
+            while ($row = mysql_fetch_array($companyList)) {
+                $companyId = $row['id'];
+                $companyPo = $this->objDao->getCompanyRootIdByCompanyId($row['id']);
+                if ($companyPo) {
+                    $treeJson['data'][$i]['id'] = $companyPo['id'];
+                    $treeJson['data'][$i]['name'] = $companyPo['name'];
+                    $treeJson['data'][$i]['pid'] = $companyPo['pid'];
+                    $treeJson['data'][$i]['company_id'] = $row['id'];
+                    $count = $this->objDao->isParentNode($companyId,$companyPo['id']);
+                    if ($count['cnt'] > 0) {
+                        $treeJson['data'][$i]['isParent'] = 'true';
+                    } else {
+                        $treeJson['data'][$i]['isParent'] = 'false';
+                    }
+                    $treeJson['data'][$i]['isParent'] = 'true';
+
+                } else {
+                    $treeJson['data'][$i]['company_id'] = $companyId;
+                    $treeJson['data'][$i]['name'] = $row['company_name'];
+                    $treeJson['data'][$i]['pid'] = 0;
+                    $treeJson['data'][$i]['isParent'] = 'true';
+                    $data = $treeJson['data'][$i];
+                    $result = $this->objDao->addDepartmentTreeData($data);
+                    $last_id = $this->objDao->g_db_last_insert_id();
+                    $treeJson['data'][$i]['id'] = $last_id;
+                }
+                $i++;
             }
+
+
         } else {
             //找到树节点
 
-            $treeNode = $this->objDao->getTreeNodeDataById($companyId,$id);
+            $treeNode = $this->objDao->getTreeNodeDataById($id);
             if ($treeNode) {
-                $result = $this->objDao->getChildNodeDataByPid($companyId,$treeNode['id']);
+                $result = $this->objDao->getChildNodeDataByPid($treeNode['id']);
                 $i = 0;
                 while($row = mysql_fetch_array($result)) {
                     $treeJson['data'][$i]['id'] = $row['id'];
@@ -255,7 +266,7 @@ class BaseDataAction extends BaseAction {
                     $treeJson['data'][$i]['pid'] = $row['pid'];
                     $treeJson['data'][$i]['employ_id'] = $row['employ_id'];
                     $treeJson['data'][$i]['is_employ'] = $row['is_employ'];
-                    $count = $this->objDao->isParentNode($companyId,$row['id']);
+                    $count = $this->objDao->isParentNode($row['id']);
                     if ($count['cnt'] > 0) {
                         $treeJson['data'][$i]['isParent'] = 'true';
                     } else {

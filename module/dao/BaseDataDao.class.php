@@ -46,13 +46,13 @@ class BaseDataDao extends BaseDao
         $result=$this->g_db_query($sql);
         return mysql_fetch_array($result);
     }
-    function getChildNodeDataByPid($companyId,$parentId) {
-        $sql ="select * from OA_department_tree where company_id= $companyId and pid=$parentId";
+    function getChildNodeDataByPid($parentId) {
+        $sql ="select * from OA_department_tree where pid=$parentId";
         $result=$this->g_db_query($sql);
         return $result;
     }
-    function getTreeNodeDataById($companyId,$id) {
-        $sql ="select * from OA_department_tree where company_id= $companyId and id=$id";
+    function getTreeNodeDataById($id) {
+        $sql ="select * from OA_department_tree where  id=$id";
         $result=$this->g_db_query($sql);
         return mysql_fetch_array($result);
     }
@@ -77,8 +77,8 @@ class BaseDataDao extends BaseDao
         $result=$this->g_db_query($sql);
         return $result;
     }
-    function isParentNode($companyId,$id) {
-        $sql ="select count(id) as cnt from OA_department_tree where company_id= $companyId and pid=$id";
+    function isParentNode($id) {
+        $sql ="select count(id) as cnt from OA_department_tree where pid=$id";
         $result=$this->g_db_query($sql);
         return mysql_fetch_array($result);
     }

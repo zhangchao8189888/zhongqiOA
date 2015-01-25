@@ -36,6 +36,7 @@
                 <ul>
                     <li><a href="index.php?action=Salary&mode=toFukuanList">付款通知单</a></li>
                     <li><a href="index.php?action=Salary&mode=toShoukuanList">收款</a></li>
+                    <li><a href="index.php?action=Salary&mode=toFukuandanList">付款单</a></li>
                 </ul>
             </li>
 
