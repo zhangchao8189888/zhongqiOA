@@ -92,6 +92,15 @@ class SalaryAction extends BaseAction {
             case "getSalaryInfoJson" :
                 $this->getSalaryInfoJson ();
                 break;
+            case "getSalTimeInfo" :
+                $this->getSalTimeInfo ();
+                break;
+            case "toAddNewSal" :
+                $this->toAddNewSal ();
+                break;
+            case "getSalHeadJson" :
+                $this->getSalHeadJson ();
+                break;
             default :
                 $this->modelInput();
                 break;
@@ -102,13 +111,60 @@ class SalaryAction extends BaseAction {
     function modelInput() {
         $this->mode = "toAdd";
     }
+    function getSalHeadJson () {
+        $salaryTimeId = $_REQUEST['salTimeId'];
+
+        $this->objDao = new SalaryDao ();
+        $result = $this->objDao->searchSalaryListBy_SalaryTimeId($salaryTimeId,1);
+        $salaryPo = mysql_fetch_array($result);
+        $salaryAddJson = $salaryPo['sal_add_json'];
+        $sal_del_json = $salaryPo['sal_del_json'];
+        $sal_free_json = $salaryPo['sal_free_json'];
+        $salHead = array();
+        $salHead[] = '姓名';
+        $salHead[] = '身份证号';
+        $addJson = json_decode($salaryAddJson,true);
+        $delJson = json_decode($sal_del_json,true);
+        $freeJson = json_decode($sal_free_json,true);
+        foreach($addJson as $val) {
+            $key = urldecode($val['key']);
+            $salHead[] = $key;
+        }
+        foreach($delJson as $val) {
+            $key = urldecode($val['key']);
+            $salHead[] = $key;
+        }
+        foreach($freeJson as $val) {
+            $key = urldecode($val['key']);
+            $salHead[] = $key;
+        }
+        $headData =array();
+        $headData[] = $salHead;
+        echo json_encode($headData);
+        exit;
+    }
+    function toAddNewSal () {
+        $this->mode = "toAddNewSal";
+        $salaryTimeId = $_REQUEST['salTimeId'];
+        $this->objDao = new SalaryDao ();
+        $salTime = $this->objDao->getSalaryTimeBySalId($salaryTimeId);
+
+        $this->objForm->setFormData("salTime",$salTime);
+    }
     function getSalaryInfoJson () {
-        $salaryTimeId = $_REQUEST['salTime'];
+        $salaryTimeId = $_REQUEST['salTimeId'];
         $this->objDao = new SalaryDao ();
         $result = $this->objDao->searchSumSalaryListBy_SalaryTimeId($salaryTimeId);
         echo json_encode($result);
         exit;
 
+    }
+    function getSalTimeInfo () {
+        $salaryTimeId = $_REQUEST['salTimeId'];
+        $this->objDao = new SalaryDao ();
+        $result = $this->objDao->getSalaryTimeBySalId($salaryTimeId);
+        echo json_encode($result);
+        exit;
     }
     function getSalaryTimeListJson () {
         $companyId = $_REQUEST['companyId'];

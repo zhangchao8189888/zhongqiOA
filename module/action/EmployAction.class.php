@@ -51,6 +51,9 @@ class EmployAction extends BaseAction {
             case "getEmployTemlate":
                 $this->getEmployTemlate();
                 break;
+            case "getEmployInfo":
+                $this->getEmployInfo();
+                break;
             case "newemImport" :
                 $this->newemImport();
                 break;
@@ -70,6 +73,14 @@ class EmployAction extends BaseAction {
     }
     function toEmImport() {
         $this->mode = "toimport";
+    }
+    function getEmployInfo () {
+        $employId = $_REQUEST['employId'];
+        $this->objDao = new EmployDao();
+        $employInfo = $this->objDao->getEmployById($employId);
+
+        echo json_encode($employInfo);
+        exit;
     }
     function getEmployTemlate() {
         $file = 'template/empTemlate.xls';
@@ -271,8 +282,8 @@ class EmployAction extends BaseAction {
         $search_name = $_REQUEST['search_name'];
         $this->objDao = new EmployDao();
         $where = '';
-        if ($searchType =='name') {
-            $where.= ' and e_name = "'.$search_name.'"';
+        if ($searchType =='e_company') {
+            $where.= ' and e_company like "%'.$search_name.'%"';
         } elseif ($searchType =='e_num') {
             $where.= ' and e_num ='.$search_name;
         }
@@ -317,7 +328,9 @@ class EmployAction extends BaseAction {
     function saveOrUpdateEmploy () {
         //company_name,com_contact,contact_no,company_address,com_bank,bank_no,company_level,company_type
         $employ = array();
+        $employ['id'] = $_POST['employ_id'];
         $employ['e_name'] = $_POST['e_name'];
+        $employ['e_company_id'] = $_POST['company_id'];
         $employ['e_num'] = $_POST['e_num'];
         $employ['bank_name'] = $_POST['e_bank'];
         $employ['bank_num'] = $_POST['bank_no'];
@@ -326,12 +339,14 @@ class EmployAction extends BaseAction {
         $employ['shebaojishu'] = $_POST['shebaojishu'];
         $employ['gongjijinjishu'] = $_POST['gongjijinjishu'];
         $employ['laowufei'] = $_POST['laowufei'];
-        $employ['canbaojin'] = $_POST['canbaofei'];
+        $employ['canbaojin'] = $_POST['canbaojin'];
         $employ['danganfei'] = $_POST['danganfei'];
+        $employ['e_hetongnian'] = $_POST['e_hetongnian'];
+        $employ['e_hetong_date'] = $_POST['e_hetong_date'];
         $employ['memo'] = $_POST['memo'];
         $this->objDao = new EmployDao();
         $data = array();
-        if (empty($company['id'])) {
+        if (empty($employ['id'])) {
             $emper = $this->objDao->getEmByEno($employ['e_num']);
             if (!empty($emper)) {
                 $mess = "此员工身份证号已存在，请重新确认";

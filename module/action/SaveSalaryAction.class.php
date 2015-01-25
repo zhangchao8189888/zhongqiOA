@@ -51,6 +51,9 @@ class SaveSalaryAction extends BaseAction {
 			case "saveSalary" :
 				$this->saveSalary ();
 				break;
+			case "saveNewAddSalary" :
+				$this->saveNewAddSalary ();
+				break;
 			case "saveNianSalary" :
 				$this->saveNianSalary ();
 				break;
@@ -142,6 +145,114 @@ class SaveSalaryAction extends BaseAction {
         $time["first"]  =    $first_date;
         $time["last"]   =      $for_day;
         return $time;
+    }
+    function saveNewAddSalary () {
+        $excelMove = $_POST ['excelMove'];
+        $excelHead = $_POST ['excelHead'];
+        foreach ( $excelHead  as $num => $row ) {
+            if (ereg ( $row, "身份证号" )) {
+                $sit_shenfenzhenghao = $num; // 等到“身份证”字段的标志位
+            } elseif (ereg ( $row, "个人应发合计" )) {
+                $sit_gerenyinfaheji = $num; // 得到个人应发合计字段的标志位
+            }
+        }
+        $salTimeId = $_REQUEST['salTimeId'];
+        $this->objDao = new SalaryDao ();
+        $salTimePo = $this->objDao->getSalaryTimeBySalId($salTimeId);
+        if (empty($salTimePo)) {
+            $data['code'] = 100001;
+            $data['message'] = '未查询到该工资';
+            echo json_encode($data);
+            exit;
+        }
+        $salaryList = $_POST['data'];
+        // 开始事务
+        $this->objDao->beginTransaction ();
+        for($i = 0; $i < count ($salaryList); $i ++) {
+            // 如果是等于$sit_gerenyinfaheji标志位存储到固定工资表字段中
+            $salayList = array ();
+            $salayList ['per_yingfaheji'] = $salaryList [$i] [$sit_gerenyinfaheji];
+            $salayList ['per_shiye'] = $salaryList [$i] [($sit_gerenyinfaheji + 1)];
+            $salayList ['per_yiliao'] = $salaryList [$i] [($sit_gerenyinfaheji + 2)];
+            $salayList ['per_yanglao'] = $salaryList [$i] [($sit_gerenyinfaheji + 3)];
+            $salayList ['per_gongjijin'] = $salaryList [$i] [($sit_gerenyinfaheji + 4)];
+            $salayList ['per_daikoushui'] = $salaryList [$i] [($sit_gerenyinfaheji + 5)];
+            $salayList ['per_koukuangheji'] = $salaryList [$i] [($sit_gerenyinfaheji + 6)];
+            $salayList ['per_shifaheji'] = $salaryList [$i] [($sit_gerenyinfaheji + 7)];
+            $salayList ['com_shiye'] = $salaryList [$i] [($sit_gerenyinfaheji + 8)];
+            $salayList ['com_yiliao'] = $salaryList [$i] [($sit_gerenyinfaheji + 9)];
+            $salayList ['com_yanglao'] = $salaryList [$i] [($sit_gerenyinfaheji + 10)];
+            $salayList ['com_gongshang'] = $salaryList [$i] [($sit_gerenyinfaheji + 11)];
+            $salayList ['com_shengyu'] = $salaryList [$i] [($sit_gerenyinfaheji + 12)];
+            $salayList ['com_gongjijin'] = $salaryList [$i] [($sit_gerenyinfaheji + 13)];
+            $salayList ['com_heji'] = $salaryList [$i] [($sit_gerenyinfaheji + 14)];
+            $salayList ['laowufei'] = $salaryList [$i] [($sit_gerenyinfaheji + 15)];
+            $salayList ['canbaojin'] = $salaryList [$i] [($sit_gerenyinfaheji + 16)];
+            $salayList ['danganfei'] = $salaryList [$i] [($sit_gerenyinfaheji + 17)];
+            $salayList ['paysum_zhongqi'] = $salaryList [$i] [($sit_gerenyinfaheji + 18)];
+
+            $salayList ['employid'] = $salaryList [$i] [$sit_shenfenzhenghao];
+            $salayList ['salaryTimeId'] = $salTimeId;
+            if (!empty($excelMove [$i+1]['add'])){
+                $salayList ['sal_add_json'] = json_encode($excelMove [$i+1]['add']);
+            }
+            if (!empty($excelMove [$i+1]['del'])){
+                $salayList ['sal_del_json'] = json_encode($excelMove [$i+1]['del']);
+            }
+            if (!empty($excelMove [$i+1]['freeTex'])){
+                $salayList ['sal_free_json'] = json_encode($excelMove [$i+1]['freeTex']);
+            }
+            if ($i == ((count ( $salaryList ) - 1))) { // 最后一行为合计所以需要减1
+                //查询合计项
+                $salSumPo = $this->objDao->searchSumSalaryListBy_SalaryTimeId($salTimeId);
+                $salayList ['per_yingfaheji'] += $salSumPo['sum_per_yingfaheji'];
+                $salayList ['per_shiye'] += $salSumPo['sum_per_shiye'];
+                $salayList ['per_yiliao'] += $salSumPo ['sum_per_yiliao'];
+                $salayList ['per_yanglao'] += $salSumPo ['sum_per_yanglao'];
+                $salayList ['per_gongjijin'] += $salSumPo ['sum_per_gongjijin'];
+                $salayList ['per_daikoushui'] += $salSumPo ['sum_per_daikoushui'];
+                $salayList ['per_koukuangheji'] += $salSumPo ['sum_per_koukuangheji'];
+                $salayList ['per_shifaheji'] += $salSumPo ['sum_per_shifaheji'];
+                $salayList ['com_shiye'] += $salSumPo ['sum_com_shiye'];
+                $salayList ['com_yiliao'] += $salSumPo ['sum_com_yiliao'];
+                $salayList ['com_yanglao'] += $salSumPo ['sum_com_yanglao'];
+                $salayList ['com_gongshang'] += $salSumPo['sum_com_gongshang'];
+                $salayList ['com_shengyu'] += $salSumPo['sum_com_shengyu'];
+                $salayList ['com_gongjijin'] += $salSumPo['sum_com_gongjijin'];
+                $salayList ['com_heji'] += $salSumPo['sum_com_heji'];
+                $salayList ['laowufei'] += $salSumPo ['sum_laowufei'];
+                $salayList ['canbaojin'] += $salSumPo ['sum_canbaojin'];
+                $salayList ['danganfei'] += $salSumPo ['sum_danganfei'];
+                $salayList ['paysum_zhongqi'] += $salSumPo ['sum_paysum_zhongqi'];
+
+                // 以上保存成功后，保存合计项
+                $lastSumSalaryId = $this->objDao->updateSumSalary ( $salayList );
+                if (! $lastSumSalaryId) {
+                    $this->objDao->rollback ();
+                    $data['mess'] = "保存合计工资失败！";
+                    echo json_encode($data);
+                    exit;
+                }
+            } else {
+                if (empty($salaryList [$i] [$sit_gerenyinfaheji])) {
+                    continue;
+                }
+                $lastSalaryId = $this->objDao->saveSalary ( $salayList );
+            }
+            if (! $lastSalaryId && $lastSalaryId != 0) {
+                $this->objDao->rollback ();
+                $data['mess'] = "保存固定工资失败！";
+                echo json_encode($data);
+                exit;
+            }
+        }
+
+        // 事务提交
+        $this->objDao->commit ();
+        $data['message'] = "保存一次工资成功";
+        $data['code'] = "100000";
+        echo json_encode($data);
+        exit;
     }
     // FIXME 保存工资
 	function saveSalary() {

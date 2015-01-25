@@ -80,6 +80,13 @@ $(document).ready(function () {
         $("#excelForm").attr("action","index.php?action=Salary&mode=salaryImport");
         $("#excelForm").submit();
     });
+    $(".rowAdd").click(function(){
+        var salTimeId = $(this).attr("data-id");
+        $("#salTimeId").val(salTimeId);
+        $("#iForm").attr("action","index.php?action=Salary&mode=toAddNewSal");
+        $("#iForm").submit();
+
+    });
 });/**
  * Created by zhangchao8189888 on 15-1-3.
  */

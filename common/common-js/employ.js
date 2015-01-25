@@ -7,7 +7,8 @@ $(function(){
         submitHandler:function(form){
             var obj = {};
             obj.e_num = $("#e_num").val();
-            obj.e_company = $("#e_company").text();
+            obj.e_company = $("#e_company").val();
+            obj.company_id = $("#company_id").val();
             obj.e_name = $("#e_name").val();
             obj.bank_no = $("#bank_no").val();
             obj.e_bank = $("#e_bank").val();
@@ -15,10 +16,16 @@ $(function(){
             obj.employ_id = $("#employ_id").val();
             obj.shebaojishu = $("#shebaojishu").val();
             obj.gongjijinjishu = $("#gongjijinjishu").val();
+            obj.canbaojin = $("#canbaojin").val();
+            obj.laowufei = $("#laowufei").val();
+            obj.danganfei = $("#danganfei").val();
+            obj.e_hetongnian = $("#e_hetongnian").val();
+            obj.e_hetong_date = $("#e_hetong_date").val();
+            obj.memo = $("#memo").val();
             $.ajax(
                 {
                     type: "POST",
-                    url: "index.php?action=Employ&mode=saveOrUpdateCompany",
+                    url: "index.php?action=Employ&mode=saveOrUpdateEmploy",
                     data: obj,
                     success: function(data){
                         if (data.code > 100000) {
@@ -82,8 +89,8 @@ $(function(){
         var suggestWrap = $('#custor_search_suggest');
         var oSearchSelect = BaseWidget.UI.SearchSelect;
         oSearchSelect.fnInt();
-        oSearchSelect.leftPlus = -779;
-        oSearchSelect.topPlus = -13;
+        oSearchSelect.leftPlus = -179;
+        oSearchSelect.topPlus = 75;
         oSearchSelect.inputWith = 314;
         oSearchSelect.url = 'index.php?action=Company&mode=getCompanyListJson';
         var fnHideSuggest = function(){
@@ -100,7 +107,7 @@ $(function(){
                 //Customer.oCustomer.fnGetCustomerInfo(obj);
                 //得到用户信息
                 $("#e_company").val(obj.name);
-                $("#employ_id").val(obj.id);
+                $("#company_id").val(obj.id);
             }
         }
         input = $(this);

@@ -8,6 +8,12 @@
         <ul>
             <li class=""> <a href="index.php"><i class="icon icon-file"></i> <span>首页</span></a>
             <!--<li class=""> <a href="index.php?action=Company&mode=toDepartmentEdit"><i class="icon icon-file"></i> <span>部门设置</span></a>-->
+            <li class="submenu"> <a href="#"><i class="icon icon-file"></i> <span>基础信息设置</span><span class="label label-important">2</span></a>
+                <ul>
+                    <li><a href="index.php?action=BaseData&mode=toShenfenType">身份类别</a></li>
+                    <li><a href="index.php?action=BaseData&mode=toDepartmentEdit">部门设置</a></li>
+                </ul>
+            </li>
             <li class="submenu"> <a href="#"><i class="icon icon-file"></i> <span>企业管理</span><span class="label label-important">1</span></a>
                 <ul>
                     <li><a href="index.php?action=Company&mode=toCompanyList">企业信息</a></li>
@@ -24,11 +30,14 @@
                 <ul>
                     <li><a href="index.php?action=Salary&mode=toSalaryUpload">做工资</a></li>
                     <li><a href="index.php?action=Salary&mode=salarySearchList">工资查询</a></li>
+                </ul>
+            </li>
+            <li class="submenu"> <a href="#"><i class="icon icon-file"></i> <span>财务管理</span><span class="label label-important">1</span></a>
+                <ul>
                     <li><a href="index.php?action=Salary&mode=toFukuanList">付款通知单</a></li>
                     <li><a href="index.php?action=Salary&mode=toShoukuanList">收款</a></li>
                 </ul>
             </li>
-
 
             </li>
             <!--<li class="submenu"> <a href="#"><i class="icon icon-file"></i> <span>财务对账</span><span class="label label-important">1</span></a>
