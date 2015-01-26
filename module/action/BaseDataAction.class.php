@@ -113,12 +113,14 @@ class BaseDataAction extends BaseAction {
     }
     function saveOrUpdateShenfenType () {
         $typeName = $_POST['shenfenType'];
+        $type_id = $_POST['type_id'];
         $id = $_POST['id'];
         $adminPO = $_SESSION ['admin'];
         $this->objDao = new BaseDataDao();
         $type = array();
         $type['type_name'] = $typeName;
         $type['op_id'] = $adminPO['id'];
+        $type['type_id'] = $type_id;
         $type['id'] = $id;
 
         if (empty($type['id'])) {
@@ -161,7 +163,7 @@ class BaseDataAction extends BaseAction {
         $data['company_id'] = $companyId;
         $data['name'] = $name;
         $data['id'] = $id;
-        $this->objDao = new CompanyDao();
+        $this->objDao = new BaseDataDao();
         $result = $this->objDao->eitDepartmentTreeData($data);
         $megs = array();
         if ($result){
@@ -176,7 +178,7 @@ class BaseDataAction extends BaseAction {
     function delDepartmentTreeJson () {
         $id = $_POST['id'];
         $data['id'] = $id;
-        $this->objDao = new CompanyDao();
+        $this->objDao = new BaseDataDao();
         $result = $this->objDao->delDepartmentTreeData($data);
         $megs = array();
         if ($result){
@@ -189,7 +191,7 @@ class BaseDataAction extends BaseAction {
 
     }
     function getEmployJson () {
-        $this->objDao = new CompanyDao();
+        $this->objDao = new BaseDataDao();
         $companyName ="系统测试公司";
         $result = $this->objDao->getEmlistbyComname($companyName);
         $emArr = array();
@@ -205,47 +207,58 @@ class BaseDataAction extends BaseAction {
     }
     function getEmployByIdJson () {
         $id = $_POST['id'];
-        $this->objDao = new CompanyDao();
+        $this->objDao = new BaseDataDao();
         //$companyName ="系统测试公司";
         $result = $this->objDao->getEmployById($id);
         echo json_encode($result);
         exit;
     }
     function getDepartmentTreeJson() {
-        $companyId = 11;
-        $companyName ="测试单位";
+       $company_id = $_REQUEST['comapny_id'];
+//        $companyName ="测试单位";
         $id = $_POST['id'];
-        $this->objDao = new CompanyDao();
+        $this->objDao = new BaseDataDao();
         $treeJson =array();
         if(empty($id)) {
-            $companyPo = $this->objDao->getCompanyRootIdByCompanyId($companyId);
-            if ($companyPo) {
-                $treeJson['data'][0]['id'] = $companyPo['id'];
-                $treeJson['data'][0]['name'] = $companyPo['name'];
-                $treeJson['data'][0]['pid'] = $companyPo['pid'];
-                $count = $this->objDao->isParentNode($companyId,$companyPo['id']);
-                if ($count['cnt'] > 0) {
-                    $treeJson['data'][0]['isParent'] = 'true';
-                } else {
-                    $treeJson['data'][0]['isParent'] = 'false';
-                }
 
-            } else {
-                $treeJson['data'][0]['company_id'] = $companyId;
-                $treeJson['data'][0]['name'] = $companyName;
-                $treeJson['data'][0]['pid'] = 0;
-                $treeJson['data'][0]['isParent'] = 'false';
-                $data = $treeJson['data'][0];
-                $result = $this->objDao->addDepartmentTreeData($data);
-                $last_id = $this->objDao->g_db_last_insert_id();
-                $treeJson['data'][0]['id'] = $last_id;
+            $companyList = $this->objDao->searchCompanyListAll();
+            $i = 0;
+            while ($row = mysql_fetch_array($companyList)) {
+                $companyId = $row['id'];
+                $companyPo = $this->objDao->getCompanyRootIdByCompanyId($row['id']);
+                if ($companyPo) {
+                    $treeJson['data'][$i]['id'] = $companyPo['id'];
+                    $treeJson['data'][$i]['name'] = $companyPo['name'];
+                    $treeJson['data'][$i]['pid'] = $companyPo['pid'];
+                    $treeJson['data'][$i]['company_id'] = $row['id'];
+                    $count = $this->objDao->isParentNode($companyId,$companyPo['id']);
+                    if ($count['cnt'] > 0) {
+                        $treeJson['data'][$i]['isParent'] = 'true';
+                    } else {
+                        $treeJson['data'][$i]['isParent'] = 'false';
+                    }
+                    $treeJson['data'][$i]['isParent'] = 'true';
+
+                } else {
+                    $treeJson['data'][$i]['company_id'] = $companyId;
+                    $treeJson['data'][$i]['name'] = $row['company_name'];
+                    $treeJson['data'][$i]['pid'] = 0;
+                    $treeJson['data'][$i]['isParent'] = 'true';
+                    $data = $treeJson['data'][$i];
+                    $result = $this->objDao->addDepartmentTreeData($data);
+                    $last_id = $this->objDao->g_db_last_insert_id();
+                    $treeJson['data'][$i]['id'] = $last_id;
+                }
+                $i++;
             }
+
+
         } else {
             //找到树节点
 
-            $treeNode = $this->objDao->getTreeNodeDataById($companyId,$id);
+            $treeNode = $this->objDao->getTreeNodeDataById($id);
             if ($treeNode) {
-                $result = $this->objDao->getChildNodeDataByPid($companyId,$treeNode['id']);
+                $result = $this->objDao->getChildNodeDataByPid($treeNode['id']);
                 $i = 0;
                 while($row = mysql_fetch_array($result)) {
                     $treeJson['data'][$i]['id'] = $row['id'];
@@ -253,7 +266,7 @@ class BaseDataAction extends BaseAction {
                     $treeJson['data'][$i]['pid'] = $row['pid'];
                     $treeJson['data'][$i]['employ_id'] = $row['employ_id'];
                     $treeJson['data'][$i]['is_employ'] = $row['is_employ'];
-                    $count = $this->objDao->isParentNode($companyId,$row['id']);
+                    $count = $this->objDao->isParentNode($row['id']);
                     if ($count['cnt'] > 0) {
                         $treeJson['data'][$i]['isParent'] = 'true';
                     } else {
@@ -278,7 +291,7 @@ class BaseDataAction extends BaseAction {
         $data['company_id'] = $companyId;
         $data['name'] = $name;
         $data['pid'] = $pid;
-        $this->objDao = new CompanyDao();
+        $this->objDao = new BaseDataDao();
         $result = $this->objDao->addDepartmentTreeData($data);
         $megs = array();
         if ($result){
@@ -302,7 +315,7 @@ class BaseDataAction extends BaseAction {
         $ids = trim($_POST['ids'],',');
 
         $idArr = explode(",",$ids);
-        $this->objDao = new CompanyDao();
+        $this->objDao = new BaseDataDao();
         foreach ($idArr as $id){
             $data['company_id'] = $companyId;
             $employ = $this->objDao->getEmployById($id);
@@ -318,7 +331,7 @@ class BaseDataAction extends BaseAction {
     }
     function toEmployList () {
         $this->mode = 'toEmployList';
-        $this->objDao = new CompanyDao();
+        $this->objDao = new BaseDataDao();
         $companyName ="系统测试公司";
         $result = $this->objDao->getEmlistbyComname($companyName);
         $emArr = array();

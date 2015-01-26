@@ -67,8 +67,7 @@ $admin=$_SESSION['admin'];
                                         <option value="0" <?php if ($com_status == '0') echo 'selected'; ?>>停用</option>
                                     </select>
                                     <input type="submit" value="查询"/>
-                                    <input type="hidden" value="" id="pro_id"/>
-                                    <input type="hidden" value="" id="pro_code"/>
+                                    <input type="hidden" value="" id="salTimeId"name="salTimeId"/>
                                     <div style="float: right;margin-right: 20px"><a href="#" id="com_add" class="btn btn-success" >新增订单</a></div>
                                 </form>
                             </div>
@@ -87,6 +86,7 @@ $admin=$_SESSION['admin'];
                                 <?php
                                 foreach ($salaryTimeList as $row){
                                 ?>
+                                <tr>
                                     <td class="tl pl10">
                                         <div></div>
                                     </td>
@@ -101,7 +101,9 @@ $admin=$_SESSION['admin'];
                                     </td>
                                     <td class="tl pl10">
                                         <a title="查看" data-id="<?php echo $row['id'];?>" style="cursor:pointer" class="rowCheck theme-color">查看</a>
+                                        <a title="继续添加" data-id="<?php echo $row['id'];?>" style="cursor:pointer" class="rowAdd theme-color">继续添加</a>
                                     </td>
+                                </tr>
                                 <?php }?>
                                 </tbody>
                             </table>

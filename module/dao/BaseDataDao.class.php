@@ -16,8 +16,8 @@ class BaseDataDao extends BaseDao
         parent::BaseDao();
     }
     function addShenfenData ($shenfenType) {
-        $sql="insert into OA_base_shenfenType (type_name,op_id,create_time)
-        values ('{$shenfenType['type_name']}',{$shenfenType['op_id']},now())";
+        $sql="insert into OA_base_shenfenType (type_name,op_id,type_id,create_time)
+        values ('{$shenfenType['type_name']}',{$shenfenType['op_id']},{$shenfenType['type_id']},now())";
         $result=$this->g_db_query($sql);
         return $result;
     }
@@ -37,7 +37,7 @@ class BaseDataDao extends BaseDao
         return $result;
     }
     function updateShenfenData ($shenfenType) {
-        $sql="update OA_base_shenfenType  set  type_name = '{$shenfenType['type_name']}' where id = {$shenfenType['id']}";
+        $sql="update OA_base_shenfenType  set  type_name = '{$shenfenType['type_name']}',type_id = {$shenfenType['type_id']} where id = {$shenfenType['id']}";
         $result=$this->g_db_query($sql);
         return $result;
     }
@@ -46,13 +46,13 @@ class BaseDataDao extends BaseDao
         $result=$this->g_db_query($sql);
         return mysql_fetch_array($result);
     }
-    function getChildNodeDataByPid($companyId,$parentId) {
-        $sql ="select * from OA_department_tree where company_id= $companyId and pid=$parentId";
+    function getChildNodeDataByPid($parentId) {
+        $sql ="select * from OA_department_tree where pid=$parentId";
         $result=$this->g_db_query($sql);
         return $result;
     }
-    function getTreeNodeDataById($companyId,$id) {
-        $sql ="select * from OA_department_tree where company_id= $companyId and id=$id";
+    function getTreeNodeDataById($id) {
+        $sql ="select * from OA_department_tree where  id=$id";
         $result=$this->g_db_query($sql);
         return mysql_fetch_array($result);
     }
@@ -77,8 +77,8 @@ class BaseDataDao extends BaseDao
         $result=$this->g_db_query($sql);
         return $result;
     }
-    function isParentNode($companyId,$id) {
-        $sql ="select count(id) as cnt from OA_department_tree where company_id= $companyId and pid=$id";
+    function isParentNode($id) {
+        $sql ="select count(id) as cnt from OA_department_tree where pid=$id";
         $result=$this->g_db_query($sql);
         return mysql_fetch_array($result);
     }

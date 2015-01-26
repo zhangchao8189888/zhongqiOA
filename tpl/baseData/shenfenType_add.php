@@ -53,6 +53,7 @@ $shenfenList=$form_data['shenfenList'];
                                     <th class="tl"><div></div></th>
                                     <th class="tl"><div>id</div></th>
                                     <th class="tl"><div>类别名称</div></th>
+                                    <th class="tl"><div>类别编号</div></th>
                                     <th class="tl"><div>添加人</div></th>
                                     <th class="tl"><div>添加时间</div></th>
                                     <th class="tl"><div>操作</div></th>
@@ -65,6 +66,7 @@ $shenfenList=$form_data['shenfenList'];
                                         <td><div></div></td>
                                         <td><div><?php echo $row['id'];?></div></td>
                                         <td><div><?php echo $row['type_name'];?></div></td>
+                                        <td><div><?php echo $row['type_id'];?></div></td>
                                         <td><div><?php echo $row['name'];?></div></td>
                                         <td><div><?php echo $row['create_time'];?></div></td>
                                         <td class="tr">
@@ -116,6 +118,7 @@ $shenfenList=$form_data['shenfenList'];
         <div class="modal-body">
             <div class="designer_win">
                 <div class="tips"><em style="color: red;padding-right: 10px;">*</em>身份类别：<input type="text" maxlength="20" id="shenfenType"name="shenfenType"  /></div>
+                <div class="tips"><em style="color: red;padding-right: 10px;">*</em>类别编号：<input type="text" maxlength="20" id="type_id"name="type_id"  /></div>
             </div>
         </div>
 

@@ -34,6 +34,10 @@ class SalaryForm extends BaseForm
                 return "salary/shoukuan_list.php";
             case "toFukuanList":
                 return "salary/fukuan_list.php";
+            case "toAddNewSal":
+                return "salary/salary_newAdd.php";
+            case "toFukuandanList":
+                return "salary/fukuandan_list.php";
             default :
                 return "BaseConfig.php";
         }

@@ -14,42 +14,36 @@ $admin=$_SESSION['admin'];
             $(this).tab('show');//显示当前选中的链接及关联的content
         })
         $("#com_add").click(function(){
-            /*$("#pro_date").val($("#shaijia_date").val());*/
-            $.ajax(
-                {
-                    type: "get",
-                    url: "index.php?action=Company&mode=getCode",
-                    data: {type:'qiye'},
-                    dataType: "json",
-                    success: function(data){
-                        $(".codeNo").text(data.codeNo);
-                    }
-                }
-            );
+            $("#company_validate")[0].reset();
             $('#modal-event1').modal({show:true});
         });
         $(".rowUpdate").click(function(){
             /*$("#pro_date").val($("#shaijia_date").val());*/
+            $("#company_validate")[0].reset();
             var id = $(this).attr("data-id");
             $.ajax(
                 {
                     type: "post",
-                    url: "index.php?action=Company&mode=getCompany",
-                    data: {id:id},
+                    url: "index.php?action=Employ&mode=getEmployInfo",
+                    data: {employId:id},
                     dataType: "json",
                     success: function(data){
-                        //company_code,company_name,com_contact,contact_no,company_address,com_bank,bank_no,company_level,company_type,company_status
-                        //add_time,update_time
-                        $("#company_id").val(data.id);
-                        $(".codeNo").text(data.company_code);
-                        $("#company_name").val(data.company_name);
-                        $("#contacts").val(data.com_contact);
-                        $("#contacts_no").val(data.contact_no);
-                        $("#com_address").val(data.company_address);
-                        $("#com_bank").val(data.com_bank);
+                        $("#employ_id").val(data.id);
+                        $("#e_num").val(data.e_num);
+                        $("#e_company").val(data.company_name);
+                        $("#company_id").val(data.e_company_id);
+                        $("#e_name").val(data.e_name);
                         $("#bank_no").val(data.bank_no);
-                        $("#company_level").val(data.company_level);
-                        $("#company_type").val(data.company_type);
+                        $("#e_bank").val(data.e_bank);
+                        $("#e_type").val(data.e_type);
+                        $("#shebaojishu").val(data.shebaojishu);
+                        $("#gongjijinjishu").val(data.gongjijinjishu);
+                        $("#canbaojin").val(data.canbaojin);
+                        $("#laowufei").val(data.laowufei);
+                        $("#danganfei").val(data.danganfei);
+                        $("#e_hetongnian").val(data.e_hetongnian);
+                        $("#e_hetong_date").val(data.e_hetong_date);
+                        $("#memo").val(data.memo);
                     }
                 }
             );
@@ -72,16 +66,13 @@ $admin=$_SESSION['admin'];
             <div class="tab-pane active" id="tab1">
 
                 <div class="controls">
-                    <form id="iForm" action="index.php?action=Company&mode=toCompanyList" method="post">
+                    <form id="iForm" action="index.php?action=Employ&mode=toEmployList" method="post">
                         <select id="searchType" name="searchType"   onchange="searchByType()" >
-                            <option value="name" <?php if ($searchType == 'name') echo 'selected'; ?>>企业名称</option>
-                            <option value="status" <?php if ($searchType == 'status') echo 'selected'; ?>>企业状态</option>
+                            <option value="e_company" <?php if ($searchType == 'e_company') echo 'selected'; ?>>企业名称</option>
+                            <option value="e_num" <?php if ($searchType == 'e_num') echo 'selected'; ?>>身份证号</option>
                         </select>
                         <input type="text" value="<?php echo $search_name;?>" name="search_name" id="search_name" placeholder="请输入企业名称"/>
-                        <select id="com_status" name="com_status"   onchange="searchByStatus()" style="display: none">
-                            <option value="1" <?php if ($com_status == '1') echo 'selected'; ?>>启用</option>
-                            <option value="0" <?php if ($com_status == '0') echo 'selected'; ?>>停用</option>
-                        </select>
+
                         <input type="submit" value="查询"/>
                         <input type="hidden" value="" id="pro_id"/>
                         <input type="hidden" value="" id="pro_code"/>
@@ -128,7 +119,7 @@ $admin=$_SESSION['admin'];
                                 <div><?php echo $row['gongjijinjishu'];?></div>
                             </td>
                             <td class="tr">
-                                <a title="修改" data-id="<?php echo $row['id'];?>"  class="rowUpdate theme-color">修改</a>
+                                <a title="修改" data-id="<?php echo $row['id'];?>"  class="rowUpdate pointer theme-color">修改</a>
                                 <div class="cb"></div>
                             </td>
                         </tr>
@@ -154,13 +145,7 @@ $admin=$_SESSION['admin'];
     });
     function searchByType () {
         var type = $("#searchType").val();
-        if (type == 'name') {
-            $("#search_name").show();
-            $("#com_status").hide();
-        } else if (type == 'status') {
-            $("#search_name").hide();
-            $("#com_status").show();
-        }
+        $("#search_name").val('');
     }
     function searchByStatus() {
 
@@ -177,7 +162,7 @@ $admin=$_SESSION['admin'];
         <div class="modal-body">
             <div class="designer_win">
                 <div class="tips"><em style="color: red;padding-right: 10px;">*</em>姓名：<input type="text" maxlength="20" id="e_name"name="e_name"  /><input type="hidden" value="" id="employ_id" name="employ_id"/></div>
-                <div class="tips"><em style="color: red;padding-right: 10px;">*</em>所属公司：<input type="text" maxlength="20" id="e_company"name="e_company"  /></div>
+                <div class="tips"><em style="color: red;padding-right: 10px;">*</em>所属公司：<input type="text" maxlength="20" id="e_company"name="e_company"  /><input type="hidden" value="" id="company_id" name="company_id"/></div>
                 <div class="tips"><em style="color: red;padding-right: 10px;">*</em>身份证号：<input type="text" maxlength="20" id="e_num"name="e_num"  /></div>
                 <div class="tips">银行卡号：<input type="text" maxlength="20" id="bank_no"  /></div>
                 <div class="tips">开户行：<input type="text" maxlength="20" id="e_bank"  /></div>
@@ -192,6 +177,14 @@ $admin=$_SESSION['admin'];
                     <option value="5">本市农民工</option>
                     <option value="6">外地农民工</option>
                     </select></div>
+                <div class="tips">劳务费：<input type="text" maxlength="20" id="laowufei" value="0.00" /></div>
+                <div class="tips">档案费：<input type="text" maxlength="20" id="danganfei"  value="0.00" /></div>
+                <div class="tips">残保金：<input type="text" maxlength="20" id="canbaojin" value="0.00"   /></div>
+                <div class="tips">合同年份：<input type="text" maxlength="20" id="e_hetongnian"/>年</div>
+                <div class="tips">合同介绍日期：<input type="text" maxlength="20" id="e_hetong_date"  onFocus="WdatePicker({isShowClear:false,readOnly:true,dateFmt:'yyyy-MM-dd',realDateFmt:'yyyy-MM-dd'})" /></div>
+                <div class="tips">备注：<textarea id="memo">
+
+                    </textarea></div>
             </div>
         </div>
 

@@ -14,9 +14,54 @@ class SalaryDao extends BaseDao {
         parent::BaseDao ();
     }
 
+    function getFukuandanList ($where  = null) {
+        $sql = "select oa.name as admin_name,oc.company_name,os.salaryTime,of.*  from OA_admin oa, OA_company oc,OA_salarytime os,OA_fukuandan of where
+of.company_id = oc.id and of.salTime_id = os.id  and of.op_id =oa.id ";
+        if ($where['company_name']) {
+            $sql .= " and oc.company_name like '%{$where['company_name']}%'";
+        }
+        $sql .= " order by update_time desc";
+        $result=$this->g_db_query($sql);
+        return $result;
+    }
+    function getFukuandanListCount ($where = null) {
+        $sql = "select count(of.id) as cnt  from OA_admin oa, OA_company oc,OA_salarytime os,OA_fukuandan of where
+of.company_id = oc.id and of.salTime_id = os.id  and of.op_id =oa.id ";
+        if ($where['company_name']) {
+            $sql .= " and oc.company_name like '%{$where['company_name']}%'";
+        }
+        $result=$this->g_db_query($sql);
+        $sum = mysql_fetch_array($result);
+        return $sum['cnt'];
+    }
+
     function getShoukuanList () {
         $sql = "select oa.name as admin_name,oc.company_name,os.salaryTime,of.*  from OA_admin oa, OA_company oc,OA_salarytime os,OA_shoukuan of where
 of.company_id = oc.id and of.salaryTime_id = os.id  and of.op_id =oa.id ;";
+        $result=$this->g_db_query($sql);
+        return $result;
+    }
+    function saveFukuandan($fukuandan) {
+        $sql="insert into OA_fukuandan
+        (company_id,salTime_id,salSumValue,
+        op_id,file_path,create_time,update_time,
+        fukuan_status,memo)
+        values ({$fukuandan['company_id']},{$fukuandan['salTime_id']},
+        {$fukuandan['salSumValue']},{$fukuandan['op_id']},'{$fukuandan['file_path']}',
+        now(),now(),{$fukuandan['fukuan_status']},'{$fukuandan['memo']}'
+        )";
+        echo $sql;
+        $result=$this->g_db_query($sql);
+        return $result;
+    }
+    function updateFukuandan ($fukuandan) {
+        $sql="update OA_fukuandan
+        set company_id = {$fukuandan['company_id']},salTime_id = {$fukuandan['salTime_id']},
+        salSumValue = {$fukuandan['salSumValue']},
+        op_id = {$fukuandan['op_id']},
+        file_path = '{$fukuandan['file_path']}',
+        create_time = now(),update_time = now(),
+        fukuan_status = {$fukuandan['fukuan_status']},memo = '{$fukuandan['memo']}';";
         $result=$this->g_db_query($sql);
         return $result;
     }
@@ -217,7 +262,33 @@ of.company_id = oc.id and of.salary_time_id = os.id  and of.op_id =oa.id ;";
         $result = $this->g_db_query ( $sql );
         return $result;
     }
+    function updateSumSalary($salary) {
+        $sql = "update OA_total
+        set sum_per_yingfaheji = {$salary['per_yingfaheji']},
+            sum_per_shiye = {$salary['per_shiye']},
+            sum_per_yiliao = {$salary['per_yiliao']},
+            sum_per_yanglao = {$salary['per_yanglao']},
+            sum_per_gongjijin = {$salary['per_gongjijin']},
+            sum_per_daikoushui = {$salary['per_daikoushui']},
+            sum_per_koukuangheji = {$salary['per_koukuangheji']},
+            sum_per_shifaheji = {$salary['per_shifaheji']},
+            sum_com_shiye = {$salary['com_shiye']},
+            sum_com_yiliao= {$salary['com_yiliao']},
+            sum_com_yanglao = {$salary['com_yanglao']},
+            sum_com_gongshang = {$salary['com_gongshang']},
+            sum_com_shengyu = {$salary['com_shengyu']},
+            sum_com_gongjijin = {$salary['com_gongjijin']},
+            sum_com_heji = {$salary['com_heji']},
+            sum_laowufei = {$salary['laowufei']},
+            sum_canbaojin = {$salary['canbaojin']},
+            sum_danganfei = {$salary['danganfei']},
+            sum_paysum_zhongqi = {$salary['paysum_zhongqi']}
+    	where salaryTime_Id = {$salary['salaryTimeId']}
+    	;";
+        $result = $this->g_db_query ( $sql );
 
+        return $result;
+    }
     // 保存工资合计项
     function saveSumSalary($salary) {
         $sql = "insert  into  OA_total (salaryTime_Id,sum_per_yingfaheji,sum_per_shiye,sum_per_yiliao,sum_per_yanglao,sum_per_gongjijin,sum_per_daikoushui
@@ -1036,32 +1107,11 @@ ON c.id = d.company_level where  1 = 1
         $list = $this->g_db_query ( $sql );
         return $list;
     }
-    function searchSalaryListBy_SalaryTimeId($sid) {
-        /**
-         * `employid` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
-         * `salaryTimeId` int(11) NOT NULL,
-         * `per_yingfaheji` double(10,2) DEFAULT NULL,
-         * `per_shiye` double(10,2) DEFAULT NULL,
-         * `per_yiliao` double(10,2) DEFAULT NULL,
-         * `per_yanglao` double(10,2) DEFAULT NULL,
-         * `per_gongjijin` double(10,2) DEFAULT NULL,
-         * `per_daikoushui` double(10,2) DEFAULT NULL,
-         * `per_koukuangheji` double(10,2) DEFAULT NULL,
-         * `per_shifaheji` double(10,2) DEFAULT NULL,
-         * `com_shiye` double(10,2) DEFAULT NULL,
-         * `com_yiliao` double(10,2) DEFAULT NULL,
-         * `com_yanglao` double(10,2) DEFAULT NULL,
-         * `com_gongshang` double(10,2) DEFAULT NULL,
-         * `com_shengyu` double(10,2) DEFAULT NULL,
-         * `com_gongjijin` double(10,2) DEFAULT NULL,
-         * `com_heji` double(10,2) DEFAULT NULL,
-         * `laowufei` double(10,2) DEFAULT NULL,
-         * `canbaojin` double(10,2) DEFAULT NULL,
-         * `danganfei` double(10,2) DEFAULT NULL,
-         * `paysum_zhongqi` double(10,2) DEFAULT NULL,
-         * `salary_type` int(2) NOT NULL DEFAULT '0',
-         */
+    function searchSalaryListBy_SalaryTimeId($sid,$count = null) {
         $sql = "select *  from OA_salary where salaryTimeId=$sid";
+        if ($count) {
+            $sql .= " limit $count";
+        }
         $list = $this->g_db_query ( $sql );
         return $list;
     }

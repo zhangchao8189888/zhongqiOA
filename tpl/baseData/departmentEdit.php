@@ -10,8 +10,8 @@
     <div class="search-form">
         <div class="row-fluid1">
             <div class="search">
-<!--                <input type="text" />-->
-<!--                <input type="submit" value="搜索" name="yt0" class="btn btn-success" id="classify">-->
+                公司名称：<input type="text" maxlength="20" id="e_company"name="e_company"  /><input type="hidden" value="" id="company_id" name="company_id"/>
+                <input type="submit" value="搜索" name="yt0" class="btn btn-success" id="classify">
             </div>
         </div>
     </div>

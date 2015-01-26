@@ -80,7 +80,7 @@ class EmployDao extends BaseDao
     	return $result;
     }
     function getEmployById($eid){
-    	$sql="select *  from OA_employ where id=$eid";
+    	$sql="select oc.company_name,oe.*  from OA_employ oe,OA_company oc where oe.e_company_id = oc.id and oe.id=$eid";
     	//echo $sql;
     	$result=$this->g_db_query($sql);
     	return mysql_fetch_array($result);
@@ -94,14 +94,14 @@ class EmployDao extends BaseDao
     }
     function updateEm($employ){
     	$sql="update OA_employ  set 
-		e_name='{$employ["e_name"]}',e_company='{$employ["e_company"]}',
+		e_name='{$employ["e_name"]}',e_company='{$employ["e_company"]}',e_company_id={$employ["e_company_id"]},
 		e_num='{$employ["e_num"]}',bank_name='{$employ["bank_name"]}',
 		bank_num='{$employ["bank_num"]}',e_type='{$employ["e_type"]}',
 		shebaojishu={$employ["shebaojishu"]},gongjijinjishu={$employ["gongjijinjishu"]},
 		laowufei={$employ["laowufei"]},canbaojin={$employ["canbaojin"]},e_hetongnian={$employ["e_hetongnian"]},e_hetong_date='{$employ["e_hetong_date"]}',
-		danganfei={$employ["danganfei"]},memo='{$employ["memo"]}' where id={$employ["id"]}
+		danganfei={$employ["danganfei"]},memo='{$employ["memo"]}',update_time = now() where id={$employ["id"]}
 		";
-    	//echo $sql;
+    	echo $sql;
 		$result=$this->g_db_query($sql);
 		return $result;
     }

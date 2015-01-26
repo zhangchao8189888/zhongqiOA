@@ -4,6 +4,7 @@ $(function(){
         submitHandler:function(form){
             var obj = {};
             obj.shenfenType = $("#shenfenType").val();
+            obj.type_id = $("#type_id").val();
             obj.id = $("#typeId").val();
             $.ajax(
                 {
