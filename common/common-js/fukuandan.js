@@ -83,9 +83,26 @@ $(document).ready(function () {
         }
 
     });
+    Handsontable.Dom.addEvent(rowHeaders, 'click', function () {
+        if (this.checked) {
+            salaryGride.updateSettings({
+                fixedRowsTop: 1
+            });
+        } else {
+            salaryGride.updateSettings({
+                fixedRowsTop: 0
+            });
+        }
+
+    });
     $('.rowCheck').click(function () {
         var salTimeId = $(this).attr('data-id');
-        var fileName = salTimeId;
+        var fileName = $(this).attr('data-file');
+        if (!fileName) {
+            return;
+        }
+        //salTimeId
+        $("#salaryTimeId").val(salTimeId);
         $.ajax(
             {
                 type: "get",
@@ -110,30 +127,35 @@ $(document).ready(function () {
         );
 
     });
-    var selectFirst = document.getElementById('selectFirst'),
-        rowHeaders = document.getElementById('rowHeaders'),
-        colHeaders = document.getElementById('colHeaders');
-    /*Handsontable.Dom.addEvent(rowHeaders, 'click', function () {
-     hot5.updateSettings({
-     rowHeaders: this.checked
-     });
-     });
-     */
-    Handsontable.Dom.addEvent(colHeaders, 'click', function () {
-        if (this.checked) {
-            hot5.updateSettings({
-                fixedColumnsLeft: 2
-            });
-        } else {
-            hot5.updateSettings({
-                fixedColumnsLeft: 0
-            });
-        }
 
-    });
-    $("#import").click(function(){
-        $("#excelForm").attr("action","index.php?action=Salary&mode=salaryImport");
-        $("#excelForm").submit();
+    $("#comeIn").click(function(){
+        var data = salaryGride.getData();
+        if (data.length < 0) {
+            return;
+        }
+        var url = 'index.php?action=Salary&mode=SalaryComeIn';
+        var formData = {
+            "data": data,
+            salaryTimeId: $("#salaryTimeId").val()
+        }
+        $.ajax({
+            url: url,
+            data: formData, //returns all cells' data
+            dataType: 'json',
+            type: 'POST',
+            success: function (res) {
+                if (res.code == '10000') {
+                    console.log(res.data);
+                    alert('工作保存成功');
+                }
+                else {
+                    console.log('Save error');
+                }
+            },
+            error: function () {
+                console.text('Save error');
+            }
+        });
     });
     $("#e_company").on("click",function(){
         var input;

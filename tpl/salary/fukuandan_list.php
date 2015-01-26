@@ -5,6 +5,7 @@ $searchType=$form_data['searchType'];
 $search_name = $form_data['search_name'];
 $com_status = $form_data['com_status'];
 $errorMsg=$form_data['error'];
+$succ=$form_data['succ'];
 $admin=$_SESSION['admin'];
 ?>
 <script src="common/hot-js/handsontable.full.js"></script>
@@ -28,15 +29,6 @@ $admin=$_SESSION['admin'];
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span12"><div class="widget-box">
-                    <!--<div class="widget-title">
-                        <ul class="nav nav-pills">
-                            <li class="active"><a href="index.php?action=Order&mode=toOrderPage">订货单</a></li>
-                            <li class=""><a href="index.php?action=Order&mode=toOrderReturnList">退货单</a></li>
-                            <li class=""><a href="index.php?action=Order&mode=toOrderStatistics">订单商品统计</a></li>
-                        </ul>
-
-                    </div>-->
-
                     <div class="widget-content tab-content ">
                         <div class="tab-pane active" id="tab1">
 
@@ -106,7 +98,7 @@ $admin=$_SESSION['admin'];
                                 </td>
                                 <td class="tr">
 <!--                                    <a title="修改" data-id="--><?php //echo $row['id'];?><!--" style="cursor:pointer"  class="rowUpdate theme-color">修改</a>-->
-                                    <a title="查看" data-id="<?php echo $row['file_path'];?>" style="cursor:pointer"  class="rowCheck theme-color">查看付款详细</a>
+                                    <a title="查看" data-file="<?php echo $row['file_path'];?>" data-id="<?php echo $row['salTime_id'];?>" style="cursor:pointer"  class="rowCheck theme-color">查看付款详细</a>
 
                                     <div class="cb"></div>
                                 </td>
@@ -132,6 +124,9 @@ $admin=$_SESSION['admin'];
                         <div class="controls">
                             <!-- checked="checked"-->
                             <input type="checkbox" id="colHeaders" autocomplete="off"> <span>锁定前两列</span>
+                            <input type="checkbox" id="rowHeaders" autocomplete="off"> <span>锁定第一行</span>
+                            <input type="button" value="入账" class="btn btn-success" id="comeIn" />
+                            <input type="hidden" id="salaryTimeId" name="salaryTimeId" value=""/>
                         </div>
                         <div id="exampleGrid" class="dataTable" style="width: 1400px; height: 400px; overflow: auto"></div>
                     </div>

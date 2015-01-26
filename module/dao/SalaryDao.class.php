@@ -41,6 +41,11 @@ of.company_id = oc.id and of.salaryTime_id = os.id  and of.op_id =oa.id ;";
         $result=$this->g_db_query($sql);
         return $result;
     }
+    function getFukuandanBySalTimeId ($salTime_id) {
+        $sql="select * from OA_fukuandan where salTime_id = $salTime_id";
+        $result = $this->g_db_query ( $sql );
+        return mysql_fetch_array ( $result );
+    }
     function saveFukuandan($fukuandan) {
         $sql="insert into OA_fukuandan
         (company_id,salTime_id,salSumValue,
@@ -50,7 +55,6 @@ of.company_id = oc.id and of.salaryTime_id = os.id  and of.op_id =oa.id ;";
         {$fukuandan['salSumValue']},{$fukuandan['op_id']},'{$fukuandan['file_path']}',
         now(),now(),{$fukuandan['fukuan_status']},'{$fukuandan['memo']}'
         )";
-        echo $sql;
         $result=$this->g_db_query($sql);
         return $result;
     }

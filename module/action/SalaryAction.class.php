@@ -107,6 +107,9 @@ class SalaryAction extends BaseAction {
             case "toFukuandanList" :
                 $this->toFukuandanList ();
                 break;
+            case "SalaryComeIn" :
+                $this->SalaryComeIn ();
+                break;
             default :
                 $this->modelInput();
                 break;
@@ -116,6 +119,86 @@ class SalaryAction extends BaseAction {
     }
     function modelInput() {
         $this->mode = "toAdd";
+    }
+    function SalaryComeIn () {
+        $bukouData = array();//补扣、垫付：企业单位未缴纳个人金额，中企垫付
+        $daikouData = array();//代扣、延付：企业单位已缴纳个人金额，中企暂存延付
+        $fukuanData = $_REQUEST['data'];
+        $salaryTimeId = $_REQUEST['salaryTimeId'];
+        $this->objDao = new SalaryDao();
+        $salListResult = $this->objDao->searchSalaryListBy_SalaryTimeId($salaryTimeId);
+        $fukuanList = array();
+        $errorList =array();
+        foreach($fukuanData as $key =>$fukuan){
+            if ($key == 0) continue;
+            if (empty($fukuan[2])) {
+                $errorList[] = "第$key 行,身份证为空";
+            }
+            $fukuanList[$fukuan[2].'']['name'] = $fukuan[1];
+            $fukuanList[$fukuan[2].'']['per_shiye'] = $fukuan[3];
+            $fukuanList[$fukuan[2].'']['per_yiliao'] = $fukuan[4];
+            $fukuanList[$fukuan[2].'']['per_yanglao'] = $fukuan[5];
+            $fukuanList[$fukuan[2].'']['per_gongjijin'] = $fukuan[6];
+            $fukuanList[$fukuan[2].'']['com_shiye'] = $fukuan[7];
+            $fukuanList[$fukuan[2].'']['com_yiliao'] = $fukuan[8];
+            $fukuanList[$fukuan[2].'']['com_yanglao'] = $fukuan[9];
+            $fukuanList[$fukuan[2].'']['com_gongshang'] = $fukuan[10];
+            $fukuanList[$fukuan[2].'']['com_shengyu'] = $fukuan[11];
+            $fukuanList[$fukuan[2].'']['com_gongjijin'] = $fukuan[12];
+        }
+        if (count($errorList) > 0) {
+            $jsonData['code'] = 100001;
+            $jsonData['data'] = $errorList;
+            echo json_encode($jsonData);
+            exit;
+        }
+        //print_r($fukuanList);
+        $noEqual = array();
+        while ($row = mysql_fetch_array($salListResult)) {
+            $key = $row['employid'];
+            $results = $this->_commonEqual($fukuanList[$key],$row);
+            $noEqual[] = $results;
+        }
+        $jsonData = array();
+        $jsonData['code'] = 100000;
+        $jsonData['data'] = $noEqual;
+        echo json_encode($jsonData);
+        exit;
+    }
+
+    /**
+     * @param $arr1 付款单
+     * @param $arr2 工资
+     */
+    function _commonEqual($arr1,$arr2){
+        $noEqual['yanfu'] =array();
+        $noEqual['dianfu'] =array();
+        $noEqual['error'] =array();
+        //print_r($arr1);
+        //print_r($arr2);
+        foreach($arr1 as $key => $val){
+            //echo $arr2[$key]."{$key}".$val."/\n";
+            if (floatval($arr2[$key]) != floatval($val)) {
+                if ($val == 0) {
+                    $yanfu['key'] = $key;
+                    $yanfu['val'] = $arr2[$key];
+                    $yanfu['employNo'] = $arr2['employid'];
+                    $noEqual['yanfu'][] =$yanfu;
+                } else if ($arr2[$key] == 0) {
+                    $dianfu['key'] = $key;
+                    $dianfu['val'] = $val;
+                    $dianfu['employNo'] = $arr2['employid'];
+                    $noEqual['dianfu'][] =$dianfu;
+                } else {
+                    $error['gongzi'] = $arr2[$key];
+                    $error['fukuandan'] = $val;
+                    $error['key'] = $key;
+                    $error['employNo'] = $arr2['employid'];
+                    $noEqual['error'][] =$error;
+                }
+            }
+        }
+        return $noEqual;
     }
     function toFukuandanList () {
         $this->mode = "toFukuandanList";
@@ -858,9 +941,13 @@ class SalaryAction extends BaseAction {
         $files = $op->list_filename("upload/", 1);
         $this->objForm->setFormData("files", $files);
     }
-    function filesUpCommon ($uploadPath) {
-        $exmsg = new EC();
-        $fullfilepath = $uploadPath . $_FILES['file']['name'];
+    function filesUpCommon ($uploadPath,$fileName = null) {
+        if ($fileName != null) {
+            $fullfilepath = $uploadPath . $fileName;
+        } else {
+            $fullfilepath = $uploadPath . $_FILES['file']['name'];
+        }
+
         $errorMsg = "";
         //var_dump($_FILES);
         $fileArray = split("\.", $_FILES['file']['name']);
@@ -963,36 +1050,39 @@ class SalaryAction extends BaseAction {
         $fukuandan['memo'] = $_REQUEST['more'];
         $fukuandan['op_id'] = $adminPO['id'];
 
-        $path = 'fukuandanfile/';
-        $fukuandan['file_path'] = $_FILES['file']['name'];
-        $mess = $this->filesUpCommon($path);
+        $this->objDao = new SalaryDao();
+        if (empty($fukuandan['id'])) {
+            $fukuandanPO = $this->objDao->getFukuandanBySalTimeId($fukuandan['salTime_id']);
+            if (!empty($fukuandanPO)) {
+                $errorMsg = '该工资月份已经添加过了';
+                $this->objForm->setFormData("error", $errorMsg);
+            } else{
+                $path = 'fukuandanfile/';
+                $fileArray = explode(".",$_FILES['file']['name']);
+                $fileName = 'fukuandan-'.$fukuandan['salTime_id'].".{$fileArray[1]}";
+                $fukuandan['file_path'] = $fileName;
+                $mess = $this->filesUpCommon($path,$fileName);
 
-        if(!empty($mess)) {
-            $this->toFukuandanList();
-        } else {
-            $this->objDao = new SalaryDao();
-            $data = array();
-            if (empty($fukuandan['id'])) {
-                $result = $this->objDao->saveFukuandan($fukuandan);
-                if ($result) {
-                    $data['code'] = 100000;
-                    $data['mess'] = '添加成功';
-                } else {
-                    $data['code'] = 100001;
-                    $data['mess'] = '添加失败，请重试';
+                if(empty($mess)) {
+                    $result = $this->objDao->saveFukuandan($fukuandan);
+                    if ($result) {
+                        $this->objForm->setFormData("succ", '添加成功');
+                    } else {
+                        $this->objForm->setFormData("error", '添加失败请重试');
+                    }
                 }
-            } else {
-                $result = $this->objDao->updateFukuandan($fukuandan);
-                if ($result) {
-                    $data['code'] = 100000;
-                    $data['mess'] = '修改成功';
-                } else {
-                    $data['code'] = 100001;
-                    $data['mess'] = '修改失败，请重试';
-                }
+
             }
-            $this->toFukuandanList();
+
+        } else {
+            $result = $this->objDao->updateFukuandan($fukuandan);
+            if ($result) {
+                $this->objForm->setFormData("succ", '修改成功');
+            } else {
+                $this->objForm->setFormData("error", '修改失败请重试');
+            }
         }
+        $this->toFukuandanList();
     }
     function saveShoukuan () {
 
