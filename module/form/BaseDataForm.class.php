@@ -33,5 +33,4 @@ class BaseDataForm extends BaseForm
         }
     }
 }
-?>
 
