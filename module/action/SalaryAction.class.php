@@ -152,16 +152,19 @@ class SalaryAction extends BaseAction {
             echo json_encode($jsonData);
             exit;
         }
-        //print_r($fukuanList);
         $noEqual = array();
         while ($row = mysql_fetch_array($salListResult)) {
             $key = $row['employid'];
             $results = $this->_commonEqual($fukuanList[$key],$row);
-            $noEqual[] = $results;
+            if (count($results['error']) >2)$noEqual[] = $results['error'];
+            if (count($results['dianfu']) >2) $bukouData[] = $results['dianfu'];
+            if (count($results['yanfu']) >2)$daikouData[] = $results['yanfu'];
         }
         $jsonData = array();
         $jsonData['code'] = 100000;
-        $jsonData['data'] = $noEqual;
+        $jsonData['data']['error'] = $noEqual;
+        $jsonData['data']['dianfu'] = $bukouData;
+        $jsonData['data']['yanfu'] = $daikouData;
         echo json_encode($jsonData);
         exit;
     }
@@ -174,27 +177,20 @@ class SalaryAction extends BaseAction {
         $noEqual['yanfu'] =array();
         $noEqual['dianfu'] =array();
         $noEqual['error'] =array();
-        //print_r($arr1);
-        //print_r($arr2);
+        $noEqual['yanfu']['e_num'] = $arr2['employid'];
+        $noEqual['dianfu']['e_num'] = $arr2['employid'];
+        $noEqual['error']['e_num'] = $arr2['employid'];
+        $noEqual['yanfu']['e_name'] = $arr2['e_name'];
+        $noEqual['dianfu']['e_name'] = $arr2['e_name'];
+        $noEqual['error']['e_name'] = $arr2['e_name'];
         foreach($arr1 as $key => $val){
-            //echo $arr2[$key]."{$key}".$val."/\n";
             if (floatval($arr2[$key]) != floatval($val)) {
                 if ($val == 0) {
-                    $yanfu['key'] = $key;
-                    $yanfu['val'] = $arr2[$key];
-                    $yanfu['employNo'] = $arr2['employid'];
-                    $noEqual['yanfu'][] =$yanfu;
+                    $noEqual['yanfu'][$key] =$arr2[$key];
                 } else if ($arr2[$key] == 0) {
-                    $dianfu['key'] = $key;
-                    $dianfu['val'] = $val;
-                    $dianfu['employNo'] = $arr2['employid'];
-                    $noEqual['dianfu'][] =$dianfu;
+                    $noEqual['dianfu'][$key] =$val;
                 } else {
-                    $error['gongzi'] = $arr2[$key];
-                    $error['fukuandan'] = $val;
-                    $error['key'] = $key;
-                    $error['employNo'] = $arr2['employid'];
-                    $noEqual['error'][] =$error;
+                    $noEqual['error'][$key] = '工资：'.$arr2[$key].'/付款单：'.$val;
                 }
             }
         }

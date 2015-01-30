@@ -1112,7 +1112,7 @@ ON c.id = d.company_level where  1 = 1
         return $list;
     }
     function searchSalaryListBy_SalaryTimeId($sid,$count = null) {
-        $sql = "select *  from OA_salary where salaryTimeId=$sid";
+        $sql = "select oe.e_name ,os.*  from OA_salary os,OA_employ oe where os.employId = oe.e_num and  salaryTimeId=$sid";
         if ($count) {
             $sql .= " limit $count";
         }
