@@ -2,6 +2,7 @@
 require_once("module/form/EmployForm.class.php");
 require_once("module/dao/EmployDao.class.php");
 require_once("module/dao/SalaryDao.class.php");
+require_once("module/dao/BaseDataDao.class.php");
 require_once("tools/excel_class.php");
 require_once("tools/Classes/PHPExcel.php");
 require_once("tools/Util.php");
@@ -60,6 +61,12 @@ class EmployAction extends BaseAction {
             case "toEmImport" :
                 $this->toEmImport();
                 break;
+            case "employDelByIds" :
+                $this->employDelByIds();
+                break;
+            case "employDelById" :
+                $this->employDelById();
+                break;
             default :
                 $this->modelInput();
                 break;
@@ -78,9 +85,46 @@ class EmployAction extends BaseAction {
         $employId = $_REQUEST['employId'];
         $this->objDao = new EmployDao();
         $employInfo = $this->objDao->getEmployById($employId);
-
+        $this->objDao = new BaseDataDao();
+        $companyTree = $this->objDao->getCompanyRootIdByCompanyId($employInfo['e_company_id']);
+        $companyList = $this->objDao->getDepartmentsByCompanyId($companyTree['id']);
+        while($row = mysql_fetch_array($companyList)) {
+            $pao['name'] = $row['name'];
+            $pao['id'] = $row['id'];
+            $department[] = $pao;
+        }
+        $employInfo['department'] = $department;
         echo json_encode($employInfo);
         exit;
+    }
+    function employDelById () {
+
+        $employId = $_REQUEST['employId'];
+        $this->objDao = new EmployDao();
+        $result = $this->objDao->delEmployById($employId);
+        $data = array();
+        if ($result) {
+            $data['code'] = 100000;
+            $data['mess'] = '删除成功';
+        } else {
+            $data['code'] = 100001;
+            $data['mess'] = '删除失败';
+        }
+        echo json_encode($data);
+        exit;
+    }
+    function employDelByIds() {
+        $employIds = $_REQUEST['employIds'];
+        $employIdArr = explode(',',$employIds);
+
+        $this->objDao = new EmployDao();
+        foreach($employIdArr as $id) {
+            if (empty($id)) {
+                continue;
+            }
+            $result = $this->objDao->delEmployById($id);
+        }
+        $this->toEmployList();
     }
     function getEmployTemlate() {
         $file = 'template/empTemlate.xls';
@@ -198,6 +242,8 @@ class EmployAction extends BaseAction {
             $employList[$i]['e_company'] = $company['company_name'];
             $employList[$i]['e_name'] = $return[Sheet1][$i][1];
             $employList[$i]['e_num'] = $return[Sheet1][$i][2];
+            $employList[$i]['depart'] = $return[Sheet1][$i][0];
+            $employList[$i]['e_state'] = 1;
             $employList[$i]['bank_name'] = $return[Sheet1][$i][3];
             $employList[$i]['bank_num'] = $return[Sheet1][$i][4];
             $employList[$i]['e_type'] = $userTypeName[$return[Sheet1][$i][5]];
@@ -209,17 +255,8 @@ class EmployAction extends BaseAction {
             $employList[$i]['memo'] = $return[Sheet1][$i][11];
             $employList[$i]['e_hetong_date'] = $return[Sheet1][$i][12];
             $employList[$i]['e_hetongnian'] = findNullReturnNumber($return[Sheet1][$i][13]);
-            /*//查询公司信息
-            if ($comname != $employList[$i]['e_company']) {
-                $company = $this->objDao->searchCompanyByName($comname);
-                if (empty($company)) {
-                    //添加公司信息
-                    $companyList = array();
-                    $companyList['name'] = $comname;
-                    $companyId = $this->objDao->addCompany($companyList);
-                    $comname = $employList[$i]['e_company'];
-                }
-            }*/
+            $employList[$i]['department_id'] = 0;
+
         }
         //var_dump($employList);
         $errorList = array();
@@ -238,6 +275,25 @@ class EmployAction extends BaseAction {
                     $j++;
                     continue;
                 }
+                if (!empty($employList[$i]['depart'])) {
+                    $dataBaseDao = new BaseDataDao();
+                    $dapartment = trim($return[Sheet1][$i][0]);
+
+                    $companyTree = $dataBaseDao->getCompanyRootIdByCompanyId($companyId);
+                    $dataDpart = $dataBaseDao->getDepartmentByNameAndComId($dapartment,$companyTree['id']);
+                    if (!empty($companyTree) && empty($dataDpart)) {
+                        $data['company_id'] = 0;
+                        $data['name'] = $return[Sheet1][$i][0];
+                        $data['pid'] = $companyTree['id'];
+                        $result = $dataBaseDao->addDepartmentTreeData($data);
+                        if ($result){
+                            $id = $this->objDao->g_db_last_insert_id();
+                            $employList[$i]['department_id'] = $id;
+                        } else {
+                            $employList[$i]['department_id'] = 0;
+                        }
+                    }
+                }
                 $retult = $this->objDao->addEm($employList[$i]);
 
                 if ($retult) {
@@ -245,11 +301,10 @@ class EmployAction extends BaseAction {
                     $emList[$z]['e_name'] = $employList[$i]["e_name"];
                     $z++;
                 }
-            } else {
-                $errorList[$j]["errmg"] = "此员工身份证号为空或是系统无法识别，请重新复制到模版重新上传";
+            } else if(!empty($employList[$i]['e_name']) && !$employList[$i]['e_num']){
+                $errorList[$j]["errmg"] = "{$employList[$i]['e_num']} :此员工身份证号为空或是系统无法识别，请重新复制到模版重新上传";
                 $errorList[$j]["e_name"] = $employList[$i]["e_name"];
                 $errorList[$j]["e_num"] = $employList[$i]["e_num"];
-                // $this->objForm->setFormData("succ",$succMsg);
                 $j++;
             }
         }
@@ -286,6 +341,8 @@ class EmployAction extends BaseAction {
             $where.= ' and e_company like "%'.$search_name.'%"';
         } elseif ($searchType =='e_num') {
             $where.= ' and e_num ='.$search_name;
+        } elseif ($searchType =='e_name') {
+            $where.= ' and e_name like "%'.$search_name.'%"';
         }
         $sum =$this->objDao->g_db_count("OA_employ","*","1=1 $where");
         $pageSize=PAGE_SIZE_EMPLOY;
@@ -307,6 +364,7 @@ class EmployAction extends BaseAction {
         $pages->makePages();
         $employList = array();
         global $userType;
+        global $employState;
         //company_code,company_name,com_contact,contact_no,company_address,com_bank,bank_no,company_level,company_type,company_status
         while ($row = mysql_fetch_array($searchResult)) {
             $employ['id'] = $row['id'];
@@ -317,6 +375,7 @@ class EmployAction extends BaseAction {
             $employ['e_type_name'] = $userType[$row['e_type']];
             $employ['shebaojishu'] = $row['shebaojishu'];
             $employ['gongjijinjishu'] = $row['gongjijinjishu'];
+            $employ['e_state_name'] = $employState[$row['e_state']];
             $employList[] = $employ;
         }
         $this->objForm->setFormData("employList",$employList);
@@ -343,6 +402,8 @@ class EmployAction extends BaseAction {
         $employ['danganfei'] = $_POST['danganfei'];
         $employ['e_hetongnian'] = $_POST['e_hetongnian'];
         $employ['e_hetong_date'] = $_POST['e_hetong_date'];
+        $employ['e_state'] = $_POST['e_state'];
+        $employ['department_id'] = $_POST['department_id'];
         $employ['memo'] = $_POST['memo'];
         $this->objDao = new EmployDao();
         $data = array();

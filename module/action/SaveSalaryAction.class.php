@@ -288,6 +288,7 @@ class SaveSalaryAction extends BaseAction {
 			$salaryTime = $this->objDao->searchSalTimeByComIdAndSalTime ( $companyId, "{$time["first"]}", "{$time["last"]}", 3 );
 			if (! empty ( $salaryTime ['id'] )) {
                 $data['mess'] = " $comname 本月已做工资 ,有问题请联系财务！";
+                $data['code'] = "100001";
                 echo json_encode($data);
                 exit;
 			}
@@ -306,6 +307,7 @@ class SaveSalaryAction extends BaseAction {
 		if (! $lastSalaryTimeId) {
             $this->objDao->rollback ();
             $data['mess'] = "保存工资时间失败！";
+            $data['code'] = "100001";
             echo json_encode($data);
             exit;
 		}
@@ -349,6 +351,7 @@ class SaveSalaryAction extends BaseAction {
 				if (! $lastSumSalaryId) {
                     $this->objDao->rollback ();
                     $data['mess'] = "保存合计工资失败！";
+                    $data['code'] = "100001！";
                     echo json_encode($data);
                     exit;
 				}
@@ -361,6 +364,7 @@ class SaveSalaryAction extends BaseAction {
 			if (! $lastSalaryId && $lastSalaryId != 0) {
                 $this->objDao->rollback ();
                 $data['mess'] = "保存固定工资失败！";
+                $data['code'] = "100001";
                 echo json_encode($data);
                 exit;
 			}
@@ -406,6 +410,7 @@ class SaveSalaryAction extends BaseAction {
 		// 事务提交
 		$this->objDao->commit ();
         $data['mess'] = "保存一次工资成功";
+        $data['code'] = "100000";
         echo json_encode($data);
         exit;
 	}

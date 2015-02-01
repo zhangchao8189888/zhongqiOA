@@ -5,6 +5,10 @@ $(function(){
     $("#company_validate").validate({
         onsubmit:true,
         submitHandler:function(form){
+            if (!$("#company_id").val()) {
+                alert('请重新选择公司');
+                return;
+            }
             var obj = {};
             obj.e_num = $("#e_num").val();
             obj.e_company = $("#e_company").val();
@@ -13,6 +17,7 @@ $(function(){
             obj.bank_no = $("#bank_no").val();
             obj.e_bank = $("#e_bank").val();
             obj.e_type = $("#e_type").val();
+            obj.e_state = $("#e_state").val();
             obj.employ_id = $("#employ_id").val();
             obj.shebaojishu = $("#shebaojishu").val();
             obj.gongjijinjishu = $("#gongjijinjishu").val();
@@ -21,12 +26,14 @@ $(function(){
             obj.danganfei = $("#danganfei").val();
             obj.e_hetongnian = $("#e_hetongnian").val();
             obj.e_hetong_date = $("#e_hetong_date").val();
+            obj.department_id = $("#department").val();
             obj.memo = $("#memo").val();
             $.ajax(
                 {
                     type: "POST",
                     url: "index.php?action=Employ&mode=saveOrUpdateEmploy",
                     data: obj,
+                    dataType :'json',
                     success: function(data){
                         if (data.code > 100000) {
                             alert(data.message);
@@ -40,6 +47,8 @@ $(function(){
         rules: {
             e_name: { required: true },
             e_company: { required: true },
+            e_hetongnian: { required: true },
+            e_hetong_date: { required: true },
             e_name: { required: true }
             /*contacts_no: { required: true },
              contacts: { required: true }*/
@@ -62,6 +71,14 @@ $(function(){
                 required: '必填'
             },
             contacts:
+            {
+                required: '必填'
+            },
+            e_hetongnian:
+            {
+                required: '必填'
+            },
+            e_hetong_date:
             {
                 required: '必填'
             },
@@ -108,6 +125,22 @@ $(function(){
                 //得到用户信息
                 $("#e_company").val(obj.name);
                 $("#company_id").val(obj.id);
+                $.ajax(
+                    {
+                        type: "get",
+                        url: "index.php?action=BaseData&mode=getDepartmentByComId",
+                        data: {companyId : obj.id},
+                        dataType: "json",
+                        success: function(data){
+                            $("#department").html('');
+                            $("#department").append('<option value="0">无部门</option>');
+                            for(var i = 0; i < data.length; i++) {
+                                $("#department").append('<option value="'+data[i].id+'">'+data[i].name+'</option>');
+                            }
+
+                        }
+                    }
+                );
             }
         }
         input = $(this);

@@ -673,6 +673,9 @@ class SalaryAction extends BaseAction {
         $errorRow = 0;
         global $userType;
         for($i = 1; $i < count ( $dataExcel ); $i ++) {
+            if($dataExcel [$i] [$shenfenzheng] =='null') {
+                continue;
+            }
             $employ = $this->objDao->getEmByEno ( $dataExcel [$i] [$shenfenzheng] );
             if ($employ) {
                 $jisuan_var [$i] ['yinhangkahao'] = $employ ['bank_num'];
@@ -698,6 +701,7 @@ class SalaryAction extends BaseAction {
                     $f++;
                     $addValue += $dataExcel [$i] [($row - 1)];
                 } else {
+                    $dataExcel [$i] [($row - 1)] = '无数值';
                     $error [$errorRow] ["error"] = "第$i 行 第$row 列所加项非数字类型";
                     $errorRow++;
                     continue;
@@ -713,6 +717,7 @@ class SalaryAction extends BaseAction {
                         $delValue += $dataExcel [$i] [($row - 1)];
                         $f++;
                     } else {
+                        $dataExcel [$i] [($row - 1)] = '无数值';
                         $error [$errorRow] ["error"] = "第$i 行 第$row 列所加项非数字类型";
                         $errorRow++;
                         continue;
@@ -752,6 +757,9 @@ class SalaryAction extends BaseAction {
         $sumJiaozhongqiheji = 0;
         $data = array();
         for($i = 1; $i < count ( $dataExcel ); $i ++) {
+            if($dataExcel [$i] [$shenfenzheng] =='null') {
+                continue;
+            }
             $canjiren = $this->objDao->getCanjiren ( $dataExcel [$i] [$shenfenzheng] );
             $salary = array();
             $salary = $dataExcel[$i];

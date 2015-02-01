@@ -78,6 +78,9 @@ class BaseDataAction extends BaseAction {
             case "toEmployList" :
                 $this->toEmployList();
             default :
+            case "getDepartmentByComId" :
+                $this->getDepartmentByComId();
+            default :
                 $this->modelInput();
                 break;
         }
@@ -213,6 +216,23 @@ class BaseDataAction extends BaseAction {
         echo json_encode($result);
         exit;
     }
+    function getDepartmentByComId () {
+        $company_id = $_REQUEST['companyId'];
+        $this->objDao = new BaseDataDao();
+        $department = array();
+        if(!empty($company_id)) {
+
+            $companyTree = $this->objDao->getCompanyRootIdByCompanyId($company_id);
+            $companyList = $this->objDao->getDepartmentsByCompanyId($companyTree['id']);
+            while($row = mysql_fetch_array($companyList)) {
+                $pao['name'] = $row['name'];
+                $pao['id'] = $row['id'];
+                $department[] = $pao;
+            }
+        }
+        echo json_encode($department);
+        exit;
+    }
     function getDepartmentTreeJson() {
        $company_id = $_REQUEST['comapny_id'];
 //        $companyName ="测试单位";
@@ -285,10 +305,9 @@ class BaseDataAction extends BaseAction {
 
     }
     function addDepartmentTreeJson() {
-        $companyId = 11;
         $pid = $_POST['id'];
         $name = $_POST['name'];
-        $data['company_id'] = $companyId;
+        $data['company_id'] = 0;
         $data['name'] = $name;
         $data['pid'] = $pid;
         $this->objDao = new BaseDataDao();
@@ -296,7 +315,7 @@ class BaseDataAction extends BaseAction {
         $megs = array();
         if ($result){
             $id = $this->objDao->g_db_last_insert_id();
-            $treeNode = $this->objDao->getTreeNodeDataById($companyId,$id);
+            $treeNode = $this->objDao->getTreeNodeDataById($id);
             $treeNode['isParent'] = 'true';
             $megs['data']['id'] = $treeNode['id'];
             $megs['data']['name'] = $treeNode['name'];

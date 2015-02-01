@@ -119,9 +119,9 @@ $salState=array(
 //员工类型
 global $employState;
 $employState=array(
-    'zhengchang'=>0,
-    'lizhi'=>1,
-    'hetongdaoqi'=>2,
+    'zhengchang'=>1,
+    'lizhi'=>2,
+    'hetongdaoqi'=>3,
     '1'=>'正常',
     '2'=>'离职',
     '3'=>'合同到期',

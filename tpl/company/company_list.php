@@ -112,7 +112,7 @@ $admin=$_SESSION['admin'];
                                     <th class="tl"><div>联系方式</div></th>
                                     <th class="tl"><div>地址</div></th>
                                     <th class="tl"><div>银行账户</div></th>
-                                    <th class="tl"><div>客户等级</div></th>
+                                    <th class="tl"><div>企业类型</div></th>
                                     <th class="tl"><div>操作</div></th>
                                 </tr>
                                 </thead>

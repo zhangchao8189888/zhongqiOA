@@ -1,6 +1,8 @@
 <?php
+
 ob_start ();
 session_start ();
+header("Content-Type: text/html; charset=UTF-8");
 require_once ("./common/common.inc");
 $actionPath = $_REQUEST ['action'];
 global $actionPath;

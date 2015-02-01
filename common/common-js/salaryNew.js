@@ -24,10 +24,24 @@ $(document).ready(function () {
                 dataType: "json",
                 success: function(data){
                     var header = [];
+                    //var columns = [];
                     for(var i = 1;i <= data[0].length; i++){
                         header.push(i);
+//                        if (i >2 ) {
+//                            columns.push({
+//                                defaultValue:0,
+//                                type: 'numeric',
+//                                format: '0.00'
+//                            });
+//
+//                        }else {
+//                            columns.push({
+//                                defaultValue:''
+//                            });
+//                        }
                     }
                     hot5.updateSettings({
+                        //columns :columns,
                         colHeaders: header
                     });
                     hot5.loadData(data);
@@ -92,6 +106,7 @@ $(document).ready(function () {
     });
     var excelMove = [];
     var excelHead = [];
+    var errorList = [];
     $('#sumFirst').click(function () {
         $.ajax({
             url: "index.php?action=Salary&mode=sumSalary",
@@ -116,7 +131,7 @@ $(document).ready(function () {
                             colWidths.push(80);
                         }
                     }
-                    var errorList = res.error;
+                    errorList = res.error;
                     $("#error").html(errorList.length+"个错误");
                     $("#errorInfo").html("<tobdy></tobdy>");
                     for(var i =0 ; i < errorList.length; i++){
@@ -135,7 +150,7 @@ $(document).ready(function () {
                         cells: function (row, col, prop) {
                             var cellProperties = {};
                             //console.log(hot6.getData()[row][6]);
-                            if (hot6.getData()[row][shenfenleibie] == 'null' || hot6.getData()[row][shenfenleibie] == null){
+                            if (hot6.getData()[row][col] == '无数值'){
                                 //cellProperties.readOnly = true;
                                 cellProperties.renderer = redRenderer;
                             }
@@ -163,14 +178,18 @@ $(document).ready(function () {
         if (data.length < 0) {
             return;
         }
+        if (errorList.length > 0) {
+            alert('保存工资包含错误信息不能保存,请修改后重新保存');
+            return;
+        }
         var formData = {};
-        var url = 'index.php?action=SaveSalary&mode=saveSalary';
+        var url = 'index.php?action=SaveSalary&mode=saveNewAddSalary';
         if ($("#change").val() == 1) {
             formData = {
                 "data": data,
                 company_id: $("#company_id").val(),
                 e_company: $("#e_company").val(),
-                salaryDate: $("#salaryDate").val(),
+                salTimeId: $("#salTimeId").val(),
                 mark:  $("#mark").val(),
                 excelHead:  excelHead,
                 excelMove : excelMove
@@ -182,12 +201,14 @@ $(document).ready(function () {
             dataType: 'json',
             type: 'POST',
             success: function (res) {
-                if (res.result === 'ok') {
+                if (res.code > 100000) {
                     console.text('Data saved');
-                    alert('工作保存成功');
+                    alert(res.message);
+                    return;
                 }
                 else {
-                    console.text('Save error');
+                    alert(res.message);
+                    window.location.href = "index.php?action=Salary&mode=salarySearchList";
                 }
             },
             error: function () {
@@ -222,6 +243,21 @@ $(document).ready(function () {
                 //得到用户信息
                 $("#e_company").val(obj.name);
                 $("#company_id").val(obj.id);
+                $.ajax(
+                    {
+                        type: "get",
+                        url: "index.php?action=Salary&mode=getSalaryTimeListJson",
+                        data: {companyId : obj.id},
+                        dataType: "json",
+                        success: function(data){
+                            $("#salTimeId").html('<option value="-1">选择工资月份</option>');
+                            for(var i = 0; i < data.length; i++) {
+                                $("#salTimeId").append('<option value="'+data[i].id+'">'+data[i].salaryTime+'</option>');
+                            }
+
+                        }
+                    }
+                );
             }
         }
         oSearchSelect.targetInput = input;

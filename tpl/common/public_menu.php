@@ -8,9 +8,9 @@
         <ul>
             <li class=""> <a href="index.php"><i class="icon icon-file"></i> <span>首页</span></a>
             <!--<li class=""> <a href="index.php?action=Company&mode=toDepartmentEdit"><i class="icon icon-file"></i> <span>部门设置</span></a>-->
-            <li class="submenu"> <a href="#"><i class="icon icon-file"></i> <span>基础信息设置</span><span class="label label-important">2</span></a>
+            <li class="submenu open"> <a href="#"><i class="icon icon-file"></i> <span>基础信息设置</span><span class="label label-important">2</span></a>
                 <ul>
-                    <li><a href="index.php?action=BaseData&mode=toShenfenType">身份类别</a></li>
+                    <li class="active"><a href="index.php?action=BaseData&mode=toShenfenType">身份类别</a></li>
                     <li><a href="index.php?action=BaseData&mode=toDepartmentEdit">部门设置</a></li>
                 </ul>
             </li>

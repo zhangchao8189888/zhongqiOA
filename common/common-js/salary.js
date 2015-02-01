@@ -181,12 +181,14 @@ $(document).ready(function () {
             dataType: 'json',
             type: 'POST',
             success: function (res) {
-                if (res.result === 'ok') {
+                if (res.code > 100000) {
                     console.text('Data saved');
-                    alert('工作保存成功');
+                    alert(res.mess);
+                    return;
                 }
                 else {
-                    console.text('Save error');
+                    alert(res.mess);
+                    window.location.href = "index.php?action=Salary&mode=salarySearchList";
                 }
             },
             error: function () {

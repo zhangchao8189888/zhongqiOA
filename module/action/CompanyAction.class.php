@@ -2,6 +2,7 @@
 require_once("module/form/CompanyForm.class.php");
 require_once("module/dao/CompanyDao.class.php");
 require_once("module/dao/SalaryDao.class.php");
+require_once("module/dao/BaseDataDao.class.php");
 require_once("tools/excel_class.php");
 require_once("tools/Classes/PHPExcel.php");
 require_once("tools/Util.php");
@@ -206,7 +207,15 @@ class CompanyAction extends BaseAction {
         $data = array();
         if (empty($company['id'])) {
             $result = $this->objDao->addCompany($company);
+
             if ($result) {
+                $id = $this->objDao->g_db_last_insert_id();
+                $data['company_id'] = $id;
+                $data['name'] = $company['company_name'];
+                $data['pid'] = 0;
+                $data['isParent'] = 'true';
+                $this->objDao = new BaseDataDao();
+                $result = $this->objDao->addDepartmentTreeData($data);
                 $data['code'] = 100000;
                 $data['mess'] = '公司添加成功';
             } else {

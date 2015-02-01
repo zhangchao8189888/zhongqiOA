@@ -35,8 +35,8 @@
                 <a id="m_add" class="btn btn-success btn-mini" onclick="addTreeNode();">增加部门</a><br/>
                 <a id="m_edit" class="btn btn-warning btn-mini"  onclick="editTreeNode();">编辑部门</a><br/>
                 <a id="m_del" class="btn btn-danger btn-mini" onclick="removeTreeNode();">删除部门</a><br/>
-                <a id="m_add" class="btn btn-success btn-mini" onclick="employ_add();">添加员工</a><br/>
-                <a id="m_del" class="btn btn-danger btn-mini" onclick="removeTreeNode();">删除员工</a><br/>
+<!--                <a id="m_add" class="btn btn-success btn-mini" onclick="employ_add();">添加员工</a><br/>-->
+<!--                <a id="m_del" class="btn btn-danger btn-mini" onclick="removeTreeNode();">删除员工</a><br/>-->
             </ul>
         </div>
 

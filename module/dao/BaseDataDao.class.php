@@ -61,6 +61,17 @@ class BaseDataDao extends BaseDao
         $result=$this->g_db_query($sql);
         return $result;
     }
+    function getDepartmentsByCompanyId ($companyId) {
+        $sql ="select * from OA_department_tree where  pid = $companyId";
+        $result=$this->g_db_query($sql);
+        return $result;
+    }
+    function getDepartmentByNameAndComId($daprtName,$companyId) {
+        $sql ="select * from OA_department_tree where name='{$daprtName}' and pid = $companyId";
+        $result=$this->g_db_query($sql);
+        return mysql_fetch_array($result);
+    }
+
     function addEmployTreeData($data) {
         $sql ="insert into OA_department_tree (pid,name,create_time,company_id,employ_id,is_employ)
         values ({$data['pid']},'{$data['name']}',now(),{$data['company_id']},{$data['employ_id']},1)";
