@@ -13,7 +13,27 @@ class SalaryDao extends BaseDao {
     function SalaryDao() {
         parent::BaseDao ();
     }
-
+    function getDianfuOrYanfu ($yandianfu) {
+        $sql = "select oe.e_name,oe.e_num ,oy.*  from OA_yanOrDian oy,OA_employ oe where oy.employ_num = oe.e_num and oy.salary_time_id = {$yandianfu['salTimeId']} ";
+        if ($yandianfu['yanOrdian_type']) {
+            $sql .= " and oy.yanOrdian_type = {$yandianfu['yanOrdian_type']}";
+        }
+        $result=$this->g_db_query($sql);
+        return $result;
+    }
+    function saveDianfuOrYanfu ($yanDianfu) {
+        $sql = " insert into OA_yanOrDian (salary_time_id,salary_id,employ_num,per_shiye,per_yiliao,per_yanglao,
+        per_gongjijin,com_shiye,com_yiliao,com_yanglao,com_gongshang,com_shengyu,com_gongjijin,yanOrdian_type)
+        values ({$yanDianfu['salary_time_id']},{$yanDianfu['salary_id']},'{$yanDianfu['employ_num']}',
+        {$yanDianfu['per_shiye']},{$yanDianfu['per_yiliao']},{$yanDianfu['per_yanglao']},
+        {$yanDianfu['per_gongjijin']},{$yanDianfu['com_shiye']},{$yanDianfu['com_yiliao']},{$yanDianfu['com_yanglao']},
+        {$yanDianfu['com_gongshang']},{$yanDianfu['com_shengyu']},{$yanDianfu['com_gongjijin']},
+        {$yanDianfu['yanOrdian_type']}
+        )
+        ";
+        $result=$this->g_db_query($sql);
+        return $result;
+    }
     function getFukuandanList ($where  = null) {
         $sql = "select oa.name as admin_name,oc.company_name,os.salaryTime,of.*  from OA_admin oa, OA_company oc,OA_salarytime os,OA_fukuandan of where
 of.company_id = oc.id and of.salTime_id = os.id  and of.op_id =oa.id ";
@@ -65,7 +85,12 @@ of.company_id = oc.id and of.salaryTime_id = os.id  and of.op_id =oa.id ;";
         op_id = {$fukuandan['op_id']},
         file_path = '{$fukuandan['file_path']}',
         create_time = now(),update_time = now(),
-        fukuan_status = {$fukuandan['fukuan_status']},memo = '{$fukuandan['memo']}';";
+        fukuan_status = {$fukuandan['fukuan_status']},memo = '{$fukuandan['memo']}' where id = {$fukuandan['id']}";
+        $result=$this->g_db_query($sql);
+        return $result;
+    }
+    function updateFukuandanStatus($fukuandan) {
+        $sql="update OA_fukuandan set fukuan_status = {$fukuandan['fukuan_status']} where id = {$fukuandan['id']}";
         $result=$this->g_db_query($sql);
         return $result;
     }

@@ -110,6 +110,12 @@ class SalaryAction extends BaseAction {
             case "SalaryComeIn" :
                 $this->SalaryComeIn ();
                 break;
+            case "saveYanDianfu" :
+                $this->saveYanDianfu ();
+                break;
+            case "getDianfuYanfuBySalTimeId" :
+                $this->getDianfuYanfuBySalTimeId ();
+                break;
             default :
                 $this->modelInput();
                 break;
@@ -119,6 +125,89 @@ class SalaryAction extends BaseAction {
     }
     function modelInput() {
         $this->mode = "toAdd";
+    }
+    function getDianfuYanfuBySalTimeId() {
+        $salTimeId = $_REQUEST['salTimeId'];
+        $type = $_REQUEST['type'];
+        $yandianfu = array();
+        if ($type) {
+            $yandianfu['yanOrdian_type'] = $type;
+        }
+        $yandianfu['salTimeId'] = $salTimeId;
+        $this->objDao = new SalaryDao();
+        $result = $this->objDao->getDianfuOrYanfu($yandianfu);
+        $dianfu = array();
+        $yanfu = array();
+        while($row = mysql_fetch_array($result)) {
+            if($row['yanOrdian_type'] == 1) {
+                $yanfu[] = $row;
+            } elseif ($row['yanOrdian_type'] == 2) {
+                $dianfu[] = $row;
+            }
+        }
+        $data['dianfu'] = $dianfu;
+        $data['yanfu'] = $yanfu;
+        echo json_encode($data);
+        exit;
+    }
+    function saveYanDianfu () {
+        $dianfuData = $_REQUEST['dianfuData'];
+        $yanfuData = $_REQUEST['yanfuData'];
+        $salaryTimeId = $_REQUEST['salaryTimeId'];
+        $fukuanId = $_REQUEST['fukuandanId'];
+        $type = $_REQUEST['type'];
+        $this->objDao = new SalaryDao();
+        foreach($dianfuData as $val){
+            $dainYanfu['employ_num'] = $val['e_num'];
+            $dainYanfu['salary_time_id'] = $salaryTimeId;
+            $dainYanfu['salary_id'] = $val['salary_id'];
+            $dainYanfu['per_shiye'] = $val['per_shiye']?$val['per_shiye']:'0.00';
+            $dainYanfu['per_yiliao'] = $val['per_yiliao']?$val['per_shiye']:'0.00';
+            $dainYanfu['per_yanglao'] = $val['per_yanglao']?$val['per_shiye']:'0.00';
+            $dainYanfu['per_gongjijin'] = $val['per_gongjijin']?$val['per_shiye']:'0.00';
+            $dainYanfu['com_shiye'] = $val['com_shiye']?$val['per_shiye']:'0.00';
+            $dainYanfu['com_yiliao'] = $val['com_yiliao']?$val['per_shiye']:'0.00';
+            $dainYanfu['com_yanglao'] = $val['com_yanglao']?$val['per_shiye']:'0.00';
+            $dainYanfu['com_gongshang'] = $val['com_gongshang']?$val['per_shiye']:'0.00';
+            $dainYanfu['com_shengyu'] = $val['com_shengyu']?$val['per_shiye']:'0.00';
+            $dainYanfu['com_gongjijin'] = $val['com_gongjijin']?$val['per_shiye']:'0.00';
+            $dainYanfu['yanOrdian_type'] = 2;//1延付2垫付
+            $result = $this->objDao->saveDianfuOrYanfu($dainYanfu);
+            $jsonData = array();
+
+        }
+        foreach($yanfuData as $val){
+            $dainYanfu['employ_num'] = $val['e_num'];
+            $dainYanfu['salary_time_id'] = $salaryTimeId;
+            $dainYanfu['salary_id'] = $val['salary_id'];
+            $dainYanfu['per_shiye'] = $val['per_shiye']?$val['per_shiye']:'0.00';
+            $dainYanfu['per_yiliao'] = $val['per_yiliao']?$val['per_shiye']:'0.00';
+            $dainYanfu['per_yanglao'] = $val['per_yanglao']?$val['per_shiye']:'0.00';
+            $dainYanfu['per_gongjijin'] = $val['per_gongjijin']?$val['per_shiye']:'0.00';
+            $dainYanfu['com_shiye'] = $val['com_shiye']?$val['per_shiye']:'0.00';
+            $dainYanfu['com_yiliao'] = $val['com_yiliao']?$val['per_shiye']:'0.00';
+            $dainYanfu['com_yanglao'] = $val['com_yanglao']?$val['per_shiye']:'0.00';
+            $dainYanfu['com_gongshang'] = $val['com_gongshang']?$val['per_shiye']:'0.00';
+            $dainYanfu['com_shengyu'] = $val['com_shengyu']?$val['per_shiye']:'0.00';
+            $dainYanfu['com_gongjijin'] = $val['com_gongjijin']?$val['per_shiye']:'0.00';
+            $dainYanfu['yanOrdian_type'] = 1;//1延付2垫付
+            $result = $this->objDao->saveDianfuOrYanfu($dainYanfu);
+            $jsonData = array();
+
+        }
+        $fukuandan['fukuan_status'] = 1;
+        $fukuandan['id'] = $fukuanId;
+        $result = $this->objDao->updateFukuandanStatus($fukuandan);
+        if ($result) {
+
+            $jsonData['code'] = 100000;
+            $jsonData['message'] = '保存成功';
+        }else {
+            $jsonData['code'] = 100001;
+            $jsonData['message'] = '保存失败请重试';
+        }
+        echo json_encode($jsonData);
+        exit;
     }
     function SalaryComeIn () {
         $bukouData = array();//补扣、垫付：企业单位未缴纳个人金额，中企垫付
@@ -156,9 +245,9 @@ class SalaryAction extends BaseAction {
         while ($row = mysql_fetch_array($salListResult)) {
             $key = $row['employid'];
             $results = $this->_commonEqual($fukuanList[$key],$row);
-            if (count($results['error']) >2)$noEqual[] = $results['error'];
-            if (count($results['dianfu']) >2) $bukouData[] = $results['dianfu'];
-            if (count($results['yanfu']) >2)$daikouData[] = $results['yanfu'];
+            if (count($results['error']) >3)$noEqual[] = $results['error'];
+            if (count($results['dianfu']) >3) $bukouData[] = $results['dianfu'];
+            if (count($results['yanfu']) >3)$daikouData[] = $results['yanfu'];
         }
         $jsonData = array();
         $jsonData['code'] = 100000;
@@ -180,6 +269,9 @@ class SalaryAction extends BaseAction {
         $noEqual['yanfu']['e_num'] = $arr2['employid'];
         $noEqual['dianfu']['e_num'] = $arr2['employid'];
         $noEqual['error']['e_num'] = $arr2['employid'];
+        $noEqual['yanfu']['salary_id'] = $arr2['id'];
+        $noEqual['dianfu']['salary_id'] = $arr2['id'];
+        $noEqual['error']['salary_id'] = $arr2['id'];
         $noEqual['yanfu']['e_name'] = $arr2['e_name'];
         $noEqual['dianfu']['e_name'] = $arr2['e_name'];
         $noEqual['error']['e_name'] = $arr2['e_name'];

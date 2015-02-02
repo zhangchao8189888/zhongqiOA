@@ -85,6 +85,38 @@ $(document).ready(function () {
         minSpareRows: 0,
         contextMenu: true
     });
+    $("#saveYanfu").click(function () {
+        var yanfuData = yanfu.getData();
+        var dianfuData = dianfu.getData();
+        var errorData = error.getData();
+        if (errorData.length > 0) {
+            alert('还有不一致的！');
+            return;
+        }
+        var url = 'index.php?action=Salary&mode=saveYanDianfu';
+        var formData = {
+            dianfuData: dianfuData,
+            yanfuData: yanfuData,
+            fukuandanId: $("#fukuandanId").val(),
+            salaryTimeId: $("#salaryTimeId").val()
+        }
+        $.ajax({
+            url: url,
+            data: formData, //returns all cells' data
+            dataType: 'json',
+            type: 'POST',
+            success: function (res) {
+                if (res.code > 100000) {
+                    alert(res.message);
+                    return;
+                }
+                else {
+                    alert(res.message);
+                    window.location.reload();
+                }
+            }
+        });
+    });
     var yanfuGrid = document.getElementById("yanfuGrid");
     var yanfu = new Handsontable(yanfuGrid,{
         data: [],
@@ -197,11 +229,38 @@ $(document).ready(function () {
     $('.rowCheck').click(function () {
         var salTimeId = $(this).attr('data-id');
         var fileName = $(this).attr('data-file');
+        var ruzhangStatus = $(this).attr('data-status');
+        var fukuandanId = $(this).attr('fukuan-id');
         if (!fileName) {
             return;
         }
+        if (ruzhangStatus > 0) {
+            $("#comeIn").hide();
+            $.ajax(
+                {
+                    type: "post",
+                    url: "index.php?action=Salary&mode=getDianfuYanfuBySalTimeId",
+                    data: {
+                        salTimeId : salTimeId
+                    },
+                    dataType: "json",
+                    success: function(data){
+                        if(data) {
+                            dianfu.loadData(data.dianfu);
+                            $('#dianfuNum').text(data.dianfu.length);
+                            $('#yanfuNum').text(data.yanfu.length);
+                            yanfu.loadData(data.yanfu);
+                        }
+                    }
+                }
+            );
+        } else {
+
+            $("#comeIn").show();
+        }
         //salTimeId
         $("#salaryTimeId").val(salTimeId);
+        $("#fukuandanId").val(fukuandanId);
         $.ajax(
             {
                 type: "get",
@@ -244,11 +303,16 @@ $(document).ready(function () {
             type: 'POST',
             success: function (res) {
                 if (res.code == '100000') {
-                    console.log(res.data);
-                    dianfu.loadData(res.data.dianfu);
-                    yanfu.loadData(res.data.yanfu);
-                    error.loadData(res.data.error);
-                    alert('工作保存成功');
+                    if(res.data) {
+                        dianfu.loadData(res.data.dianfu);
+                        $('#dianfuNum').text(res.data.dianfu.length);
+                        $('#yanfuNum').text(res.data.yanfu.length);
+                        $('#errorNum').text(res.data.error.length);
+                        yanfu.loadData(res.data.yanfu);
+                        error.loadData(res.data.error);
+
+                        $("#saveYanfu").show();
+                    }
                 }
                 else {
                     console.log('Save error');

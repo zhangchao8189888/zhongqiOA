@@ -102,7 +102,7 @@ $admin=$_SESSION['admin'];
                                 </td>
                                 <td class="tr">
 <!--                                    <a title="修改" data-id="--><?php //echo $row['id'];?><!--" style="cursor:pointer"  class="rowUpdate theme-color">修改</a>-->
-                                    <a title="查看" data-file="<?php echo $row['file_path'];?>" data-id="<?php echo $row['salTime_id'];?>" style="cursor:pointer"  class="rowCheck theme-color">查看付款详细</a>
+                                    <a title="查看" data-file="<?php echo $row['file_path'];?>" data-id="<?php echo $row['salTime_id'];?>"data-status="<?php echo $row['fukuan_status'];?>" fukuan-id="<?php echo $row['id'];?>" style="cursor:pointer"  class="rowCheck theme-color">查看付款详细</a>
 
                                     <div class="cb"></div>
                                 </td>
@@ -120,9 +120,9 @@ $admin=$_SESSION['admin'];
             <div class="widget-box">
                 <ul class="nav nav-tabs" id="myTab">
                     <li class="active"><a href="#home">工资查询</a></li>
-                    <li><a href="#profile">企业垫付</a></li>
-                    <li><a href="#yanfu">企业延付</a></li>
-                    <li><a href="#error">不一致</a></li>
+                    <li><a href="#profile">企业垫付<em style="color: red" id="dianfuNum"></em></a></li>
+                    <li><a href="#yanfu">企业延付<em style="color: red" id="yanfuNum"></em></a></li>
+                    <li><a href="#error">不一致<em style="color: red" id="errorNum"></em></a></li>
                 </ul>
 
                 <div class="tab-content">
@@ -131,8 +131,10 @@ $admin=$_SESSION['admin'];
                             <!-- checked="checked"-->
                             <input type="checkbox" id="colHeaders" autocomplete="off"> <span>锁定前两列</span>
                             <input type="checkbox" id="rowHeaders" autocomplete="off"> <span>锁定第一行</span>
-                            <input type="button" value="入账" class="btn btn-success" id="comeIn" />
+                            <input type="button" value="入账" class="btn btn-success" id="comeIn" style="display: none"/>
+                            <input type="button" value="保存垫付延付" class="btn btn-success" id="saveYanfu" style="display: none"/>
                             <input type="hidden" id="salaryTimeId" name="salaryTimeId" value=""/>
+                            <input type="hidden" id="fukuandanId" name="fukuandanId" value=""/>
                         </div>
                         <div id="exampleGrid" class="dataTable" style="width: 1000px; height: 400px; overflow: auto"></div>
                     </div>
