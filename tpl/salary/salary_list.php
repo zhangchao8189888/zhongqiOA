@@ -117,7 +117,8 @@ $admin=$_SESSION['admin'];
                 <div class="widget-box">
                     <ul class="nav nav-tabs" id="myTab">
                         <li class="active"><a href="#home">工资信息</a></li>
-                        <!--<li><a href="#profile">企业账户</a></li>-->
+                        <li><a href="#bujiao">上个月补交</a></li>
+                        <li><a href="#bukou">上个月补扣</a></li>
                     </ul>
 
                     <div class="tab-content">
@@ -132,8 +133,11 @@ $admin=$_SESSION['admin'];
                             </div>
                             <div id="exampleGrid" class="dataTable" style="width: 1000px; height: 400px; overflow: auto"></div>
                         </div>
-                        <div class="tab-pane" id="profile">
-
+                        <div class="tab-pane" id="bujiao">
+                            <div id="dianfuGrid" class="dataTable" style="width: 1000px; height: 400px; overflow: auto"></div>
+                        </div>
+                        <div class="tab-pane" id="bukou">
+                            <div id="yanfuGrid" class="dataTable" style="width: 1000px; height: 400px; overflow: auto"></div>
                         </div>
                     </div>
                 </div>

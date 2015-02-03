@@ -79,7 +79,7 @@ class EmployAction extends BaseAction {
         $this->mode = "toAdd";
     }
     function toEmImport() {
-        $this->mode = "toimport";
+        $this->mode = "toEmImport";
     }
     function getEmployInfo () {
         $employId = $_REQUEST['employId'];

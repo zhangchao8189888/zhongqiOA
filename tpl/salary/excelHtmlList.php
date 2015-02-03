@@ -242,7 +242,7 @@ $fname=$form_data['fname'];
     <form action="" id="company_validate" method="post" class="form-horizontal"  novalidate="novalidate">
         <div class="modal-body">
             <div class="designer_win">
-                <div class="tips"><em style="color: red;padding-right: 10px;">*</em>所属公司：<input type="text" maxlength="20" id="e_company"name="e_company"  /><input type="hidden" value="" id="company_id" name="company_id"/></div>
+                <div class="tips"><em style="color: red;padding-right: 10px;">*</em>所属公司：<input type="text" maxlength="20" id="e_company"name="e_company" autocomplete="off" /><input type="hidden" value="" id="company_id" name="company_id"/></div>
                 <div class="tips"><em style="color: red;padding-right: 10px;">*</em>工资月份：
                     <input type="text" id="salaryDate" name="salaryDate" value=""  onFocus="WdatePicker({isShowClear:false,readOnly:true,dateFmt:'yyyy-MM',realDateFmt:'yyyy-MM'})"/>
                 </div>

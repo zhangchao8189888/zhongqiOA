@@ -4,13 +4,13 @@
  * @author zhang.chao
  *
  */
-class EmployForm extends BaseForm
+class FinancialForm extends BaseForm
 {
     /**
      *
      * @return AdminForm
      */
-    function EmployForm()
+    function FinancialForm()
     {
         //页面formData做成
         parent::BaseForm();
@@ -24,10 +24,12 @@ class EmployForm extends BaseForm
     function getTpl($mode = false)
     {
         switch ($mode) {
-            case "toEmployList" :
-                return "employ/employList.php";
-            case "toEmImport" :
-                return "employ/employ_import.php";
+            case "toShoukuanList":
+                return "salary/shoukuan_list.php";
+            case "toFukuanList":
+                return "salary/fukuan_list.php";
+            case "toFukuandanList":
+                return "salary/fukuandan_list.php";
             default :
                 return "BaseConfig.php";
         }

@@ -256,7 +256,7 @@ $admin=$_SESSION['admin'];
         <div class="modal-body">
             <div class="designer_win">
                 <div class="tips">付款通知单号：<span class="codeNo"></span><input type="hidden" value="" id="shouNo" name="shouNo"/></div>
-                <div class="tips"><em style="color: red;padding-right: 10px;">*</em>企业名称：<input type="text" maxlength="20" id="e_company"name="e_company"  /><input type="hidden" value="" id="company_id" name="company_id"/></div>
+                <div class="tips"><em style="color: red;padding-right: 10px;">*</em>企业名称：<input type="text" maxlength="20" id="e_company"name="e_company" autocomplete="off" /><input type="hidden" value="" id="company_id" name="company_id"/></div>
                 <div class="tips"><em style="color: red;padding-right: 10px;">*</em>工资月份：
                     <select id="salTimeId" name="salTimeId"   onchange="searchByStatus()" >
 

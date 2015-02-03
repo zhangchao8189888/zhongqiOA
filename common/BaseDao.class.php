@@ -195,6 +195,13 @@ class BaseDao extends db {
         $result = $this->g_db_query ( $sql );
         return mysql_fetch_array ( $result );
     }
+    function searchSalaryTimeBySalaryTimeAndComId($salTime,$companyId) {
+        $sql = "select st.*,c.company_name from OA_salarytime st,OA_company c where st.companyId=c.id
+        and st.salaryTime='{$salTime}'
+        and st.companyId = $companyId ";
+        $result = $this->g_db_query ( $sql );
+        return mysql_fetch_array ( $result );
+    }
     /**
      * 首页数据dao 获得count
      */

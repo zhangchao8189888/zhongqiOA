@@ -33,10 +33,96 @@ $(document).ready(function () {
         }
 
     });
+    var dianfuGrid = document.getElementById("dianfuGrid");
+    var dianfu = new Handsontable(dianfuGrid,{
+        data: [],
+        startRows: 5,
+        startCols: 4,
+        colHeaders: true,
+        dataSchema: {e_num: '', per_shiye: {first: null, last: null}, address: null},
+        colHeaders: ['姓名','身份证号', '个人失业', '个人医疗', '个人养老',
+            '个人公积金', '单位失业', '单位医疗', '单位养老', '单位工伤',
+            '单位生育','单位公积金'
+        ],
+        colWidths: [100,160, 100, 100, 100, 100, 100, 100, 100, 100, 100],
+        columns: [
+            {data: "e_name"},
+            {data: "e_num"},
+            {data: "per_shiye"},
+            {data: "per_yiliao"},
+            {data: "per_yanglao"},
+            {data: "per_gongjijin"},
+            {data: "com_shiye"},
+            {data: "com_yiliao"},
+            {data: "com_yanglao"},
+            {data: "com_gongshang"},
+            {data: "com_shengyu"},
+            {data: "com_gongjijin"}
+        ],
+        stretchH: 'last',
+        manualColumnResize: true,
+        manualRowResize: true,
+        readOnly:true,
+        minSpareRows: 0,
+        contextMenu: true
+    });
+    var yanfuGrid = document.getElementById("yanfuGrid");
+    var yanfu = new Handsontable(yanfuGrid,{
+        data: [],
+        startRows: 5,
+        startCols: 4,
+        colHeaders: true,
+        dataSchema: {e_num: '', per_shiye: {first: null, last: null}, address: null},
+        colHeaders: ['姓名','身份证号', '个人失业', '个人医疗', '个人养老',
+            '个人公积金', '单位失业', '单位医疗', '单位养老', '单位工伤',
+            '单位生育','单位公积金'
+        ],
+        colWidths: [100,160, 100, 100, 100, 100, 100, 100, 100, 100, 100],
+        columns: [
+            {data: "e_name"},
+            {data: "e_num"},
+            {data: "per_shiye"},
+            {data: "per_yiliao"},
+            {data: "per_yanglao"},
+            {data: "per_gongjijin"},
+            {data: "com_shiye"},
+            {data: "com_yiliao"},
+            {data: "com_yanglao"},
+            {data: "com_gongshang"},
+            {data: "com_shengyu"},
+            {data: "com_gongjijin"}
+        ],
+        stretchH: 'last',
+        manualColumnResize: true,
+        manualRowResize: true,
+        readOnly:true,
+        minSpareRows: 0,
+        contextMenu: true
+    });
     var excelHead = '';
     $('.rowCheck').click(function () {
         var salTimeId = $(this).attr('data-id');
         $("#salaryId").val(salTimeId);
+        if (salTimeId) {
+            $.ajax(
+                {
+                    type: "post",
+                    url: "index.php?action=Salary&mode=getLastDianfuYanfuBySalTimeId",
+                    data: {
+                        salTimeId : salTimeId
+                    },
+                    dataType: "json",
+                    success: function(data){
+                        if(data) {
+                            dianfu.loadData(data.dianfu);
+                            $('#bukou').text(data.dianfu.length);
+                            $('#bujiao').text(data.yanfu.length);
+                            yanfu.loadData(data.yanfu);
+                        }
+                    }
+                }
+            );
+        }
         $.ajax({
             url: "index.php?action=Salary&mode=getSalaryListByTimeIdJson",
             data: {

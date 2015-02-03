@@ -116,6 +116,9 @@ class SalaryAction extends BaseAction {
             case "getDianfuYanfuBySalTimeId" :
                 $this->getDianfuYanfuBySalTimeId ();
                 break;
+            case "getLastDianfuYanfuBySalTimeId" :
+                $this->getLastDianfuYanfuBySalTimeId ();
+                break;
             default :
                 $this->modelInput();
                 break;
@@ -125,6 +128,39 @@ class SalaryAction extends BaseAction {
     }
     function modelInput() {
         $this->mode = "toAdd";
+    }
+    function getLastDianfuYanfuBySalTimeId () {
+        $salTimeId = $_REQUEST['salTimeId'];
+        $this->objDao = new SalaryDao();
+        $salTimePo = $this->objDao->getSalaryTimeBySalId($salTimeId);
+        if ($salTimePo){
+            $salTime = $salTimePo['salaryTime'];
+            $lastSalTime =  date("Y-m-01",strtotime("$salTime -1 month"));
+            $lastSalTimePO = $this->objDao->searchSalaryTimeBySalaryTimeAndComId($lastSalTime,$salTimePo['companyId']);
+            if ($lastSalTimePO) {
+                $yandianfu['salTimeId'] = $lastSalTimePO['id'];
+                $this->objDao = new SalaryDao();
+                $result = $this->objDao->getDianfuOrYanfu($yandianfu);
+                $dianfu = array();
+                $yanfu = array();
+                while($row = mysql_fetch_array($result)) {
+                    if($row['yanOrdian_type'] == 1) {
+                        $yanfu[] = $row;
+                    } elseif ($row['yanOrdian_type'] == 2) {
+                        $dianfu[] = $row;
+                    }
+                }
+                $data['dianfu'] = $dianfu;
+                $data['yanfu'] = $yanfu;
+                echo json_encode($data);
+                exit;
+            } else {
+                $data['dianfu'] = array();
+                $data['yanfu'] = array();
+                echo json_encode($data);
+                exit;
+            }
+        }
     }
     function getDianfuYanfuBySalTimeId() {
         $salTimeId = $_REQUEST['salTimeId'];

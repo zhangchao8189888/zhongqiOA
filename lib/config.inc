@@ -71,6 +71,95 @@ $userType=array(
     5 => "本市农民工",
 	6 => "外地农民工",
 );
+global $memu;
+$memu=array(
+    '1' => array(
+        'resource'   => '基础信息设置',
+        'action' => 'BaseData',
+        'icon'		 =>	'edit',
+        'son'		 => array(
+            '1'	=> array(
+                'action' => 'BaseData',
+                'mode' => 'toShenfenType',
+                'resource'	=> '身份类别',
+            ),
+            '2'	=> array(
+                'action' => 'BaseData',
+                'mode' => 'toDepartmentEdit',
+                'resource'	=> '部门设置',
+            ),
+        ),
+    ),
+    '2' => array(
+        'action' => 'Company',
+        'resource'   => '企业管理',
+        'icon'		 =>	'group',
+        'son'		 => array(
+            '1'	=> array(
+                'action' => 'Company',
+                'mode' => 'toCompanyList',
+                'resource'	=> '企业信息',
+            ),
+        ),
+    ),
+    '3' => array(
+        'action' => 'Employ',
+        'resource'   => '员工管理',
+        'icon'		 =>	'user',
+        'son'		 => array(
+            '1'	=> array(
+                'action' => 'BaseData',
+                'mode' => 'toEmployList',
+                'resource'	=> '员工查询',
+            ),
+            '2'	=> array(
+                'action' => 'BaseData',
+                'mode' => 'toEmImport',
+                'resource'	=> '员工导入',
+            ),
+        ),
+    ),
+    '4' => array(
+        'action' => 'Salary',
+        'resource'   => '工资管理',
+        'icon'		 =>	'money',
+        'son'		 => array(
+            '1'	=> array(
+                'action' => 'Salary',
+                'mode' => 'toSalaryUpload',
+                'resource'	=> '做工资',
+            ),
+            '2'	=> array(
+                'action' => 'Salary',
+                'mode' => 'salarySearchList',
+                'resource'	=> '工资查询',
+            ),
+        ),
+    ),
+    '5' => array(
+        'action' => 'Financial',
+        'resource'   => '财务管理',
+        'icon'		 =>	'star',
+        'son'		 => array(
+            '1'	=> array(
+                'action' => 'Financial',
+                'mode' => 'toFukuanList',
+                'resource'	=> '付款通知单',
+            ),
+            '2'	=> array(
+                'action' => 'Financial',
+                'mode' => 'toShoukuanList',
+                'resource'	=> '收款',
+            ),
+            '3'	=> array(
+                'action' => 'Financial',
+                'mode' => 'toFukuandanList',
+                'resource'	=> '付款单',
+            ),
+        ),
+    ),
+
+);
 global $userTypeName;
 $userTypeName=array(
     "未缴纳保险"=>0,
