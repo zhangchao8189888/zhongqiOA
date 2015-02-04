@@ -7,7 +7,12 @@ $(document).ready(function () {
         rules: {
             company_name: { required: true },
             salaryDate: { required: true },
-            file: { required: true }
+            file: { required: function(){
+                if ($("#fileName").text()) {
+                    return false;
+                }
+                return true;
+            } }
         },
         messages: {
             company_name:
@@ -225,6 +230,36 @@ $(document).ready(function () {
             });
         }
 
+    });
+
+    $('.rowUpdate').click(function () {
+        var fukuandanId = $(this).attr('data-id');
+        $.ajax(
+            {
+                type: "get",
+                url: "index.php?action=Salary&mode=getFukuandanByIdJson",
+                data: {
+                    fukuandanId : fukuandanId
+                },
+                dataType: "json",
+                success: function(data){
+                    $("#fid").val(data.id);
+                    $("#e_company").val(data.company_name);
+                    $("#company_id").val(data.company_id);
+                    $("#salTimeId").append('<option value="'+data.salTime_id+'">'+data.salaryTime+'</option>');
+                    $("#fileDiv").show();
+                    $("#fileName").text(data.file_path);
+                    $("#fileNameValue").val(data.file_path);
+                    $("#salSum").text(data.salSumValue);
+                    $("#salSumValue").val(data.salSumValue);
+                    $("#op_name").val(data.admin_name);
+                    $("#op_id").val(data.op_id);
+                    $("#more").val(data.memo);
+
+                }
+            }
+        );
+        $('#modal-event1').modal({show:true});
     });
     $('.rowCheck').click(function () {
         var salTimeId = $(this).attr('data-id');

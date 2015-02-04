@@ -21,6 +21,11 @@ $admin=$_SESSION['admin'];
             $('#modal-event1').modal({show:true});
         });
     });
+    function chanpinDownLoad(){
+        $("#iForm").attr("action","index.php?action=Salary&mode=fukuandanDownload");
+        //$("#nfname").val($("#newfname").val());
+        $("#iForm").submit();
+    }
 </script>
 <div id="content">
     <div id="content-header">
@@ -52,6 +57,9 @@ $admin=$_SESSION['admin'];
                                     <input type="hidden" value="" id="pro_code"/>
                                     <font color="red"><?php if($errorMsg)echo $errorMsg?></font>
                                     <font color="green"><?php if($succ)echo $succ?></font>
+                                    <!--<form id="iformD"action="index.php?action=Company&mode=toCompanyList" method="post">-->
+                                        <input type="button" value="下载工资导入模版" onclick="chanpinDownLoad()" class="btn btn-primary"/>
+                                    <!--</form>-->
                                     <div style="float: right;margin-right: 20px"><a href="#" id="com_add" class="btn btn-success" >新增付款单</a></div>
                                 </form>
                             </div>
@@ -101,7 +109,9 @@ $admin=$_SESSION['admin'];
                                     <div><?php echo $row['memo'];?></div>
                                 </td>
                                 <td class="tr">
-<!--                                    <a title="修改" data-id="--><?php //echo $row['id'];?><!--" style="cursor:pointer"  class="rowUpdate theme-color">修改</a>-->
+                                    <?php if ($row['fukuan_status']<1){?>
+                                            <a title="修改" data-id="<?php echo $row['id'];?>" style="cursor:pointer"  class="rowUpdate theme-color">修改</a>
+                                        <?php }?>
                                     <a title="查看" data-file="<?php echo $row['file_path'];?>" data-id="<?php echo $row['salTime_id'];?>"data-status="<?php echo $row['fukuan_status'];?>" fukuan-id="<?php echo $row['id'];?>" style="cursor:pointer"  class="rowCheck theme-color">查看付款详细</a>
 
                                     <div class="cb"></div>
@@ -186,6 +196,7 @@ $admin=$_SESSION['admin'];
     <form action="index.php?action=Salary&mode=saveFukuandan" enctype="multipart/form-data" id="company_validate" method="post" class="form-horizontal"  novalidate="novalidate">
         <div class="modal-body">
             <div class="designer_win">
+                <input type="hidden" value="" id="fid" name="fid"/>
 <!--                <div class="tips">付款通知单号：<span class="codeNo"></span><input type="hidden" value="" id="shouNo" name="shouNo"/></div>-->
                 <div class="tips"><em style="color: red;padding-right: 10px;">*</em>企业名称：<input type="text" maxlength="20" id="e_company"name="e_company" autocomplete="off" /><input type="hidden" value="" id="company_id" name="company_id"/></div>
                 <div class="tips"><em style="color: red;padding-right: 10px;">*</em>工资月份：
@@ -194,12 +205,13 @@ $admin=$_SESSION['admin'];
                     </select>
                 </div>
                 <div class="tips"><em style="color: red;padding-right: 10px;">*</em>导入付款单：<input type="hidden" name="max_file_size" value="10000000"/><input name="file" type="file"/></div>
+                <div class="tips" id="fileDiv"><em style="color: red;padding-right: 10px;">*</em>导入付款单：<em id="fileName"></em><input type="hidden" name="fileNameValue"id="fileNameValue"/></div>
                 <div class="tips">工资总额：<label id="salSum"name="salSum"></label><input type="hidden" name="salSumValue"id="salSumValue"/></div>
                 <div class="tips">制单人：<input type="text" maxlength="20" id="op_name" name="op_name" value="<?php echo $admin['name'];?>" />
                     <input type="hidden" name="op_id" value="<?php echo $admin['id'];?>"/>
                 </div>
                 <div class="tips">是否入账：<span style="color: red">未入账</span></div>
-                <div class="tips">备注：<textarea id="more">
+                <div class="tips">备注：<textarea id="more" name="more">
 
                     </textarea></div>
             </div>

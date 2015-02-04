@@ -115,8 +115,8 @@ $(document).ready(function () {
                     success: function(data){
                         if(data) {
                             dianfu.loadData(data.dianfu);
-                            $('#bukou').text(data.dianfu.length);
-                            $('#bujiao').text(data.yanfu.length);
+                            $('#dianfuNum').text(data.dianfu.length);
+                            $('#yanfuNum').text(data.yanfu.length);
                             yanfu.loadData(data.yanfu);
                         }
                     }

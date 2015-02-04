@@ -44,6 +44,12 @@ of.company_id = oc.id and of.salTime_id = os.id  and of.op_id =oa.id ";
         $result=$this->g_db_query($sql);
         return $result;
     }
+    function getFukuandanById ($id) {
+        $sql = "select oa.name as admin_name,oc.company_name,os.salaryTime,of.*  from OA_admin oa, OA_company oc,OA_salarytime os,OA_fukuandan of where
+of.company_id = oc.id and of.salTime_id = os.id  and of.op_id =oa.id and of.id = $id";
+        $result=$this->g_db_query($sql);
+        return mysql_fetch_array($result);
+    }
     function getFukuandanListCount ($where = null) {
         $sql = "select count(of.id) as cnt  from OA_admin oa, OA_company oc,OA_salarytime os,OA_fukuandan of where
 of.company_id = oc.id and of.salTime_id = os.id  and of.op_id =oa.id ";
@@ -83,9 +89,11 @@ of.company_id = oc.id and of.salaryTime_id = os.id  and of.op_id =oa.id ;";
         set company_id = {$fukuandan['company_id']},salTime_id = {$fukuandan['salTime_id']},
         salSumValue = {$fukuandan['salSumValue']},
         op_id = {$fukuandan['op_id']},
-        file_path = '{$fukuandan['file_path']}',
-        create_time = now(),update_time = now(),
-        fukuan_status = {$fukuandan['fukuan_status']},memo = '{$fukuandan['memo']}' where id = {$fukuandan['id']}";
+        create_time = now(),update_time = now(),memo = '{$fukuandan['memo']}' ";
+        if ($fukuandan['file_path']) {
+            $sql .= " ,file_path = '{$fukuandan['file_path']}'";
+        }
+        $sql .= "where id = {$fukuandan['id']}";
         $result=$this->g_db_query($sql);
         return $result;
     }

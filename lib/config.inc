@@ -60,6 +60,7 @@ define('ER_SALARY_TIME_TYPE',6);
 
 define('UPLOAD_FILE_NAME','upload.');
 define('DOWNLOAD_SALARY_PATH','template/salTemlate.xls');
+define('DOWNLOAD_FUKUANDAN_PATH','template/fukuandanTemplate.xlsx');
 
 global $userType;
 $userType=array(

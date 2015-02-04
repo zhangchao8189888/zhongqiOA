@@ -53,6 +53,9 @@ class SalaryAction extends BaseAction {
             case "fileProDownload" :
                 $this->fileProDownload();
                 break;
+            case "fukuandanDownload" :
+                $this->fukuandanDownload();
+                break;
             case "filesUp" :
                 $this->filesUp();
                 break;
@@ -76,6 +79,9 @@ class SalaryAction extends BaseAction {
                 break;
             case "toFukuanList" :
                 $this->toFukuanList();
+                break;
+            case "getFukuandanByIdJson" :
+                $this->getFukuandanByIdJson();
                 break;
             case "salaryImport" :
                 $this->salaryImport ();
@@ -511,6 +517,13 @@ class SalaryAction extends BaseAction {
         $xls = new Excel_XML('UTF-8', false, 'My Test Sheet');
         $xls->addArray($salaryArray);
         $xls->generateXML($time);
+    }
+    function getFukuandanByIdJson () {
+        $fukuandanId = $_REQUEST['fukuandanId'];
+        $this->objDao = new SalaryDao();
+        $fukuandan=$this->objDao->getFukuandanById($fukuandanId);
+        echo json_encode($fukuandan);
+        exit;
     }
     function toFukuanList () {
         $this->mode = "toFukuanList";
@@ -1010,7 +1023,27 @@ class SalaryAction extends BaseAction {
             readfile($file);
 
         }
-        $this->filesUpload();
+        //$this->filesUpload();
+    }
+    function fukuandanDownload()
+    {
+        $file = DOWNLOAD_FUKUANDAN_PATH;
+        //$this->mode="toUpload";
+        if (file_exists($file)) {
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename=' . basename($file));
+            header('Content-Transfer-Encoding: binary');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($file));
+            ob_clean();
+            flush();
+            readfile($file);
+
+        }
+        //$this->filesUpload();
     }
     function filesUp()
     {
@@ -1178,6 +1211,7 @@ class SalaryAction extends BaseAction {
         $fukuandan['company_id'] = $_REQUEST['company_id'];
         $fukuandan['salTime_id'] = $_REQUEST['salTimeId'];
         $fukuandan['salSumValue'] = $_REQUEST['salSumValue'];
+        $fukuandan['fileNameValue'] = $_REQUEST['fileNameValue'];
         $fukuandan['fukuan_status'] = 0;
         $fukuandan['memo'] = $_REQUEST['more'];
         $fukuandan['op_id'] = $adminPO['id'];
@@ -1207,12 +1241,28 @@ class SalaryAction extends BaseAction {
             }
 
         } else {
-            $result = $this->objDao->updateFukuandan($fukuandan);
-            if ($result) {
-                $this->objForm->setFormData("succ", '修改成功');
+
+            $path = 'fukuandanfile/';
+            $fileArray = explode(".",$_FILES['file']['name']);
+            if (count($fileArray) > 1) {
+                $fileName = 'fukuandan-'.$fukuandan['salTime_id'].".{$fileArray[1]}";
+                $op=new fileoperate();
+                $mess=$op->del_file($path,$fukuandan['fileNameValue']);
+                echo $mess;
+                $fukuandan['file_path'] = $fileName;
+                $mess = $this->filesUpCommon($path,$fileName);
             } else {
-                $this->objForm->setFormData("error", '修改失败请重试');
+                $fukuandan['file_path'] = '';
             }
+            if(empty($mess)) {
+                $result = $this->objDao->updateFukuandan($fukuandan);
+                if ($result) {
+                    $this->objForm->setFormData("succ", '修改成功');
+                } else {
+                    $this->objForm->setFormData("error", '修改失败请重试');
+                }
+            }
+
         }
         $this->toFukuandanList();
     }

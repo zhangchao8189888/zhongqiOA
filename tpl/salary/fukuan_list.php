@@ -160,62 +160,6 @@ $admin=$_SESSION['admin'];
                             <div id="exampleGrid" class="dataTable" style="width: 1400px; height: 400px; overflow: auto"></div>
                         </div>
                         <div class="tab-pane" id="profile">
-
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead>
-                                <tr>
-                                    <!-- 资金来往方 资金类型 收入 支出 支付方式 填报人 填报时间 备注
-                                    清华大学 工资汇入 520210.15 支票支付 王子诚 2014-12-04 14:20:30 2015年1月份工资汇入
-                                    -->
-                                    <th class="tl"><div>资金来往方</div></th>
-                                    <th class="tl"><div>资金类型</div></th>
-                                    <th class="tl"><div>收入</div></th>
-                                    <th class="tl"><div>支出</div></th>
-                                    <th class="tl"><div>支付方式</div></th>
-                                    <th class="tl"><div>填报人</div></th>
-                                    <th class="tl"><div>填报时间</div></th>
-                                    <th class="tl"><div>备注</div></th>
-                                </tr>
-                                </thead>
-                                <tbody  class="tbodays">
-                                <tr class="">
-                                    <td>清华大学</td>
-                                    <td>工资汇入</td>
-                                    <td>￥<em style="color: red">52000.15</em></td>
-                                    <td>￥<em style="color: #008000">0.00</em></td>
-                                    <td>支票支付</td>
-                                    <td>王子诚</td>
-                                    <td>2014-12-04 14:20:30</td>
-                                    <td class="tl pl10">
-                                        2015年1月份工资汇入
-                                    </td>
-                                </tr>
-                                <tr class="">
-                                    <td>海淀公安局</td>
-                                    <td>垫付冲回</td>
-                                    <td>￥<em style="color: red">0.00</em></td>
-                                    <td>￥<em style="color: #008000">-600</em></td>
-                                    <td>银行转账</td>
-                                    <td>王子诚</td>
-                                    <td>2014-12-04 14:20:30</td>
-                                    <td class="tl pl10">
-                                        1月张超公积金垫付冲回
-                                    </td>
-                                </tr>
-                                <tr class="">
-                                    <td>合计</td>
-                                    <td></td>
-                                    <td>￥<em style="color: red">52000.15</em></td>
-                                    <td>￥<em style="color: #008000">-600</em></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td class="tl pl10">
-
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
                         </div>
                     </div>
                 </div>

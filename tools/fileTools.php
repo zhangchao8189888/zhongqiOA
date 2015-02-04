@@ -96,6 +96,7 @@ echo "文件修改成功";
 function del_file($path,$name){ //删除文件
 $filename=$path.$name;
 $mess="";
+    echo $filename;
 if (!file_exists($filename)) {
 $mess= "文件不存在，请确认路径是否正确";
 }
