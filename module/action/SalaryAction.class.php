@@ -125,6 +125,10 @@ class SalaryAction extends BaseAction {
             case "getLastDianfuYanfuBySalTimeId" :
                 $this->getLastDianfuYanfuBySalTimeId ();
                 break;
+            case "fileDel" :
+                $this->fileDel ();
+                break;
+
             default :
                 $this->modelInput();
                 break;
@@ -135,6 +139,18 @@ class SalaryAction extends BaseAction {
     function modelInput() {
         $this->mode = "toAdd";
     }
+
+    function fileDel()
+    {
+        $this->mode = "toSalaryUpload";
+        $fname = $_GET['fname'];
+        $op = new fileoperate();
+        $mess = $op->del_file("upload/", $fname);
+        $files = $op->list_filename("upload/", 1);
+        $this->objForm->setFormData("files", $files);
+        $this->objForm->setFormData("mess", $mess);
+    }
+
     function getLastDianfuYanfuBySalTimeId () {
         $salTimeId = $_REQUEST['salTimeId'];
         $this->objDao = new SalaryDao();
@@ -687,6 +703,8 @@ class SalaryAction extends BaseAction {
         $salaryArray[] = $salarySum;
         $data['head'] = $tableHead;
         $data['salary'] = $salaryArray;
+        $headLength = $this->sumTableHeadByStringLen($tableHead);
+        $data['headLength'] = $headLength;
         $data['code'] = 100000;
         echo json_encode($data);
         exit;
@@ -1196,7 +1214,10 @@ class SalaryAction extends BaseAction {
                 $temp++;
             }
         }
-        echo json_encode($_newExcel['moban']);
+        $headData = $this->sumTableHead($_newExcel['moban'][0]);
+        $data['data'] = $_newExcel['moban'];
+        $data['head'] = $headData;
+        echo json_encode($data);
         exit;
     }
     function newExcelToHtml() {

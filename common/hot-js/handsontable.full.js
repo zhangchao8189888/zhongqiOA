@@ -9208,7 +9208,7 @@ Handsontable.hooks.register('afterColumnSort');
       items: [
         {
           key: 'row_above',
-          name: 'Insert row above',
+          name: '在上面插入一行',
           callback: function (key, selection) {
             this.alter("insert_row", selection.start.row);
           },
@@ -9222,7 +9222,7 @@ Handsontable.hooks.register('afterColumnSort');
         },
         {
           key: 'row_below',
-          name: 'Insert row below',
+          name: '在上面插入一行',
           callback: function (key, selection) {
             this.alter("insert_row", selection.end.row + 1);
           },

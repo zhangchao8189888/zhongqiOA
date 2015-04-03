@@ -240,6 +240,12 @@ $companyType=array(
     4=>'外资企业',
     5=>'政府部门',
 );
+global $companyLevel;
+$companyLevel=array(
+    1=>'普通客户',
+    2=>'中级客户',
+    3=>'高级客户',
+);
 //工资表字段
 global $salaryTable;
 $salaryTable=array(

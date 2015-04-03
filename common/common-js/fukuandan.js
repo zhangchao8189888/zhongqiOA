@@ -306,14 +306,33 @@ $(document).ready(function () {
                 },
                 dataType: "json",
                 success: function(data){
+                   // var header = [];
+                    var jData = data.data;
+                    var head = data.head;
                     var header = [];
-                    for(var i = 1;i <= data[0].length; i++){
+                    for(var i = 1;i <= jData[0].length; i++){
                         header.push(i);
                     }
                     salaryGride.updateSettings({
                         colHeaders: header
                     });
-                    salaryGride.loadData(data);
+                    var sumWith = 100;
+
+                    for (i =0;i < head.length;i++) {
+                        sumWith+= head[i];
+                    }
+                    $('#exampleGrid').css('width',sumWith);
+                    salaryGride.updateSettings({
+                        colWidths: head
+                    });
+                    salaryGride.loadData(jData);
+//                    for(var i = 1;i <= data[0].length; i++){
+//                        header.push(i);
+//                    }
+//                    salaryGride.updateSettings({
+//                        colHeaders: header
+//                    });
+//                    salaryGride.loadData(data);
 
                 }
             }

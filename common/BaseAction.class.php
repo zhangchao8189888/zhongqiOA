@@ -122,5 +122,25 @@ class BaseAction
 
 
     }
+    function sumTableHead ($jsonData,$headMap = null) {
+        $defultLength = 80;
+        $headLenData = array();
+        foreach ($jsonData as $key => $val) {
+            if (isset($headMap[$key])) {
+                $headLenData[$key] = $headMap[$key];
+            } else {
+                $headLenData[$key] = $defultLength;
+            }
+        }
+        return $headLenData;
+    }
+    function sumTableHeadByStringLen ($jsonData) {
+        $headLenData = array();
+        foreach ($jsonData as $key => $val) {
+                $headLenData[$key] = strlen($val)*5;
+        }
+        return $headLenData;
+    }
+
 }
 ?>

@@ -23,14 +23,25 @@ $(document).ready(function () {
                 data: {fileName : fileName},
                 dataType: "json",
                 success: function(data){
+                    var jData = data.data;
+                    var head = data.head;
                     var header = [];
-                    for(var i = 1;i <= data[0].length; i++){
+                    for(var i = 1;i <= jData[0].length; i++){
                         header.push(i);
                     }
                     hot5.updateSettings({
                         colHeaders: header
                     });
-                    hot5.loadData(data);
+                    var sumWith = 100;
+
+                    for (i =0;i < head.length;i++) {
+                        sumWith+= head[i];
+                    }
+                    $('#exampleGrid').css('width',sumWith);
+                    hot5.updateSettings({
+                        colWidths: head
+                    });
+                    hot5.loadData(jData);
 
                 }
             }
@@ -41,7 +52,7 @@ $(document).ready(function () {
         data: [],
         startRows: 5,
         startCols: 4,
-        colWidths: [55, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80], //can also be a number or a function
+        colWidths: [], //can also be a number or a function
         rowHeaders: true,
         colHeaders: [],
         stretchH: 'last',

@@ -117,8 +117,8 @@ $admin=$_SESSION['admin'];
                 <div class="widget-box">
                     <ul class="nav nav-tabs" id="myTab">
                         <li class="active"><a href="#home">工资信息</a></li>
-                        <li><a href="#bujiao">上个月补交<em style="color: red" id="yanfuNum"></em></a></li>
-                        <li><a href="#bukou">上个月补扣<em style="color: red" id="dianfuNum"></em></a></li>
+                        <li><a href="#bujiao">上个月漏交保险<em style="color: red" id="yanfuNum"></em></a></li>
+                        <li><a href="#bukou">上个月垫付保险<em style="color: red" id="dianfuNum"></em></a></li>
                     </ul>
 
                     <div class="tab-content">

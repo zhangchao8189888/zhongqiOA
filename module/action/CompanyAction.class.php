@@ -58,6 +58,9 @@ class CompanyAction extends BaseAction {
             case "getCompany" :
                 $this->getCompany();
                 break;
+            case "verifyCompanyName" :
+                $this->verifyCompanyName();
+                break;
             case "getCompanyListJson" :
                 $this->getCompanyListJson();
                 break;
@@ -111,6 +114,7 @@ class CompanyAction extends BaseAction {
         $companyList = array();
         //company_code,company_name,com_contact,contact_no,company_address,com_bank,bank_no,company_level,company_type,company_status
         global $companyType;
+        global $companyLevel;
         while ($row = mysql_fetch_array($searchResult)) {
             $company['id'] = $row['id'];
             $company['company_code'] = $row['company_code'];
@@ -120,8 +124,8 @@ class CompanyAction extends BaseAction {
             $company['company_address'] = $row['company_address'];
             $company['com_bank'] = $row['com_bank'];
             $company['bank_no'] = $row['bank_no'];
-            $company['company_level'] = $companyType[$row['company_level']];
-            $company['company_type'] = $row['company_type'];
+            $company['company_level'] = $companyLevel[$row['company_level']];
+            $company['company_type'] = $companyType[$row['company_type']];
             $company['company_status'] = $row['company_status'];
             $companyList[] = $company;
         }
@@ -167,6 +171,18 @@ class CompanyAction extends BaseAction {
         $this->objDao = new CompanyDao();
         $result = $this->objDao->getCompanyById($id);
         echo json_encode($result);
+        exit;
+    }
+    function verifyCompanyName () {
+        $comName = $_REQUEST['comName'];
+        if (empty($comName)){
+            echo 'false';
+            exit;
+        }
+        $this->objDao = new CompanyDao();
+        $result = $this->objDao->getCompanyByName($comName);
+        if($result) echo 'false';
+        else{ echo 'true' ;}
         exit;
     }
     function getCompanyListJson () {
@@ -223,6 +239,7 @@ class CompanyAction extends BaseAction {
                 $data['mess'] = '公司添加失败，请重试';
             }
         } else {
+
             $result = $this->objDao->updateCompany($company);
             if ($result) {
                 $data['code'] = 100000;

@@ -33,28 +33,51 @@ $(function(){
             );
         },
         rules: {
-            company_name: { required: true },
-            contacts: { required: true },
-            contacts_no: { required: true }
-            /*contacts_no: { required: true },
-            contacts: { required: true }*/
-            /*company_name:
+            //company_name: { required: true },
+            company_name:
             {
                 required: true,
                 remote:{                                          //验证用户名是否存在
                     type:"POST",
-                    url:"index.php?action=Customer&mode=verifyCustomCode",             //servlet
+                    url:"index.php?action=Company&mode=verifyCompanyName",             //servlet
                     data:{
-                        code:function(){return $("#customer_code").val();}
+                        comName:function(){
+                            if ($('#company_id').val()) {
+
+                                return 'false';
+                            }
+                            return $("#company_name").val();
+                        }
                     }
                 }
             },
-            txbNewPwd2: { required: true, rangelength: [8, 15], equalTo: "#txbNewPwd1" }*/
+            contacts: { required: true },
+            contacts_no: { required: true },
+            bank_no : {
+                remote:{                                          //验证用户名是否存在
+                    type:"POST",
+                    url:"index.php?action=Company&mode=verifyCompanyName",             //servlet
+                    data:{
+                        bank_no:function(){
+                            if ($('#bank_no').val()) {
+
+                                return 'false';
+                            }
+                            return $("#bank_no").val();
+                        }
+                    }
+                }
+            }
+            /*contacts_no: { required: true },
+            contacts: { required: true }*/
+
+            /*txbNewPwd2: { required: true, rangelength: [8, 15], equalTo: "#txbNewPwd1" }*/
         },
         messages: {
             company_name:
             {
-                required: '必填'
+                required: '必填',
+                remote : '公司名称已经存在'
             },
             contacts:
             {

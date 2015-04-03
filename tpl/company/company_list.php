@@ -143,7 +143,7 @@ $admin=$_SESSION['admin'];
                                              <div><?php echo $row['bank_no'];?></div>
                                         </td>
                                         <td class="tl pl10">
-                                             <div><?php echo $row['company_level'];?></div>
+                                             <div><?php echo $row['company_type'];?></div>
                                         </td>
                                         <td class="tr">
                                             <a title="修改" data-id="<?php echo $row['id'];?>"  class="rowUpdate pointer theme-color">修改</a>

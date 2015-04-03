@@ -144,7 +144,7 @@ class EmployAction extends BaseAction {
         }
     }
     function newemImport() {
-        $this->mode = "toimport";
+        $this->mode = "toEmImport";
         set_time_limit(1800);
         $errorMsg = "";
         //var_dump($_FILES);
@@ -185,7 +185,7 @@ class EmployAction extends BaseAction {
             }
         }
         if ($errorMsg != "") {
-            $this->mode = "toimport";
+            $this->mode = "toEmImport";
             $this->objForm->setFormData("error", $errorMsg);
             return;
         }

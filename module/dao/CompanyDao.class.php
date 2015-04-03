@@ -62,5 +62,10 @@ class CompanyDao extends BaseDao
         $result=$this->g_db_query($sql);
         return mysql_fetch_assoc($result);
     }
+    function getCompanyByName($name) {
+        $sql="select * from OA_company where company_name='{$name}'";
+        $result=$this->g_db_query($sql);
+        return mysql_fetch_assoc($result);
+    }
 }
 ?>

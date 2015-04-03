@@ -1,5 +1,6 @@
 <?php
 $error=$form_data['error'];
+$mess=$form_data['mess'];
 $succ=$form_data['succ'];
 $files=$form_data['files'];
 
@@ -115,6 +116,11 @@ $files=$form_data['files'];
                                 <button data-dismiss="alert" class="close">×</button>
                                 <strong>导入成功</strong> <?php echo $succ;?> </div>
                         <?php }?>
+                        <?php if (!empty($mess)) {?>
+                            <div class="alert alert-success">
+                                <button data-dismiss="alert" class="close">×</button>
+                                <strong>信息：</strong> <?php echo $mess;?> </div>
+                        <?php }?>
                         <div class="form-actions">
                             <form id="iform" method="post">
                                 <input type="button" value="下载工资导入模版" onclick="chanpinDownLoad()" class="btn btn-primary"/>
@@ -153,7 +159,7 @@ $files=$form_data['files'];
 
                                 <td><div><?php echo $row;?></div></td>
 
-                                <td><div><a href="index.php?action=Salary&mode=excelToHtml&fname=<?php echo $row;?>">查看</a><!--|<a href="index.php?action=Product&mode=toUpdate&fname=<?php /*echo $row;*/?>">批量修改</a>-->|<a href="index.php?action=Product&mode=del&fname=<?php echo $row;?>">删除</a><!-- <a  onclick="rename('<?php echo $row;?>');">重命名</a> --></div></td>
+                                <td><div><a href="index.php?action=Salary&mode=excelToHtml&fname=<?php echo $row;?>">查看</a><!--|<a href="index.php?action=Product&mode=toUpdate&fname=<?php /*echo $row;*/?>">批量修改</a>-->|<a href="index.php?action=Salary&mode=fileDel&fname=<?php echo $row;?>">删除</a><!-- <a  onclick="rename('<?php echo $row;?>');">重命名</a> --></div></td>
                             </tr>
                         <?php }?>
                         </tbody>
